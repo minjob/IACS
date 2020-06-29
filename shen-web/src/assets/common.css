@@ -1,0 +1,58 @@
+/* 侧边导航栏 */
+.menu-ul .el-menu-item,.el-submenu__title,.el-submenu__title:hover{
+  background: #1B1E27;
+  color: #fff;
+  font-size: 18px;
+}
+.menu-ul .el-menu-item.is-active {
+  background-color: #fff;
+  color: #1B1E27;
+}
+.el-submenu .el-menu-item{
+  font-size: 14px;
+  min-width: auto;
+}
+.second-header .el-row{
+  height: 57px;;
+}
+.second-header .el-col-2{
+  height: 100%;
+  line-height: 57px;
+  text-align: center;
+}
+.second-header .el-button--info.is-plain:focus{
+  background: #fff;
+  border-color: #fff;
+  color: #1B1E27;
+}
+.second-header .el-button--info.is-plain {
+  color: #fff;
+  background: #1B1E27;
+  border-color: #1B1E27;
+}
+/* 公共导航菜单 */
+.navOptionsItem{
+  width:100%;
+  background:#34383E;
+  clear: both;
+  overflow: hidden;
+  border-radius:4px;
+  margin-bottom: 20px;
+}
+.navOptionsItem ul li{
+  float:left;
+  margin:10px;
+}
+.navOptionsItem ul li a{
+  display: block;
+  color:#fff;
+  font-size:18px;
+  background:#34383E;
+  text-decoration: none;
+  padding:5px 20px;
+  border-radius:4px;
+}
+.navOptionsItem ul li a.active{
+  color:#34383E;
+  background:#fff;
+}

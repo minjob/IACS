@@ -1,0 +1,13 @@
+.idea/
+__pycache__/
+venv/
+dbset/database/db_operate.py
+logs/
+models/SystemManagement/test.py
+tools/models/
+tools/aaa.py
+templates/chat-client.html
+templates/index.html
+node_modules/
+desktop.ini
+shuju.py
