@@ -260,7 +260,7 @@ def energytrendtu():
     if request.method == 'GET':
         data = request.values
         try:#MB2TCP3.A_ACR_10.Ep_total  MB2TCP3.A_ACR_13.Ep_total
-            sql = "SELECT  [MB2TCP3.A_ACR_10.Ep_total],[SampleTime] FROM [sz].[DataHistory] with (INDEX =IX_JHYDataHistory) WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
+            sql = "SELECT  `MB2TCP3.A_ACR_10.Ep_total`,[SampleTime] FROM [sz].[DataHistory] with (INDEX =IX_JHYDataHistory) WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
 
             return 'OK'
         except Exception as e:
