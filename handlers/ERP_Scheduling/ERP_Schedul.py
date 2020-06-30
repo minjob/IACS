@@ -229,7 +229,8 @@ def addscheduledates():
                 lis = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日', ]
                 dic = dict(enumerate(lis))
                 for i in re:
-                    w = datetime.date(int(y), int(m), int(d))
+                    ymr = i.split("-")
+                    w = datetime.date(int(ymr[0]), int(ymr[1]), int(ymr[2]))
                     xq = dic[w.weekday()]
                     if xq == "星期六" or xq == "星期日":
                         DateType = "工作日"
