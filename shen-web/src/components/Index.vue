@@ -127,23 +127,23 @@ export default {
   created(){
     window.addEventListener('resize', this.getMenuHeight);
     this.getMenuHeight()
-    // if(sessionStorage.getItem("LoginStatus")) {
-    //   this.$store.commit('setUser',sessionStorage.getItem('WorkNumber'))
-    //   this.axios.get("/api/CUID",{
-    //     params: {
-    //       tableName: "User",
-    //       field:"WorkNumber",
-    //       fieldvalue:sessionStorage.getItem('WorkNumber'),
-    //       limit:1,
-    //       offset:0
-    //     }
-    //   }).then(res =>{
-    //     var data = JSON.parse(res.data)
-    //     this.UserInfo =  data.rows[0]
-    //   })
-    // }else{
-    //   this.$router.push("/login");
-    // }
+    if(sessionStorage.getItem("LoginStatus")) {
+      this.$store.commit('setUser',sessionStorage.getItem('WorkNumber'))
+      this.axios.get("/api/CUID",{
+        params: {
+          tableName: "User",
+          field:"WorkNumber",
+          fieldvalue:sessionStorage.getItem('WorkNumber'),
+          limit:1,
+          offset:0
+        }
+      }).then(res =>{
+        var data = JSON.parse(res.data)
+        this.UserInfo =  data.rows[0]
+      })
+    }else{
+      this.$router.push("/login");
+    }
   },
   destroyed() {
 

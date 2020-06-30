@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
+import config from '@/components/config'
+import Login from '@/components/login'
 import Home from '@/views/home'
 import SystemMonitor from '@/views/SystemMonitor'
 import IntelligentAnalysis from '@/views/IntelligentAnalysis'
@@ -10,7 +12,6 @@ import ParameterConfiguration from '@/views/ParameterConfiguration'
 import DataManagement from '@/views/DataManagement'
 import ServiceDiagnosis from '@/views/ServiceDiagnosis'
 import IntelligentModel from '@/views/IntelligentModel'
-import config from '@/components/config'
 import Organization from '@/views/system/Organization'
 import Role from '@/views/system/Role'
 import Personnel from '@/views/system/Personnel'
@@ -41,8 +42,13 @@ export default new Router({
         {path:'/Personnel',name:'Personnel',meta:{ title:'人员管理'},component:Personnel},
         {path:'/Calendar',name:'Calendar',meta:{ title:'工作日历'},component:Calendar},
         {path:'/Log',name:'Log',meta:{ title:'系统日志'},component:Log},
-      ]},
-    {
+      ]
+    },{
+      path: '/login',
+      name: 'login',
+      meta:{ title:'登录'},
+      component: Login,
+    },,{
       path: '/config',
       name: 'config',
       component: config,
