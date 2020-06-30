@@ -4,7 +4,7 @@ from flask import render_template,request,Blueprint,redirect,url_for
 
 from dbset.database.db_operate import db_session
 from models.core import Role, Role_Menu, Menu
-from models.system import Permission, User, RolePermission
+from models.system import Permission, User, RolePermission, ModulMenus
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder

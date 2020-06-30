@@ -579,6 +579,37 @@ class ShiftsClass(Base):
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+# 模块菜单表
+class ModulMenus(Base):
+    __tablename__ = 'ModulMenus'
+    # 模块ID
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+
+    # 模块菜单名字:
+    ModulMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 模块菜单编码:
+    ModulMenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单路由:
+    ModulMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateDate = Column(Unicode(32), default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=True)
+
+    # 父节点
+    ParentNode = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单类型:
+    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单图标:
+    MenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单创建人:
+    Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
