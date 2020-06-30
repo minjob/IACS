@@ -250,3 +250,20 @@ def addscheduledates():
             logger.error(e)
             insertSyslog("error", "添加工作日休息日报错Error：" + str(e), current_user.Name)
             return json.dumps("添加工作日休息日报错", cls=AlchemyEncoder, ensure_ascii=False)
+
+@erp_schedul.route('/energytrendtu', methods=['GET', 'POST'])
+def energytrendtu():
+    '''
+    能耗趋势图
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:#MB2TCP3.A_ACR_10.Ep_total  MB2TCP3.A_ACR_13.Ep_total
+            sql = "SELECT  [MB2TCP3.A_ACR_10.Ep_total],[SampleTime] FROM [MES].[dbo].[DataHistory] with (INDEX =IX_JHYDataHistory) WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
+
+            return 'OK'
+        except Exception as e:
+            logger.error(e)
+            insertSyslog("error", "能耗趋势图报错Error：" + str(e), current_user.Name)
+            return json.dumps("能耗趋势图报错", cls=AlchemyEncoder, ensure_ascii=False)

@@ -168,6 +168,20 @@ class scheduledate(Base):
     # 颜色
     color = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
 
+# 日期类型
+class scheduleDateType(Base):
+    __tablename__ = "scheduleDateType"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 类型编码
+    DateTypeCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 类型名称
+    DateTypeName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 注释
+    Desc = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
+    # 颜色
+    color = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

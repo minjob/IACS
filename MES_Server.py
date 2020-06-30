@@ -175,31 +175,6 @@ api.add_resource(CUIDList, '/CUID')
 api.add_resource(CUID, '/CUID/<cuid_id>')
 
 
-class ENERGY(Resource):
-    def get(self):
-        return energyselect(request.values)
-
-
-class WATER(Resource):
-    def get(self):
-        return energyWaterSelect(request.values)
-
-
-class STEAM(Resource):
-    def get(self):
-        return energySteamSelect(request.values)
-
-
-class ELECTRIC(Resource):
-    def get(self):
-        return energyElectricSelect(request.values)
-
-
-api.add_resource(ENERGY, '/energyall')
-api.add_resource(WATER, '/energywater')
-api.add_resource(STEAM, '/energysteam')
-api.add_resource(ELECTRIC, '/energyelectric')
-
 if __name__ == '__main__':
     from livereload import Server
 
