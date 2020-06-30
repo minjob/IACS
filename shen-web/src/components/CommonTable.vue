@@ -3,7 +3,7 @@
     <el-form :inline="true">
       <el-form-item>
         <el-select v-model="tableData.searchProp" placeholder="请选择搜索字段" size="small">
-          <el-option v-for="(item,index) in tableData.searchPropList" :label="item.label" :value="item.prop" :key="index"></el-option>
+          <el-option v-for="(item,index) in tableData.column" :label="item.label" :value="item.prop" :key="index" v-if="item.searchProp"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -18,7 +18,7 @@
     </el-form>
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
-      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
+      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" :show-header="item.showHeader"></el-table-column>
     </el-table>
     <div class="paginationClass">
       <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -30,9 +30,9 @@
        @current-change="handleCurrentChange">
       </el-pagination>
     </div>
-    <el-dialog v-if="tableData.hasOwnProperty('handleForm')" :title="tableData.dialogTitle" :visible.sync="tableData.dialogVisible" :close-on-click-modal="false" width="40%">
+    <el-dialog :title="tableData.dialogTitle" :visible.sync="tableData.dialogVisible" :close-on-click-modal="false" :append-to-body="true" width="40%">
       <el-form :model="tableData.submitForm" label-width="110px">
-        <el-form-item v-for="(item,index) in tableData.handleForm" :key="index" :label="item.label" :prop="item.prop">
+        <el-form-item v-for="(item,index) in tableData.column" :key="index" :label="item.label" :prop="item.prop">
           <el-input v-if="item.type === 'input'" v-model="item.value" :disabled="item.disabled"></el-input>
           <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择" @change="changeHandleChildSelect(item.value,item.prop)">
             <el-option v-for="(i,d) in item.DownData" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>
@@ -122,14 +122,14 @@
         if(label === "添加"){
           this.determineSubmitType()
           this.tableData.dialogVisible = true
-          this.tableData.handleForm.forEach(item =>{
+          this.tableData.column.forEach(item =>{
             item.value = ""
           })
         }else if(label === "修改"){
           this.determineSubmitType()
           if(this.tableData.multipleSelection.length == 1){
             this.tableData.dialogVisible = true
-            this.tableData.handleForm.forEach(item =>{
+            this.tableData.column.forEach(item =>{
               item.value = this.tableData.multipleSelection[0][item.prop]
             })
           }else{
@@ -180,8 +180,8 @@
         }
       },
       determineSubmitType(){  //判断表单提交的字段类型
-        if(this.tableData.handleForm){
-          this.tableData.handleForm.forEach(item =>{
+        if(this.tableData.column){
+          this.tableData.column.forEach(item =>{
             if(item.type === "select"){
               var params = {
                 tableName: item.Downtable,
@@ -201,11 +201,11 @@
         }
       },
       changeHandleChildSelect(value,prop){
-        if(this.tableData.handleForm){
-          this.tableData.handleForm.forEach(item =>{
+        if(this.tableData.column){
+          this.tableData.column.forEach(item =>{
             if(item.prop === prop){  //判断点击的是当前字段的表单
               if(item.childProp){  //判断是否有联动的子字段表单
-                this.tableData.handleForm.forEach((childItem,index) =>{
+                this.tableData.column.forEach((childItem,index) =>{
                   if(childItem.prop === item.childProp){  //判断是否是点击项的子节点表单
                     this.axios.get("/api/CUID",{
                       params: {
@@ -219,7 +219,7 @@
                       var data = JSON.parse(res.data)
                       childItem.DownData = data.rows
                       var childItemObj = childItem
-                      this.tableData.handleForm.splice(index,1,childItemObj) //将子节点表单按索引替换为修改后的数据
+                      this.tableData.column.splice(index,1,childItemObj) //将子节点表单按索引替换为修改后的数据
                     },res =>{
                       console.log("请求错误")
                     })
@@ -233,7 +233,7 @@
       save(){
         if(this.tableData.dialogTitle === "添加"){
           var params = {tableName:this.tableData.tableName}
-          this.tableData.handleForm.forEach(item =>{
+          this.tableData.column.forEach(item =>{
             params[item.prop] = item.value
           })
           this.axios.post("/api/CUID",this.qs.stringify(params)).then(res =>{
@@ -255,7 +255,7 @@
           })
         }else if(this.tableData.dialogTitle === "修改"){
           var params = {tableName:this.tableData.tableName}
-          this.tableData.handleForm.forEach(item =>{
+          this.tableData.column.forEach(item =>{
             params[item.prop] = item.value
           })
           this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{

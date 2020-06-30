@@ -56,3 +56,20 @@
   color:#34383E;
   background:#fff;
 }
+/* 公用组件样式 */
+.platformContainer{
+  width: 100%;
+  background: #3D4048;
+  color: #fff;
+  border-radius: 4px;
+  padding: 15px;
+}
+.itemMarginBottom{
+  margin-bottom: 15px;
+}
+.floatLeft{
+  float: left;
+}
+.floatRight{
+  float: right;
+}
