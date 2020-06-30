@@ -154,6 +154,20 @@ class SchedulingMaterial(Base):
     # 物料剩余量
     Surplus_quantity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+# 排产日历
+class scheduledate(Base):
+    __tablename__ = "scheduledate"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 日期
+    WorkDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 类型
+    DateType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 注释
+    comment = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
+    # 颜色
+    color = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

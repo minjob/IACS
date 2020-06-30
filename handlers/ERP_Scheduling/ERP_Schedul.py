@@ -12,7 +12,7 @@ from flask import render_template, request, make_response
 from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
-    SchedulingStandard, SchedulingStock
+    SchedulingStandard, SchedulingStock, scheduledate
 from tools.MESLogger import MESLogger
 import json
 import socket
@@ -210,3 +210,42 @@ def plantSchedulingAddBatch():
             logger.error(e)
             insertSyslog("error", "计划排产增加批次报错Error：" + str(e), current_user.Name)
             return json.dumps("计划排产增加批次报错", cls=AlchemyEncoder, ensure_ascii=False)
+
+@erp_schedul.route('/addscheduledates', methods=['GET', 'POST'])
+def addscheduledates():
+    '''
+    添加工作日休息日
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            month = data['month']
+            count = db_session.query(scheduledate).filter(scheduledate.WorkDate.like("%"+month+"%")).count()
+            if count < 20:
+                mou = month.split("-")
+                monthRange = calendar.monthrange(int(mou[0]), int(mou[1]))
+                re = timeChange(mou[0], str(int(mou[1])), monthRange[1])
+                lis = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日', ]
+                dic = dict(enumerate(lis))
+                for i in re:
+                    w = datetime.date(int(y), int(m), int(d))
+                    xq = dic[w.weekday()]
+                    if xq == "星期六" or xq == "星期日":
+                        DateType = "工作日"
+                        color = "00cafa"
+                    else:
+                        DateType = "休息日"
+                        color = "00c3db"
+                    sc = scheduledate()
+                    sc.WorkDate = i
+                    sc.DateType = DateType
+                    sc.comment = xq
+                    sc.color = color
+                    db_session.add(sc)
+                    db_session.commit()
+            return 'OK'
+        except Exception as e:
+            logger.error(e)
+            insertSyslog("error", "添加工作日休息日报错Error：" + str(e), current_user.Name)
+            return json.dumps("添加工作日休息日报错", cls=AlchemyEncoder, ensure_ascii=False)
