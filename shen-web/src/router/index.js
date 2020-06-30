@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
+import config from '@/components/config'
+import Login from '@/components/login'
 import Home from '@/views/home'
+<<<<<<< HEAD
 import SystemMonitor from '@/views/energy/SystemMonitor'
 import IntelligentAnalysis from '@/views/energy/IntelligentAnalysis'
 import IntelligentOperation from '@/views/energy/IntelligentOperation'
@@ -11,6 +14,16 @@ import DataManagement from '@/views/energy/DataManagement'
 import ServiceDiagnosis from '@/views/energy/ServiceDiagnosis'
 import IntelligentModel from '@/views/energy/IntelligentModel'
 import config from '@/components/config'
+=======
+import SystemMonitor from '@/views/SystemMonitor'
+import IntelligentAnalysis from '@/views/IntelligentAnalysis'
+import IntelligentOperation from '@/views/IntelligentOperation'
+import IntelligentMaintenance from '@/views/IntelligentMaintenance'
+import ParameterConfiguration from '@/views/ParameterConfiguration'
+import DataManagement from '@/views/DataManagement'
+import ServiceDiagnosis from '@/views/ServiceDiagnosis'
+import IntelligentModel from '@/views/IntelligentModel'
+>>>>>>> 3af2a2569f9cfb12215fdc950f4eaea59b718291
 import Organization from '@/views/system/Organization'
 import Role from '@/views/system/Role'
 import Personnel from '@/views/system/Personnel'
@@ -41,8 +54,13 @@ export default new Router({
         {path:'/Personnel',name:'Personnel',meta:{ title:'人员管理'},component:Personnel},
         {path:'/Calendar',name:'Calendar',meta:{ title:'工作日历'},component:Calendar},
         {path:'/Log',name:'Log',meta:{ title:'系统日志'},component:Log},
-      ]},
-    {
+      ]
+    },{
+      path: '/login',
+      name: 'login',
+      meta:{ title:'登录'},
+      component: Login,
+    },,{
       path: '/config',
       name: 'config',
       component: config,
