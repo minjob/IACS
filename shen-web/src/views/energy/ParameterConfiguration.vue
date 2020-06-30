@@ -7,7 +7,7 @@
         </ul>
       </div>
       </el-col>
-      <div class="mainshow"><img src="../assets/img/IntelligentOperation.png"></div>
+      <div class="mainshow"><img src="../../assets/img/ParameterConfiguration.png"></div>
   </el-row>
 </template>
 

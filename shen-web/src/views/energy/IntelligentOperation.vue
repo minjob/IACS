@@ -7,8 +7,7 @@
         </ul>
       </div>
       </el-col>
-      <div v-if="navOptionsCurrent==1" class="mainshow"><img src="../assets/img/DataManagement1.png"></div>
-      <div v-if="navOptionsCurrent==2" class="mainshow"><img src="../assets/img/DataManagement2.png"></div>
+      <div class="mainshow"><img src="../../assets/img/IntelligentOperation.png"></div>
   </el-row>
 </template>
 
@@ -20,8 +19,6 @@
       return {
         navOptionsCurrent:1,
         navOptions:[
-            {name:"趋势分析",value:1},
-            {name:"数据录入",value:2}
         ],
       }
     },

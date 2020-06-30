@@ -7,7 +7,9 @@
         </ul>
       </div>
       </el-col>
-      <div class="mainshow"><img src="../assets/img/SystemMonitor.png"></div>
+      <div v-if="navOptionsCurrent==1" class="mainshow"><img src="../../assets/img/IntelligentAnalysis.png"></div>
+      <div v-if="navOptionsCurrent==2" class="mainshow"><img src="../../assets/img/IntelligentAnalysis2.png"></div>
+      <div v-if="navOptionsCurrent==3" class="mainshow"><img src="../../assets/img/IntelligentAnalysis3.png"></div>
   </el-row>
 </template>
 
@@ -19,9 +21,9 @@
       return {
         navOptionsCurrent:1,
         navOptions:[
-          {name:"大系统",value:1},
-          {name:"小系统",value:2},
-          {name:"冷却系统",value:3}
+          {name:"能耗分析",value:1},
+          {name:"设备效率分析",value:2},
+          {name:"制冷量分析",value:3}
         ],
       }
     },

@@ -7,9 +7,7 @@
         </ul>
       </div>
       </el-col>
-      <div v-if="navOptionsCurrent==1" class="mainshow"><img src="../assets/img/IntelligentAnalysis.png"></div>
-      <div v-if="navOptionsCurrent==2" class="mainshow"><img src="../assets/img/IntelligentAnalysis2.png"></div>
-      <div v-if="navOptionsCurrent==3" class="mainshow"><img src="../assets/img/IntelligentAnalysis3.png"></div>
+      <div v-if="navOptionsCurrent==1" class="mainshow"><img src="../../assets/img/IntelligentModel3.png"></div>
   </el-row>
 </template>
 
@@ -21,9 +19,11 @@
       return {
         navOptionsCurrent:1,
         navOptions:[
-          {name:"能耗分析",value:1},
-          {name:"设备效率分析",value:2},
-          {name:"制冷量分析",value:3}
+          {name:"冷水机组加减载",value:1},
+          {name:"深度学习模型",value:2},
+          {name:"制冷量模型",value:3},
+          {name:"冷冻泵自动变频",value:4},
+          {name:"冷却塔自动加减载",value:5}
         ],
       }
     },
