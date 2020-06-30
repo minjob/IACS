@@ -1,19 +1,23 @@
 <template>
   <el-row>
     <el-col :span="24">
-      <div class="card-head">
-        <span style="margin-left: 10px;" class="text-size-normol">人员管理</span>
-      </div>
-      <div class="platformContainer">
-        <tableView :tableData="TableData" @getTableData="getTableData" @privileges="privileges"></tableView>
-      </div>
-      <el-dialog :title="selectPersonnelName" :visible.sync="dialogVisible" width="50%">
-        <el-transfer :titles="['未拥有角色', '已分配角色']" :button-texts="['收回', '分配']" v-model="transferValue" :data="transferData"></el-transfer>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="savePrivileges">保存</el-button>
-        </span>
-      </el-dialog>
+      <el-col :span="24">
+        <div class="page-title">
+          <span style="margin-left: 10px;" class="text-size-normol">人员管理</span>
+        </div>
+      </el-col>
+      <el-col :span="24">
+        <div class="tableContainer">
+          <tableView :tableData="TableData" @getTableData="getTableData" @privileges="privileges"></tableView>
+        </div>
+        <el-dialog :title="selectPersonnelName" :visible.sync="dialogVisible" width="50%">
+          <el-transfer :titles="['未拥有角色', '已分配角色']" :button-texts="['收回', '分配']" v-model="transferValue" :data="transferData"></el-transfer>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="savePrivileges">保存</el-button>
+          </span>
+        </el-dialog>
+      </el-col>
     </el-col>
   </el-row>
 </template>
@@ -29,45 +33,24 @@
         TableData:{
           tableName:"User",
           column:[
-            {prop:"Name",label:"用户名"},
-            {prop:"WorkNumber",label:"工号"},
-            {prop:"Creater",label:"创建人"},
-            {prop:"CreateTime",label:"创建时间"},
-            {prop:"LastLoginTime",label:"最近在线时间"},
+            {prop:"Name",label:"用户名",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {prop:"WorkNumber",label:"工号",type:"input",value:"",showField:true,searchProp:true},
+            {prop:"Creater",label:"创建人",type:"input",value:"",showField:true,searchProp:true},
+            {prop:"CreateTime",label:"创建时间",type:"input",value:"",showField:true,searchProp:false},
+            {prop:"LastLoginTime",label:"最近在线时间",type:"input",value:"",showField:true,searchProp:false},
           ],
           data:[],
           limit:5,
           offset:1,
           total:0,
           searchProp:"",
-          searchPropList:[
-            {label:"用户名",prop:"Name"},
-            {label:"工号",prop:"WorkNumber"}
-          ],
           tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:false, //是否需要单选
           searchVal:"",
           multipleSelection: [],
           dialogVisible: false,
           dialogTitle:'',
-          rules:{
-            Name:[
-              {required: true, message: '请输入用户名', trigger: 'blur'}
-            ],
-            Password:[
-              {required: true, message: '请输入密码', trigger: 'blur'}
-            ],
-            WorkNumber:[
-              {required: true, message: '请输入工号', trigger: 'blur'}
-            ]
-          },
           handleType:[],
-          handleForm:[
-            {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
-            {label:"用户名",prop:"Name",type:"input",value:""},
-            {label:"密码",prop:"Password",type:"input",value:""},
-            {label:"工号",prop:"WorkNumber",type:"input",value:"",reg:"/^[0-9]+$/"}
-          ],
         },
         selectPersonnelName:"",
         dialogVisible:false,

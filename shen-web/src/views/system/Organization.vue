@@ -1,11 +1,11 @@
 <template>
   <el-row :gutter="10">
     <el-col :span="24">
-      <div class="card-head">
+      <div class="page-title">
         <i v-if="showTypeValue === '看板视图'" class="el-icon-share" style="color: #FB3A06"></i>
         <i v-if="showTypeValue === '表格视图'" class="el-icon-s-grid" style="color: #FB3A06"></i>
         <span style="margin-left: 10px;" class="text-size-normol">组织结构</span>
-        <el-select class="card-head-select" v-model="showTypeValue" placeholder="请选择">
+        <el-select class="page-title-select" v-model="showTypeValue" placeholder="请选择">
           <el-option v-for="(item,index) in showType" :key="index" :value="item.value" v-html="item.label"></el-option>
         </el-select>
       </div>
@@ -612,21 +612,6 @@
 </script>
 
 <style scoped>
-  .card-head{
-    width: 100%;
-    margin-bottom:10px;
-    background: #082F4C;
-    color: #fff;
-    font-size: 18px;
-    height: 48px;
-    line-height: 48px;
-    padding: 0 10px;
-    border-radius:4px;
-  }
-  .card-head-select{
-    float: right;
-    width: 100px;
-  }
   .chartContainer{
     padding: 15px;
     background: #fff;

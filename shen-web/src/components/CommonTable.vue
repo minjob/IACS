@@ -18,7 +18,7 @@
     </el-form>
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
-      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" :show-header="item.showHeader"></el-table-column>
+      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField"></el-table-column>
     </el-table>
     <div class="paginationClass">
       <el-pagination background  layout="total, sizes, prev, pager, next, jumper"

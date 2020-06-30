@@ -63,6 +63,23 @@
   color: #fff;
   border-radius: 4px;
   padding: 15px;
+  clear: both;
+  overflow: hidden;
+}
+.scheduleContainer{
+  width: 100%;
+  background: #3D4048;
+  color: #fff;
+  border-radius: 4px;
+  padding: 15px;
+}
+.tableContainer{
+  width: 100%;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 15px;
+  clear: both;
+  overflow: hidden;
 }
 .itemMarginBottom{
   margin-bottom: 15px;
@@ -72,4 +89,19 @@
 }
 .floatRight{
   float: right;
+}
+.page-title{
+  width: 100%;
+  margin-bottom:15px;
+  background: #3D4048;
+  color: #fff;
+  font-size: 18px;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 10px;
+  border-radius:4px;
+}
+.page-title-select{
+  float: right;
+  width: 100px;
 }

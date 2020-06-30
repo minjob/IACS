@@ -1,13 +1,16 @@
 <template>
   <el-row :gutter="20">
     <el-col :span="24">
+      <el-col :span="24">
+        <div class="page-title">
+          <span style="margin-left: 10px;" class="text-size-normol">工作日历</span>
+        </div>
+      </el-col>
       <el-col :span="5">
-        <div class="platformContainer" style="height: 730px;">
+        <div class="scheduleContainer" style="height: 730px;">
           <div id='external-events' class="itemMarginBottom">
             <h4>可拖放的日程</h4>
-            <a class='fc-event' style="background: #00c3db;border: 1px solid #00c3db;">维保</a>
-            <a class='fc-event' style="background: #f7d013;border: 1px solid #f7d013;">休息</a>
-            <a class='fc-event' style="background: #e73b3b;border: 1px solid #e73b3b;">其他</a>
+            <a class='fc-event' v-for="item in scheduleTableData.data" style="padding: 5px;" :style="{ background:item.color,boder:'1px solid '+ item.color }">{{ item.DateTypeName }}</a>
           </div>
           <el-popover
             placement="right"
@@ -36,13 +39,13 @@
     data(){
       return {
         scheduleTableData:{
-          tableName:"scheduleDateType",
+          tableName:"scheduledatetype",
           column:[
-            {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showHeader:false,searchProp:false},
-            {label:"类型编码",prop:"DateTypeCode",type:"input",value:"",showHeader:true,searchProp:true},
-            {label:"类型名称",prop:"DateTypeName",type:"input",value:"",showHeader:true,searchProp:true},
-            {label:"注释",prop:"Desc",type:"input",value:"",showHeader:true,searchProp:true},
-            {label:"颜色",prop:"color",type:"input",value:"",showHeader:true,searchProp:false},
+            {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {label:"类型编码",prop:"DateTypeCode",type:"input",value:"",showField:true,searchProp:true},
+            {label:"类型名称",prop:"DateTypeName",type:"input",value:"",showField:true,searchProp:true},
+            {label:"注释",prop:"Desc",type:"input",value:"",showField:true,searchProp:true},
+            {label:"颜色",prop:"color",type:"input",value:"",showField:true,searchProp:false},
           ],
           data:[],
           limit:5,
