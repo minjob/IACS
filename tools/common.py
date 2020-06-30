@@ -56,7 +56,7 @@ def insert(data):
     if isinstance(data, dict) and len(data) > 0:
         try:
             tableName = str(data.get("tableName"))
-            obj = Base.classes.get(tableName)
+            obj = Base.classes.get(tableName.lower())
             ss = obj()
             for key in data:
                 if key != "ID" and key != "tableName" and key != "id" and key != "Creater":
@@ -130,7 +130,7 @@ def update(data):
     if isinstance(data, dict) and len(data) > 0:
         try:
             tableName = str(data.get("tableName"))
-            obj = Base.classes.get(tableName)
+            obj = Base.classes.get(tableName.lower())
             ss = obj()
             ID = data.get('ID')
             oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
