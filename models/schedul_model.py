@@ -169,8 +169,8 @@ class scheduledate(Base):
     color = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
 
 # 日期类型
-class scheduleDateType(Base):
-    __tablename__ = "scheduleDateType"
+class scheduledatetype(Base):
+    __tablename__ = "scheduledatetype"
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
     # 类型编码
