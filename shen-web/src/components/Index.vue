@@ -35,10 +35,7 @@
             <li>
               <div class='item-title'>深圳桃源地铁站能耗智能分析控制系统</div>
             </li>
-            <li><div>{{ time }}</div></li>
-            <li>
-              <router-link :to="{name:'config'}" class="el-icon-data-analysis" style="color: #fff;"></router-link>
-            </li>
+            <li><div style="color: #ffffff;">{{ time }}</div></li>
           </ul>
         </div>
         <div class="head-right-menu">
@@ -98,7 +95,10 @@ export default {
 
       ],
       systemMenulist:[
-        {name:"调度维护",icon:"el-icon-suitcase",url:"/SchedulingRules"},
+        {name:"组织架构",icon:"el-icon-suitcase",url:"/Organization"},
+        {name:"角色管理",icon:"el-icon-suitcase",url:"/Role"},
+        {name:"人员管理",icon:"el-icon-suitcase",url:"/Personnel"},
+        {name:"工作日历",icon:"el-icon-suitcase",url:"/Calendar"},
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],
       isFullScreen:false, //是否全屏
@@ -274,9 +274,6 @@ export default {
     margin-right: 30px;
     color: #1B1E27;
     font-size: 20px;
-  }
-  .head-left-menu li:nth-child(2){
-   margin-left: 90px;
   }
   .head-left-menu li i{
     vertical-align: bottom;
