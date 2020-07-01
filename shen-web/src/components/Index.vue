@@ -5,9 +5,7 @@
       <el-row>
         <el-col :span="24">
           <div class="aside-head">
-            <router-link :to="{name:'home'}" class="fa fa-home" style="font-size: 24px;">
-              <!--<el-image style="padding: 0 25px;" :src="require('@/assets/imgs/logo.png')"></el-image>-->
-            </router-link>
+            <router-link :to="{name:'home'}" class="fa fa-home" style="font-size: 24px;"></router-link>
           </div>
           <div :style="selfHeight" class="aside-menu">
             <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true">
@@ -30,21 +28,29 @@
     <el-container>
       <!-- 头部 -->
       <el-header>
-        <div class="head-left-menu">
+        <div class="head-menu floatLeft">
           <ul>
-            <li>
-              <div class='item-title'>深圳桃源地铁站能耗智能分析控制系统</div>
-            </li>
-            <li><div style="color: #ffffff;">{{ time }}</div></li>
+            <li><div class='item-title'>深圳桃源地铁站能耗智能分析控制系统</div></li>
+            <li class="mainMenuList" v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
           </ul>
         </div>
-        <div class="head-right-menu">
+        <div class="head-menu floatRight">
           <ul>
-            <li v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
-              <li>
+            <li>
               <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
                 <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
+            </li>
+            <li>
+              <el-dropdown trigger="click" @command="handleCommand" style="cursor: pointer;">
+                <span class="el-dropdown-link">
+                  <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.UserName }}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">个人信息</el-dropdown-item>
+                  <el-dropdown-item command="b"><i class="fa fa-power-off"></i></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </li>
           </ul>
         </div>
@@ -114,10 +120,6 @@ export default {
     }
   },
   mounted(){
-    let _this = this
-    this.timer = setInterval(() =>{
-      _this.time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-    },1000);
     if(this.$route.meta.title === "系统管理"){  //判断是否是属于系统管理模块，展示系统模块菜单
       this.isactive = 1
     }
@@ -254,51 +256,36 @@ export default {
     margin-top: 20px;
     color: #737373;
   }
-  .head-left-menu,.head-right-menu{
+  .head-menu{
     height: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
-  .head-left-menu{
-    float: left;
-  }
-  .head-left-menu i{
+  .head-menu i{
     font-size: 24px;
+    color: #fff;
+    cursor:pointer;
   }
-  .head-right-menu{
-    float: right;
-  }
-  .head-left-menu li{
+  .head-menu li{
     display: inline-block;
     margin-right: 30px;
-    color: #1B1E27;
-    font-size: 20px;
   }
-  .head-left-menu li i{
+  .head-menu li i{
     vertical-align: bottom;
   }
-  .head-left-menu li .item-title{
+  .head-menu li .item-title{
     font-size: 22px;
     color:#fff;
   }
-  .head-right-menu li{
-    float: left;
-    margin-right: 15px;
-    color: #eee;
+  .head-menu .mainMenuList{
+    text-align: center;
+    color: #72747A;
     font-size: 16px;
     text-decoration: none;
-    display: block;
-    padding: 8px 15px;
-    background-color: #1B1E27;
-    border-radius: 8px;
     cursor: pointer;
   }
-  .head-right-menu li.active{
-    color: #34383E;
-    background-color: #fff;
-  }
-  .head-menu-item{
-    cursor:pointer;
+  .mainMenuList.active{
+    color: #fff;
   }
 </style>
