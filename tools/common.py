@@ -1,14 +1,10 @@
 import json
-
-from redis import lock
 from sqlalchemy import create_engine, desc
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 from flask_login import current_user
 import re
-
 from werkzeug.security import generate_password_hash
-
 from models.system import AuditTrace
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.system import SysLog
@@ -190,7 +186,6 @@ def select(data):#table, page, rows, fieid, param
         inipage = pages * rowsnumber + 0  # 起始页
         endpage = pages * rowsnumber + rowsnumber  # 截止页
         newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
-        lock.acquire()
         if (param == "" or param == None):
             total = db_session.query(newTable).count()
             oclass = db_session.query(newTable).order_by(desc("ID")).all()[inipage:endpage]
@@ -198,7 +193,6 @@ def select(data):#table, page, rows, fieid, param
             total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
             oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).order_by(desc("ID")).all()[
                      inipage:endpage]
-        lock.release()
         dir = []
         for i in oclass:
             a = 0
@@ -211,6 +205,7 @@ def select(data):#table, page, rows, fieid, param
         jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
         return jsonoclass
     except Exception as e:
+        db_session.rollback()
         print(e)
         logger.error(e)
         insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
