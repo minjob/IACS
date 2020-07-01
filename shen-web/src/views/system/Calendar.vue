@@ -10,7 +10,7 @@
         <div class="scheduleContainer" style="height: 730px;">
           <div id='external-events' class="itemMarginBottom">
             <h4>可拖放的日程</h4>
-            <a class='fc-event' v-for="item in scheduleTableData.data" style="padding: 5px;" :style="{ background:item.color,boder:'1px solid '+ item.color }">{{ item.DateTypeName }}</a>
+            <a class='fc-event' v-for="item in scheduleTableData.data" style="padding: 5px;border-width: 1px;border-style: solid;" :style="{ background:item.color,borderColor:item.color }">{{ item.DateTypeName }}</a>
           </div>
           <el-popover
             placement="right"
