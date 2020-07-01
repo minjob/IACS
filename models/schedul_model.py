@@ -182,6 +182,21 @@ class scheduleDateType(Base):
     # 颜色
     color = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
 
+# tag维护表
+class TagMaintain(Base):
+    __tablename__ = "TagMaintain"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # Tag编码
+    TagCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # Tag名称
+    TagName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 所属设备
+    Equipment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    # Tag区域
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 描述
+    Desc = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

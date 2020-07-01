@@ -12,7 +12,7 @@ from flask import render_template, request, make_response
 from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
-    SchedulingStandard, SchedulingStock, scheduledate
+    SchedulingStandard, SchedulingStock, scheduledate, TagMaintain
 from tools.MESLogger import MESLogger
 import json
 import socket
@@ -27,6 +27,7 @@ import os
 import openpyxl
 import suds
 from suds.client import Client
+from datetime import timedelta
 
 engine = create_engine(DB_URL)
 Session = sessionmaker(bind=engine)
@@ -259,23 +260,54 @@ def energytrendtu():
     '''
     if request.method == 'GET':
         data = request.values
-        try:#MB2TCP3.A_ACR_10.Ep_total  MB2TCP3.A_ACR_13.Ep_total
-            sql = "SELECT  `MB2TCP3.A_ACR_10.Ep_total` AS value,SampleTime AS SampleTime FROM [sz].[DataHistory] with (INDEX =IX_JHYDataHistory) WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
-            re = db_session.execute(sql)
-            oc_list = []
-            for oc in re:
-                dict_oc = {}
-                dict_oc["value"] = oc["value"]
-                dict_oc["SampleTime"] = oc["SampleTime"]
-                oc_list.append(dict_oc)
-            if re is None or re is "":
-                count = 0
-            else:
-                count = len(re)
-            dir = {}
-            dir["row"] = oc_list
-            dir["count"] = count
-            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        try:
+            TagCode = "`MB2TCP3.A_ACR_10.Ep_total`"
+            begin = "2020-6-20 00:00:00"
+            end = "2020-6-20 19:00:00"
+            begindate = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S")
+            enddate = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+            begin1 = datetime.datetime.strftime(begindate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
+            end1 = datetime.datetime.strftime(enddate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
+            begin2 = datetime.datetime.strftime(begindate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
+            end2 = datetime.datetime.strftime(enddate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
+            begin3 = datetime.datetime.strftime(begindate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
+            end3 = datetime.datetime.strftime(enddate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
+            begin4 = datetime.datetime.strftime(begindate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
+            end4 = datetime.datetime.strftime(enddate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
+            sql = "SELECT  "+TagCode+" AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
+            sql1 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + "' order by ID"
+            sql2 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' order by ID"
+            sql3 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin3 + "' AND '" + end3 + "' order by ID"
+            sql4 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin4 + "' AND '" + end4 + "' order by ID"
+            re = db_session.execute(sql).fetchall()
+            re1 = db_session.execute(sql1).fetchall()
+            re2 = db_session.execute(sql2).fetchall()
+            re3 = db_session.execute(sql3).fetchall()
+            re4 = db_session.execute(sql4).fetchall()
+            dict_list = []
+            for i in range(len(re)):
+                oc_list = []
+                oc_list.append(datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
+                if re[i]["SampleTime"] is not None:
+                    oc_list.append("-" if re[i]["value"] is None else re[i]["value"])
+                    if i < len(re1):
+                        oc_list.append("-" if re1[i]["value"] is None else re1[i]["value"])
+                    else:
+                        oc_list.append("-")
+                    if i < len(re2):
+                        oc_list.append("-" if re2[i]["value"] is None else re2[i]["value"])
+                    else:
+                        oc_list.append("-")
+                    if i < len(re3):
+                        oc_list.append("-" if re3[i]["value"] is None else re3[i]["value"])
+                    else:
+                        oc_list.append("-")
+                    if i < len(re4):
+                        oc_list.append("-" if re4[i]["value"] is None else re4[i]["value"])
+                    else:
+                        oc_list.append("-")
+                    dict_list.append(oc_list)
+            return json.dumps(dict_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
             insertSyslog("error", "能耗趋势图报错Error：" + str(e), current_user.Name)
