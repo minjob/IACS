@@ -203,6 +203,7 @@ def select(data):#table, page, rows, fieid, param
         jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
         return jsonoclass
     except Exception as e:
+        db_session.rollback()
         print(e)
         logger.error(e)
         insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
@@ -243,6 +244,7 @@ def accurateSelect(data):
         jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
         return jsonoclass
     except Exception as e:
+        db_session.rollback()
         print(e)
         logger.error(e)
         insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
