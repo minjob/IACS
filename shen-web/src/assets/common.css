@@ -123,8 +123,11 @@
 .color-lightbluebgc{
   background-color:#00CAFA;
 }
-.color-lightgreenbgc{
-  background-color:#00FAE7;
+.color-lightgreen{
+  color:#00FAE7;
+}
+.color-white{
+  color:#fff;
 }
 .color-asidebgc{
   background-color:#1B1E27;
@@ -133,7 +136,7 @@
   background-color:#34383E;
 }
 .color-boxbgc{
-  background-color:#585B62;
+  background-color:rgb(223, 219, 26);
 }
 .color-yellowbgc{
   background-color:#F8D200;
@@ -147,10 +150,55 @@
 .color-orangebgc{
   background-color:#FB8A06;
 }
-.margintop20{
+.MarginTop20{
   margin-top: 20px;
 }
-.mainContain{
+.MarginBottom{
+  margin-bottom: 50px;
+}
+.MainContain{
+  position: relative;
   width: 1450px;
   height: 887px;
+}
+.BorderRadius4{
+border-radius: 4px;
+}
+.SysMonbg{
+  background:#34383E url('../assets/img/Containerbgc.png') no-repeat scroll center center;
+}
+.PaddingRight20px{
+  padding-right:20px; 
+}
+.hf-6{
+  position: absolute;
+  width: 76px;
+  height: 62px;
+  border-radius: 4px;
+}
+.smalllbox{
+  width: 76px;
+  height: 31px;
+  line-height: 31px;
+  text-align: center;
+}
+.sfs{
+  position: absolute;
+  margin:0 auto;
+  padding:0px 14px;
+  width: 50px;
+  line-height: 95px;
+  height: 282px;
+  font-size: 18px;
+  color:#fff;
+}
+.text-box{
+  position: absolute;
+  width:75px;
+  height:33px;
+  padding: 6px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-align:center;
 }

@@ -16,15 +16,98 @@
        </div>
       </el-col>
   </el-row>
-<div class="margintop20">
   <el-row>
       <el-col :span="24">
-        <div class="color-mainbgc mainContain">
-           内容区域
+        <div class="MainContain BorderRadius4 SysMonbg">
+          <div class="hf-6 box1 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box2 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box3 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box4 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box5 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box6 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box7 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box8 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box9 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box10 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box11 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box12 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box13 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box14 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box15 color-greenbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box16 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box17 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box18 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box19 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="hf-6 box191 color-boxbgc"> 
+              <div class='smalllbox color-white'>28.6</div>
+              <div class='smalllbox color-lightgreen'>66.2%</div>
+          </div>
+          <div class="box20 BorderRadius4 color-yellowbgc sfs">湿风室</div>
+          <div class="box21 BorderRadius4 color-yellowbgc sfs">湿风室</div>
+          <div class="box22  text-box color-mainbgc">新风亭</div>
+          <div class="box23  text-box color-mainbgc ">排风亭</div>
+          <div class="box24  text-box color-mainbgc">新风亭</div>
+          <div class="box25  text-box color-mainbgc ">排风亭</div>
        </div>
       </el-col>
   </el-row>
-</div>
 </div>
 </template>
 
@@ -83,7 +166,7 @@
     height: 100%;
 }
 .el-row {
-  margin-bottom: 0px;
+  margin-bottom: 10px;
 }
 .el-row:last-child {
   margin-bottom: 0;
@@ -91,4 +174,109 @@
 .navOptionsItem{
   margin-bottom: 2px;
 }
+.box1{
+  top:55px;
+  left: 53px;
+}
+.box2{
+  left:162px;
+  top:96px;
+}
+.box3{
+  left: 429px;
+  top:149px;
+}
+.box4{
+  left:339px;
+  top:287px;
+}
+.box5{
+  left:343px;
+  top:586px;
+}
+.box6{
+  left: 573px;
+  top: 94px;
+}
+.box7{
+  left: 802px;
+  top: 94px;
+}
+.box8{
+  left: 799px;
+  top: 249px;
+}
+.box9{
+  left: 685px;
+  top: 191px;
+}
+.box10{
+  left: 573px;
+  top: 249px;
+}
+.box11{
+  left: 573px;
+  top: 572px;
+}
+.box12{
+  left: 802px;
+  top: 572px;
+}
+.box13{
+  left: 685px;
+  top: 630px;
+}
+.box14{
+  left: 573px;
+  top: 771px;
+}
+.box15{
+  left: 799px;
+  top: 771px;
+}
+.box16{
+  left: 946px;
+  top: 149px;
+}
+.box17{
+  left: 1038px;
+  top: 586px;
+}
+.box18{
+  left: 1214px;
+  top: 96px;
+}
+.box19{
+  left: 1038px;
+  top: 287px;
+}
+.box20{
+  top:95px;
+  left:260px;
+}
+.box191{
+  top:56px;
+  left:1323px;
+}
+.box21{
+  top:95px;
+  left:1142px;
+}
+.box22{
+  top:118px;
+  left:53px;
+}
+.box23{
+  top:581px;
+  left:53px;
+}
+.box24{
+  top:118px;
+  left:1322px;
+}
+.box25{
+  top:581px;
+  left:1322px;
+}
+
 </style>
