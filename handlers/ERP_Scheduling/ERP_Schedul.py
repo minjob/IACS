@@ -260,9 +260,22 @@ def energytrendtu():
     if request.method == 'GET':
         data = request.values
         try:#MB2TCP3.A_ACR_10.Ep_total  MB2TCP3.A_ACR_13.Ep_total
-            sql = "SELECT  `MB2TCP3.A_ACR_10.Ep_total`,[SampleTime] FROM [sz].[DataHistory] with (INDEX =IX_JHYDataHistory) WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
-
-            return 'OK'
+            sql = "SELECT  `MB2TCP3.A_ACR_10.Ep_total` AS value,SampleTime AS SampleTime FROM [sz].[DataHistory] with (INDEX =IX_JHYDataHistory) WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
+            re = db_session.execute(sql)
+            oc_list = []
+            for oc in re:
+                dict_oc = {}
+                dict_oc["value"] = oc["value"]
+                dict_oc["SampleTime"] = oc["SampleTime"]
+                oc_list.append(dict_oc)
+            if re is None or re is "":
+                count = 0
+            else:
+                count = len(re)
+            dir = {}
+            dir["row"] = oc_list
+            dir["count"] = count
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
             insertSyslog("error", "能耗趋势图报错Error：" + str(e), current_user.Name)
