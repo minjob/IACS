@@ -264,8 +264,6 @@ def energytrendtu():
             TagCode = "`"+data.get("TagCode")+"`"
             begin = data.get("begin")
             end = data.get("end")
-            begindate = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S")
-            enddate = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
             begin1 = datetime.datetime.strftime(begindate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
             end1 = datetime.datetime.strftime(enddate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
             begin2 = datetime.datetime.strftime(begindate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
@@ -274,6 +272,16 @@ def energytrendtu():
             end3 = datetime.datetime.strftime(enddate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
             begin4 = datetime.datetime.strftime(begindate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
             end4 = datetime.datetime.strftime(enddate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
+            # begindate = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S")
+            # enddate = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+            # begin1 = datetime.datetime.strftime(begindate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
+            # end1 = datetime.datetime.strftime(enddate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
+            # begin2 = datetime.datetime.strftime(begindate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
+            # end2 = datetime.datetime.strftime(enddate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
+            # begin3 = datetime.datetime.strftime(begindate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
+            # end3 = datetime.datetime.strftime(enddate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
+            # begin4 = datetime.datetime.strftime(begindate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
+            # end4 = datetime.datetime.strftime(enddate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
             sql = "SELECT  "+TagCode+" AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
             sql1 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + "' order by ID"
             sql2 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' order by ID"
