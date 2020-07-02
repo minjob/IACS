@@ -5,7 +5,7 @@
         <span style="margin-left: 10px;" class="text-size-normol">系统日志</span>
       </div>
       <div class="platformContainer">
-        <tableView :tableData="TableData" @getTableData="getTableData"></tableView>
+        <tableView class="blackComponents" :tableData="TableData" @getTableData="getTableData"></tableView>
       </div>
     </el-col>
   </el-row>

@@ -5,7 +5,7 @@
         <span style="margin-left: 10px;" class="text-size-normol">角色管理</span>
       </div>
       <div class="platformContainer">
-        <tableView :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
+        <tableView class="blackComponents" :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
       </div>
       <el-dialog :title="selectRoleName" :visible.sync="dialogVisible" width="50%">
         <el-transfer :titles="['未拥有权限', '已分配权限']" :button-texts="['收回', '分配']" v-model="transferValue" :data="transferData"></el-transfer>
@@ -28,10 +28,11 @@
         TableData:{
           tableName:"Role",
           column:[
-            {prop:"RoleName",label:"角色名称"},
-            {prop:"RoleCode",label:"角色编码"},
-            {prop:"Description",label:"描述"},
-            {prop:"ParentNode",label:"所属部门"},
+            {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {prop:"RoleName",label:"角色名称",type:"input",value:"",showField:true,searchProp:true},
+            {prop:"RoleCode",label:"角色编码",type:"input",value:"",showField:true,searchProp:true},
+            {prop:"Description",label:"描述",type:"input",value:"",showField:true,searchProp:false},
+            {prop:"ParentNode",label:"所属部门",type:"input",value:"",showField:true,searchProp:true},
           ],
           data:[],
           limit:5,
@@ -40,10 +41,6 @@
           multipleSelection:[],
           tableSelection:true, //是否在第一列添加复选框
           searchProp:"",
-          searchPropList:[
-            {label:"角色名称",prop:"RoleName"},
-            {label:"角色编码",prop:"RoleCode"},
-          ],
           searchVal:"",
           handleType:[
             {type:"primary",label:"分配权限",clickEvent:"privileges"},

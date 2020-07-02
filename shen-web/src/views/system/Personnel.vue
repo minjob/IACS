@@ -7,8 +7,8 @@
         </div>
       </el-col>
       <el-col :span="24">
-        <div class="tableContainer">
-          <tableView :tableData="TableData" @getTableData="getTableData" @privileges="privileges"></tableView>
+        <div class="platformContainer">
+          <tableView class="blackComponents" :tableData="TableData" @getTableData="getTableData" @privileges="privileges"></tableView>
         </div>
         <el-dialog :title="selectPersonnelName" :visible.sync="dialogVisible" width="50%">
           <el-transfer :titles="['未拥有角色', '已分配角色']" :button-texts="['收回', '分配']" v-model="transferValue" :data="transferData"></el-transfer>
@@ -33,7 +33,8 @@
         TableData:{
           tableName:"User",
           column:[
-            {prop:"Name",label:"用户名",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {prop:"Name",label:"用户名",type:"input",value:"",showField:false,searchProp:false},
             {prop:"WorkNumber",label:"工号",type:"input",value:"",showField:true,searchProp:true},
             {prop:"Creater",label:"创建人",type:"input",value:"",showField:true,searchProp:true},
             {prop:"CreateTime",label:"创建时间",type:"input",value:"",showField:true,searchProp:false},
@@ -50,7 +51,12 @@
           multipleSelection: [],
           dialogVisible: false,
           dialogTitle:'',
-          handleType:[],
+          handleType:[
+            {type:"primary",label:"添加"},
+            {type:"warning",label:"修改"},
+            {type:"danger",label:"删除"},
+            {type:"primary",label:"分配角色",clickEvent:"privileges"},
+          ],
         },
         selectPersonnelName:"",
         dialogVisible:false,
@@ -59,28 +65,12 @@
       }
     },
     created(){
-      this.WhetherHavePermission()
+
     },
     mounted() {
       this.getTableData()
     },
     methods:{
-      WhetherHavePermission(){
-        let that = this
-        this.axios.get("/api/permission/selectpermissionbyuser",{
-          params: {PermissionName:"人员管理"}
-        }).then(res =>{
-          if(res.data === "OK"){
-            var arr = [
-              {type:"primary",label:"添加"},
-              {type:"warning",label:"修改"},
-              {type:"danger",label:"删除"},
-              {type:"primary",label:"分配角色",clickEvent:"privileges"},
-            ]
-            that.TableData.handleType = arr
-          }
-        })
-      },
       getTableData(){
         var that = this
         var params = {

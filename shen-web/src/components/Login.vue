@@ -66,6 +66,7 @@
               this.axios.post('/api/account/userloginauthentication',this.qs.stringify(params)).then(res =>{
                 if(res.data == "OK"){
                   this.$message({
+                    showClose: true,
                     message: "登录成功",
                     type: 'success'
                   });
@@ -82,6 +83,7 @@
                   }
                 }else{
                   this.$message({
+                    showClose: true,
                     type: 'info',
                     message: res.data
                   });

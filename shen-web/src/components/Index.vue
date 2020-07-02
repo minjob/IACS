@@ -41,16 +41,19 @@
                 <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
             </li>
-            <li>
-              <el-dropdown trigger="click" @command="handleCommand" style="cursor: pointer;">
-                <span class="el-dropdown-link">
+            <li v-if="$store.state.UserName">
+              <el-dropdown trigger="click" @command="handleCommand" style="cursor: pointer;color: #fff;">
+                <span class="text-size-16">
                   <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.UserName }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a">个人信息</el-dropdown-item>
-                  <el-dropdown-item command="b"><i class="fa fa-power-off"></i></el-dropdown-item>
+                  <el-dropdown-item command="b" style="text-align: center"><i class="fa fa-power-off"></i></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
+            </li>
+            <li v-if="$store.state.UserName===null">
+              <router-link :to="{name:'login'}" style="font-size: 20px;color: #00FAE7;">登录</router-link>
             </li>
           </ul>
         </div>

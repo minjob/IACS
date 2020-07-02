@@ -56,6 +56,47 @@
   color:#34383E;
   background:#fff;
 }
+/* element 组件样式自定义 */
+/* 表格 */
+.blackComponents .el-table, .el-table__expanded-cell{
+  background-color: #3D4048;
+}
+.blackComponents .el-table th, .el-table tr{
+  background-color: #373B44;
+}
+.blackComponents .el-table--border,.el-table--group{
+  border: 1px solid #303339;
+}
+.blackComponents .el-table td,.blackComponents .el-table th.is-leaf{
+  border: 1px solid #303339;
+}
+.blackComponents .el-table--border::after,.blackComponents .el-table--group::after,.blackComponents .el-table::before{
+  background-color: #303339;
+}
+.blackComponents .el-table thead{
+  color: #E4E4E4;
+}
+/* 输入框 */
+.blackComponents .el-input__inner{
+  background-color: #585B62;
+  border: 1px solid #585B62;
+  color: #fff;
+}
+/* 分页 */
+.blackComponents .paginationClass{
+  text-align: right;
+  margin-top: 15px;
+}
+.blackComponents .el-pagination.is-background .btn-next,.blackComponents .el-pagination.is-background .btn-prev,.blackComponents .el-pagination.is-background .el-pager li{
+  background-color: #585B62;
+}
+.blackComponents .el-pagination__total{
+  color: #E4E4E4;
+}
+.blackComponents .el-pagination__jump{
+  color: #E4E4E4;
+}
+
 /* 公用组件样式 */
 .platformContainer{
   width: 100%;
@@ -72,14 +113,6 @@
   color: #fff;
   border-radius: 4px;
   padding: 15px;
-}
-.tableContainer{
-  width: 100%;
-  background: #ffffff;
-  border-radius: 4px;
-  padding: 15px;
-  clear: both;
-  overflow: hidden;
 }
 .itemMarginBottom{
   margin-bottom: 15px;
@@ -168,7 +201,7 @@ border-radius: 4px;
   background:#34383E url('../assets/img/Containerbgc.png') no-repeat scroll center center;
 }
 .PaddingRight20px{
-  padding-right:20px; 
+  padding-right:20px;
 }
 .hf-6{
   position: absolute;
