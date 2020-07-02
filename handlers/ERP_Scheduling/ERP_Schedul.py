@@ -261,9 +261,9 @@ def energytrendtu():
     if request.method == 'GET':
         data = request.values
         try:
-            TagCode = "`MB2TCP3.A_ACR_10.Ep_total`"
-            begin = "2020-6-20 00:00:00"
-            end = "2020-6-20 19:00:00"
+            TagCode = "`"+data.get("TagCode")+"`"
+            begin = data.get("begin")
+            end = data.get("end")
             begindate = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S")
             enddate = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
             begin1 = datetime.datetime.strftime(begindate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
