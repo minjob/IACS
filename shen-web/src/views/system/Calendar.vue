@@ -11,8 +11,8 @@
           <div id='external-events' class="itemMarginBottom">
             <h4>可拖放的日程</h4>
             <div id="fcEvent">
-              <draggable v-model="scheduleTableData.data" :move="getdata" @update="datadragEnd">
-                <a class='fc-event' v-for="item in scheduleTableData.data" style="padding: 5px;margin: 10px 0;cursor: pointer;" :style="{ background:item.color }">{{item.DateTypeName}}</a>
+              <draggable element="ul" v-model="scheduleTableData.data">
+              <a class='fc-event' v-for="item in scheduleTableData.data" style="padding: 5px;margin: 10px 0;cursor: pointer;" :style="{ background:item.color }">{{item.DateTypeName}}</a>
               </draggable>
             </div>
           </div>
@@ -27,18 +27,19 @@
       </el-col>
       <el-col :span="19">
         <div class="platformContainer">
-          <FullCalendar :plugins="calendarPlugins" :droppable="true"
-            locale="zh-cn"
-            :header="header"
-            :events="events"
-            :editable="true"
-            :selectable="true"
-            :button-text="buttonText"
-            @dateClick="handleDateClick"
-            @eventClick="handleEventClick"
-            @eventDrop="handleEventDrop"
-            @eventResize="handleEventResize"
-            @drop="drop"
+          <FullCalendar :plugins="calendarPlugins"
+                        :droppable="true"
+                        locale="zh-cn"
+                        :header="header"
+                        :events="events"
+                        :editable="true"
+                        :selectable="true"
+                        :button-text="buttonText"
+                        @dateClick="handleDateClick"
+                        @eventClick="handleEventClick"
+                        @eventDrop="handleEventDrop"
+                        @eventResize="handleEventResize"
+                        @drop="drop"
           />
         </div>
       </el-col>
@@ -111,12 +112,6 @@
       this.getScheduling()
     },
     methods:{
-      getdata(e){
-        console.log(e)
-      },
-      datadragEnd(e){
-        console.log(e)
-      },
       getScheduleTableData(){ //渲染
         var that = this
         var params = {

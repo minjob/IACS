@@ -18,7 +18,7 @@
     </el-form>
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
-      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField"></el-table-column>
+      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false || item.showField"></el-table-column>
     </el-table>
     <div class="paginationClass">
       <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -32,7 +32,7 @@
     </div>
     <el-dialog :title="tableData.dialogTitle" :visible.sync="tableData.dialogVisible" :close-on-click-modal="false" :append-to-body="true" width="40%">
       <el-form :model="tableData.submitForm" label-width="110px">
-        <el-form-item v-for="(item,index) in tableData.column" :key="index" :label="item.label" :prop="item.prop">
+        <el-form-item v-for="(item,index) in tableData.column" :key="index" :label="item.label" :prop="item.prop" v-if="item.canSubmit != false">
           <el-input v-if="item.type === 'input'" v-model="item.value" :disabled="item.disabled"></el-input>
           <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择" @change="changeHandleChildSelect(item.value,item.prop)">
             <el-option v-for="(i,d) in item.DownData" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>

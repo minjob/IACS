@@ -187,7 +187,7 @@ def select(data):#table, page, rows, fieid, param
         newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
         if (param == "" or param == None):
             total = db_session.query(newTable).count()
-            oclass = db_session.query(newTable).order_by(desc("ID")).all()[inipage:endpage]
+            oclass = db_session.query(newTable).filter().order_by(desc("ID")).all()[inipage:endpage]
         else:
             total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
             oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).order_by(desc("ID")).all()[
