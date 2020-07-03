@@ -21,22 +21,19 @@
         TableData:{
           tableName:"SysLog",
           column:[
-            {prop:"IP",label:"IP"},
-            {prop:"ComputerName",label:"计算机名称"},
-            {prop:"UserName",label:"操作用户"},
-            {prop:"OperationDate",label:"操作日期"},
-            {prop:"OperationContent",label:"操作内容"},
-            {prop:"OperationType",label:"类型"},
+            {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {prop:"IP",label:"IP",showField:true,searchProp:true},
+            {prop:"ComputerName",label:"计算机名称",showField:true,searchProp:false},
+            {prop:"UserName",label:"操作用户",showField:true,searchProp:true},
+            {prop:"OperationDate",label:"操作日期",showField:true,searchProp:true},
+            {prop:"OperationContent",label:"操作内容",showField:true,searchProp:false},
+            {prop:"OperationType",label:"类型",showField:true,searchProp:true},
           ],
           data:[],
           limit:5,
           offset:1,
           total:0,
           searchProp:"",
-          searchPropList:[
-            {label:"操作用户",value:"UserName"},
-            {label:"操作日期",value:"OperationDate"}
-          ],
           searchVal:"",
         },
       }

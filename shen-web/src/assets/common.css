@@ -67,7 +67,7 @@
 .blackComponents .el-table, .el-table__expanded-cell{
   background-color: #3D4048;
 }
-.blackComponents .el-table th, .el-table tr{
+.blackComponents .el-table th,.blackComponents .el-table tr{
   background-color: #373B44;
 }
 .blackComponents .el-table--border,.el-table--group{
@@ -101,6 +101,9 @@
 }
 .blackComponents .el-pagination__jump{
   color: #E4E4E4;
+}
+.blackComponents .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li{
+  color: #fff;
 }
 
 /* 公用组件样式 */
@@ -140,9 +143,9 @@
   padding: 0 10px;
   border-radius:4px;
 }
-.page-title-select{
+.page-title .page-title-radio{
   float: right;
-  width: 100px;
+  line-height: 48px;
 }
 .text-size-12{
   font-size: 12px;

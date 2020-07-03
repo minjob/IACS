@@ -5,33 +5,33 @@
         <i v-if="showTypeValue === '看板视图'" class="el-icon-share" style="color: #FB3A06"></i>
         <i v-if="showTypeValue === '表格视图'" class="el-icon-s-grid" style="color: #FB3A06"></i>
         <span style="margin-left: 10px;" class="text-size-normol">组织结构</span>
-        <el-select class="page-title-select" v-model="showTypeValue" placeholder="请选择">
-          <el-option v-for="(item,index) in showType" :key="index" :value="item.value" v-html="item.label"></el-option>
-        </el-select>
+        <el-radio-group v-model="showTypeValue" size="mini" class="page-title-radio" :border="false" fill="#00CAFA">
+          <el-radio-button v-for="(item,index) in showType" :key="index" :label="item.label"></el-radio-button>
+        </el-radio-group>
       </div>
       <el-form :inline="true" v-if="showTypeValue === '看板视图'">
         <el-form-item>
-          <el-radio-group v-model="layoutValue" fill="#082F4C" size="small" @change="changeSettings">
+          <el-radio-group v-model="layoutValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in layoutSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-radio-group v-model="orientValue" fill="#082F4C" size="small" @change="changeSettings">
+          <el-radio-group v-model="orientValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in orientSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-radio-group v-model="positionValue" fill="#082F4C" size="small" @change="changeSettings">
+          <el-radio-group v-model="positionValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in positionSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-radio-group v-model="roamValue" fill="#082F4C" size="small" @change="changeSettings">
+          <el-radio-group v-model="roamValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in roamSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-radio-group v-model="DepthValue" fill="#082F4C" size="small" @change="changeSettings">
+          <el-radio-group v-model="DepthValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in DepthSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -41,20 +41,20 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-radio-group v-model="modeValue" fill="#082F4C" size="small" @change="changeSettings">
+          <el-radio-group v-model="modeValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in modeSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
-      <div class="chartContainer" v-if="showTypeValue === '看板视图'">
+      <div class="platformContainer" v-if="showTypeValue === '看板视图'">
         <ve-tree :data="chartData" :settings="chartSettings" :events="events" height="600px"></ve-tree>
       </div>
       <el-col :span="24" v-else-if="showTypeValue === '表格视图'">
-        <div class="dataContainer" style="margin-bottom: 10px;">
-          <tableView :tableData="DepartmentTableData" @getTableData="getDepartmentTable" :relatedTableData="RoleTableData"></tableView>
+        <div class="platformContainer" style="margin-bottom: 10px;">
+          <tableView class="blackComponents" :tableData="DepartmentTableData" @getTableData="getDepartmentTable" :relatedTableData="RoleTableData"></tableView>
         </div>
-        <div class="dataContainer" style="margin-bottom: 10px;">
-          <tableView :tableData="RoleTableData" @getTableData="getRoleTable"></tableView>
+        <div class="platformContainer" style="margin-bottom: 10px;">
+          <tableView class="blackComponents" :tableData="RoleTableData" @getTableData="getRoleTable"></tableView>
         </div>
       </el-col>
 
@@ -127,8 +127,8 @@
       return {
         showTypeValue:"看板视图",
         showType:[
-          {label:"<i class='el-icon-share'></i> 看板视图",value:"看板视图"},
-          {label:"<i class='el-icon-s-grid'></i> 表格视图",value:"表格视图"}
+          {label:"看板视图"},
+          {label:"表格视图"}
         ],
         orientValue:'向右',
         orientSettings: [
@@ -182,7 +182,7 @@
               lineStyle:{
                 curveness:0.5,
                 width: 1.5,
-                color: "#B9B9B9"
+                color: "#ffffff"
               },
               roam:false,
               layout:"orthogonal",
@@ -191,9 +191,10 @@
               symbolSize: 8,
               label:{
                 position: 'right',
+                color:"#ffffff"
               },
               itemStyle:{
-                color:"#228AD5",
+                color:"#ffffff",
                 borderColor:"#082F4C"
               }
             }
@@ -612,18 +613,5 @@
 </script>
 
 <style scoped>
-  .chartContainer{
-    padding: 15px;
-    background: #fff;
-    border-radius: 4px;
-    clear: both;
-    overflow: inherit;
-  }
-  .dataContainer{
-    padding: 15px;
-    background: #fff;
-    border-radius: 4px;
-    clear: both;
-    overflow: hidden;
-  }
+
 </style>
