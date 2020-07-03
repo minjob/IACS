@@ -8,16 +8,12 @@
         </ul>
       </div>
       </el-col>   
-  </el-row>
-  <el-row>
       <el-col :span="24">
         <div class="color-mainbgc ">
            <el-button v-for="item in modelOption" @click="selectModel(item.value)"  :key='item.value' :class="{'el-button--primary':item.value===modelOptionCurrent}">{{item.name}}</el-button>
        </div>
       </el-col>
-  </el-row>
-  <el-row>
-      <el-col :span="24">
+      <el-col :span="24" style="overflow:auto">
         <div class="MainContain BorderRadius4 SysMonbg">
           <div class="hf-6 box1 color-boxbgc"> 
               <div class='smalllbox color-white'>28.6</div>
@@ -39,43 +35,43 @@
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box6 color-greenbgc"> 
+          <div class="hf-6 box6 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box7 color-greenbgc"> 
+          <div class="hf-6 box7 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box8 color-greenbgc"> 
+          <div class="hf-6 box8 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box9 color-greenbgc"> 
+          <div class="hf-6 box9 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box10 color-greenbgc"> 
+          <div class="hf-6 box10 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box11 color-greenbgc"> 
+          <div class="hf-6 box11 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box12 color-greenbgc"> 
+          <div class="hf-6 box12 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box13 color-greenbgc"> 
+          <div class="hf-6 box13 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box14 color-greenbgc"> 
+          <div class="hf-6 box14 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box15 color-greenbgc"> 
+          <div class="hf-6 box15 color-mainbgc"> 
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
@@ -99,8 +95,8 @@
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="box20 BorderRadius4 color-yellowbgc sfs">湿风室</div>
-          <div class="box21 BorderRadius4 color-yellowbgc sfs">湿风室</div>
+          <div class="box20 BorderRadius4 color-lightbluebgc sfs">湿风室</div>
+          <div class="box21 BorderRadius4 color-lightbluebgc sfs">湿风室</div>
           <div class="box22  text-box color-mainbgc">新风亭</div>
           <div class="box23  text-box color-mainbgc ">排风亭</div>
           <div class="box24  text-box color-mainbgc">新风亭</div>
@@ -172,7 +168,7 @@
   margin-bottom: 0;
 }
 .navOptionsItem{
-  margin-bottom: 2px;
+  margin-bottom: 20px;
 }
 .box1{
   top:55px;

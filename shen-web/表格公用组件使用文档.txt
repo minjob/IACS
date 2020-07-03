@@ -1,0 +1,85 @@
+导入组件
+import tableView from '@/components/CommonTable'
+
+
+使用组件
+如下：tableData事件为表格渲染参数，定义一个对象（如下：TableData:{}），如果同时调用多个表格，同TableData，比如再定义TableData1即可；
+     getTableData事件内添加默认请求数据的方法；
+     表格如果要添加其他点击按钮和方法，可添加@方法名="方法名"（ 如下：@privileges="privileges"）；
+<tableView :tableData="TableData" @getTableData="getUserTableData" @privileges="privileges"></tableView>
+
+components注册组件 并定义变量
+export default {
+  name: "",
+  components:{tableView},
+  data(){
+    TableData:{
+      tableName:"User",  //定义表名
+      column:[  //表格的字段集
+        {prop:"ID",label:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+        {prop:"Name",label:"用户名",type:"input",value:"",showField:false},
+        {prop:"WorkNumber",label:"工号",type:"input",value:"",showField:true},
+        {prop:"Password",label:"密码",type:"input",value:"",showField:false},
+        {prop:"Creater",label:"创建人",type:"input",value:"",showField:true,searchProp:false,canSubmit:false},
+        {prop:"CreateTime",label:"创建时间",type:"input",value:"",showField:true,searchProp:false,canSubmit:false},
+        {prop:"LastLoginTime",label:"最近在线时间",type:"input",value:"",showField:true,searchProp:false,canSubmit:false},
+      ],
+      data:[], //表格数据
+      limit:5, //每页展示条数
+      offset:1, //第几页
+      total:0,  //表格总条数
+      tableSelection:true, //是否在第一列添加复选框
+      tableSelectionRadio:false, //表格是否需要单选
+      searchProp:"", //搜索哪个字段的数据
+      searchVal:"", //搜索值
+      multipleSelection: [], //复选框选中数据
+      dialogVisible: false, //提交表单的模态框
+      dialogTitle:'',  //模态框的标题
+      handleType:[  //表格工具栏
+        {type:"primary",label:"添加"},
+        {type:"warning",label:"修改"},
+        {type:"danger",label:"删除"},
+        {type:"primary",label:"分配角色",clickEvent:"privileges"},
+      ],
+    }
+  },
+  methods:{
+    getUserTableData(){
+      var that = this
+      var params = {
+        tableName: this.TableData.tableName,
+        limit:this.TableData.limit,
+        offset:this.TableData.offset - 1
+      }
+      this.axios.get("/api/CUID",{
+        params: params
+      }).then(res =>{
+        var data = JSON.parse(res.data)
+        that.TableData.data = data.rows
+        that.TableData.total = data.total
+      },res =>{
+        console.log("请求错误")
+      })
+    },
+    privileges(){
+      <------>
+    }
+  }
+}
+
+column:[] 字段集参数配置
+  prop:""   字段名
+  label:""  字段展示的名称，表头和表单中可做展示
+  type:"text"      字段添加修改时输入的类型，默认text，text为输入框，input为下拉框
+  Downtable:""     输入类型为input时，设置下拉框数据的表名
+  showDownField:"" 输入类型为input时，设置下拉框表显示的字段
+  value:""         绑定字段的输入值
+  disabled:false   默认false，选择true时 在表单中此字段只能显示，无法输入和编辑
+  showField:true   默认true，是否在表格展示此字段的表头
+  searchProp:true  默认true，此字段是否可以搜索
+  canSubmit:true   默认true，此字段是否可以做添加修改
+
+handleType:[] 表格工具栏参数配置
+  type        按钮颜色 primary、warning  参考elementui按钮的type
+  label       按钮名字
+  clickEvent  按钮点击的事件调用的方法

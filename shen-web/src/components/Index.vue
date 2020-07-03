@@ -41,7 +41,7 @@
                 <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
             </li>
-            <li v-if="$store.state.UserName">
+            <li>
               <el-dropdown trigger="click" @command="handleCommand" style="cursor: pointer;color: #fff;">
                 <span class="text-size-16">
                   <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.UserName }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -51,9 +51,6 @@
                   <el-dropdown-item command="b" style="text-align: center"><i class="fa fa-power-off"></i></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </li>
-            <li v-if="$store.state.UserName===null">
-              <router-link :to="{name:'login'}" style="font-size: 20px;color: #00FAE7;">登录</router-link>
             </li>
           </ul>
         </div>
@@ -104,10 +101,10 @@ export default {
 
       ],
       systemMenulist:[
-        {name:"组织架构",icon:"el-icon-suitcase",url:"/Organization"},
-        {name:"角色管理",icon:"el-icon-suitcase",url:"/Role"},
-        {name:"人员管理",icon:"el-icon-suitcase",url:"/Personnel"},
-        {name:"工作日历",icon:"el-icon-suitcase",url:"/Calendar"},
+        {name:"组织架构",icon:"el-icon-office-building",url:"/Organization"},
+        {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
+        {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
+        {name:"工作日历",icon:"el-icon-date",url:"/Calendar"},
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],
       isFullScreen:false, //是否全屏
