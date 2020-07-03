@@ -273,7 +273,8 @@ def energytrendtu():
                         tag_str =  "`"+TagCode+"` AS "+"`"+TagCode+"`"
                     else:
                         tag_str = tag_str + "," + "`"+TagCode+"` AS "+"`"+TagCode+"`"
-                sql = "SELECT  " + tag_str + ",SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
+                sql = "SELECT  " + tag_str + ",SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '"\
+                      + begin + "' AND '" + end + "' order by ID"
                 re = db_session.execute(sql).fetchall()
                 dict_list = []
                 for i in range(len(re)):
@@ -295,7 +296,10 @@ def energytrendtu():
                 end3 = data.get("end3")
                 begin4 = data.get("begin4")
                 end4 = data.get("end4")
-                sql = "SELECT  "+TagCode+" AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' OR SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + "' OR SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' OR SampleTime BETWEEN '" + begin3 + "' AND '" + end3 + "' OR SampleTime BETWEEN '" + begin4 + "' AND '" + end4 + "' order by ID"
+                sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime " \
+                     "BETWEEN '" + begin + "' AND '" + end + "' OR SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + \
+                      "' OR SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' OR SampleTime BETWEEN '" + begin3 + \
+                      "' AND '" + end3 + "' OR SampleTime BETWEEN '" + begin4 + "' AND '" + end4 + "' order by ID"
                 re = db_session.execute(sql).fetchall()
                 dict_list = []
                 for i in re:
