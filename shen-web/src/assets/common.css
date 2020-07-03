@@ -58,6 +58,12 @@
 }
 /* element 组件样式自定义 */
 /* 表格 */
+.blackComponents .el-table{
+  color: #fff;
+}
+.blackComponents .el-table__body tr:hover>td{
+  background-color:#3D4048
+}
 .blackComponents .el-table, .el-table__expanded-cell{
   background-color: #3D4048;
 }

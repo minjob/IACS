@@ -261,52 +261,49 @@ def energytrendtu():
     if request.method == 'GET':
         data = request.values
         try:
-            TagCode = "`"+data.get("TagCode")+"`"
-            begin = data.get("begin")
-            end = data.get("end")
-            begindate = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S")
-            enddate = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
-            begin1 = datetime.datetime.strftime(begindate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
-            end1 = datetime.datetime.strftime(enddate + timedelta(days=1), "%Y-%m-%d %H:%M:%S")
-            begin2 = datetime.datetime.strftime(begindate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
-            end2 = datetime.datetime.strftime(enddate + timedelta(days=2), "%Y-%m-%d %H:%M:%S")
-            begin3 = datetime.datetime.strftime(begindate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
-            end3 = datetime.datetime.strftime(enddate + timedelta(days=3), "%Y-%m-%d %H:%M:%S")
-            begin4 = datetime.datetime.strftime(begindate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
-            end4 = datetime.datetime.strftime(enddate + timedelta(days=4), "%Y-%m-%d %H:%M:%S")
-            sql = "SELECT  "+TagCode+" AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
-            sql1 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + "' order by ID"
-            sql2 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' order by ID"
-            sql3 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin3 + "' AND '" + end3 + "' order by ID"
-            sql4 = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin4 + "' AND '" + end4 + "' order by ID"
-            re = db_session.execute(sql).fetchall()
-            re1 = db_session.execute(sql1).fetchall()
-            re2 = db_session.execute(sql2).fetchall()
-            re3 = db_session.execute(sql3).fetchall()
-            re4 = db_session.execute(sql4).fetchall()
-            dict_list = []
-            for i in range(len(re)):
-                oc_list = []
-                oc_list.append(datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
-                if re[i]["SampleTime"] is not None:
-                    oc_list.append("-" if re[i]["value"] is None else re[i]["value"])
-                    if i < len(re1):
-                        oc_list.append("-" if re1[i]["value"] is None else re1[i]["value"])
+            TagFlag = data.get("TagFlag")
+            if TagFlag == "first":
+                begin = data.get("begin")
+                end = data.get("end")
+                TagCodes = data.get("TagCodes")
+                TagCodes = TagCodes.split(",")
+                tag_str = ""
+                for TagCode in TagCodes:
+                    if tag_str == "":
+                        tag_str =  "`"+TagCode+"` AS "+"`"+TagCode+"`"
                     else:
-                        oc_list.append("-")
-                    if i < len(re2):
-                        oc_list.append("-" if re2[i]["value"] is None else re2[i]["value"])
-                    else:
-                        oc_list.append("-")
-                    if i < len(re3):
-                        oc_list.append("-" if re3[i]["value"] is None else re3[i]["value"])
-                    else:
-                        oc_list.append("-")
-                    if i < len(re4):
-                        oc_list.append("-" if re4[i]["value"] is None else re4[i]["value"])
-                    else:
-                        oc_list.append("-")
+                        tag_str = tag_str + "," + "`"+TagCode+"` AS "+"`"+TagCode+"`"
+                sql = "SELECT  " + tag_str + ",SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' order by ID"
+                re = db_session.execute(sql).fetchall()
+                dict_list = []
+                for i in range(len(re)):
+                    oc_list = []
+                    oc_list.append(datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
+                    if re[i]["SampleTime"] is not None:
+                        for TagCode in TagCodes:
+                            oc_list.append("-" if re[i][TagCode] is None else re[i][TagCode])
                     dict_list.append(oc_list)
+            else:
+                TagCode = "`"+data.get("TagCode")+"`"
+                begin = data.get("begin")
+                end = data.get("end")
+                begin1 = data.get("begin1")
+                end1 = data.get("end1")
+                begin2 = data.get("begin2")
+                end2 = data.get("end2")
+                begin3 = data.get("begin3")
+                end3 = data.get("end3")
+                begin4 = data.get("begin4")
+                end4 = data.get("end4")
+                sql = "SELECT  "+TagCode+" AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' OR SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + "' OR SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' OR SampleTime BETWEEN '" + begin3 + "' AND '" + end3 + "' OR SampleTime BETWEEN '" + begin4 + "' AND '" + end4 + "' order by ID"
+                re = db_session.execute(sql).fetchall()
+                dict_list = []
+                for i in re:
+                    oc_list = []
+                    oc_list.append(datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
+                    if re[i]["SampleTime"] is not None:
+                        oc_list.append("-" if re["value"] is None else re[i]["value"])
+                        dict_list.append(oc_list)
             return json.dumps(dict_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
