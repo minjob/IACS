@@ -198,5 +198,20 @@ class TagMaintain(Base):
     # 描述
     Desc = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
 
+# tag父节点
+class ParentTagMaintain(Base):
+    __tablename__ = "ParentTagMaintain"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # Tag编码
+    ParentTagCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # Tag名称
+    ParentTagName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+    # 所属设备
+    Equipment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    # Tag区域
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 描述
+    Desc = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
