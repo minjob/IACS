@@ -12,7 +12,7 @@ from flask import render_template, request, make_response
 from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
-    SchedulingStandard, SchedulingStock, scheduledate, TagMaintain
+    SchedulingStandard, SchedulingStock, scheduledate, TagMaintain, scheduleDateType
 from tools.MESLogger import MESLogger
 import json
 import socket
@@ -234,11 +234,12 @@ def addscheduledates():
                     w = datetime.date(int(ymr[0]), int(ymr[1]), int(ymr[2]))
                     xq = dic[w.weekday()]
                     if xq == "星期六" or xq == "星期日":
-                        DateType = "工作日"
-                        color = "00cafa"
+                        # dc = db_session.query(scheduleDateType).filter(scheduleDateType.DateTypeName == "周末").first()
+                        DateType = "周末"
+                        color = "#FA7D00"
                     else:
-                        DateType = "休息日"
-                        color = "00c3db"
+                        DateType = "工作日"
+                        color = "#00CAFA"
                     sc = scheduledate()
                     sc.WorkDate = i
                     sc.DateType = DateType
