@@ -163,6 +163,7 @@ def update(data):
             else:
                 return json.dumps('当前记录不存在！', cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
+            db_session.rollback()
             logger.error(e)
             insertSyslog("error", "%s数据更新报错："%tableName + str(e), current_user.Name)
             return json.dumps('数据更新失败！', cls=AlchemyEncoder, ensure_ascii=False)
