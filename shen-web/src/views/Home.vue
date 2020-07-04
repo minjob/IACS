@@ -1,12 +1,8 @@
 <template>
   <el-row :gutter="15">
-      <el-col :span="24">
-       <div class="navOptionsItem">
-        <ul>
-          <li v-for="item in navOptions" @click="showPage(item.value)"><a href="javascript:;" :class="{ active:item.value===navOptionsCurrent }" v-html="item.name"></a></li>
-        </ul>
-      </div>
-      </el-col>
+    <el-col :span="24">
+      <span class="color-lightgreen">首页</span>
+    </el-col>
   </el-row>
 </template>
 
@@ -16,27 +12,23 @@
     name: "Home",
     data(){
       return {
-        navOptionsCurrent:1,
-        navOptions:[
-          {name:"大系统",value:1},
-          {name:"小系统",value:2},
-          {name:"冷却系统",value:3}
-        ],
+
       }
     },
     created(){
 
     },
+    mounted(){
+
+    },
     watch:{
 
     },
-    computed:{ //计算属性
+    computed:{
 
     },
     methods: {
-      showPage(index) {
-        this.navOptionsCurrent = index
-      }
+
     }
   }
 </script>

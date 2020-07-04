@@ -71,7 +71,7 @@
       handleSelectionChange(val){ //选择行数
         this.tableData.multipleSelection = val;
         if(val[0] != undefined){
-          if(this.relatedTableData) {
+          if(this.relatedTableData) { //关联子表
             this.relatedTableData.searchProp = this.tableData.relatedChildTableField
             this.relatedTableData.searchVal = val[0][this.tableData.relatedTableField]
             this.axios.get("/api/CUID",{

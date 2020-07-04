@@ -1,45 +1,54 @@
 <template>
   <el-row :gutter="15">
-      <el-col :span="24">
-       <div class="navOptionsItem">
-        <ul>
-          <li v-for="item in navOptions" @click="showPage(item.value)"><a href="javascript:;" :class="{ active:item.value===navOptionsCurrent }" v-html="item.name"></a></li>
-        </ul>
-      </div>
-      </el-col>
-      <div v-if="navOptionsCurrent==1" class="mainshow"><img src="../../assets/img/IntelligentModel3.png"></div>
+    <el-col :span="24">
+      <TabControl :TabControl="TabControl"></TabControl>
+        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '冷水机组加减载'">
+          <span class="color-lightgreen">冷水机组加减载</span>
+        </div>
+        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '深度学习模型'">
+          <span class="color-lightgreen">深度学习模型</span>
+        </div>
+        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量模型'">
+          <span class="color-lightgreen">制冷量模型</span>
+        </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
+  import TabControl from '@/components/TabControl'
   var moment = require('moment');
   export default {
-    name: "Home",
+    name: "IntelligentModel",
+    components:{TabControl},
     data(){
       return {
-        navOptionsCurrent:1,
-        navOptions:[
-          {name:"冷水机组加减载",value:1},
-          {name:"深度学习模型",value:2},
-          {name:"制冷量模型",value:3},
-          {name:"冷冻泵自动变频",value:4},
-          {name:"冷却塔自动加减载",value:5}
-        ],
+        TabControl:{
+          TabControlCurrent:"",
+          TabControlOptions:[
+            {name:"冷水机组加减载"},
+            {name:"深度学习模型"},
+            {name:"制冷量模型"},
+            {name:"冷冻泵自动变频"},
+            {name:"冷却塔自动加减载"}
+          ],
+        }
       }
     },
     created(){
 
     },
+    mounted(){
+
+    },
     watch:{
 
     },
-    computed:{ //计算属性
+    computed:{
 
     },
     methods: {
-      showPage(index) {
-        this.navOptionsCurrent = index
-      }
+
     }
   }
 </script>
