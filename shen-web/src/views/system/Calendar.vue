@@ -9,7 +9,7 @@
       <el-col :span="24">
         <el-form :inline="true">
           <el-form-item label="选择月份：">
-            <el-date-picker type="month" v-model="scheduleMonth" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+            <el-date-picker type="month" v-model="scheduleMonth" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="mini" @click="addscheduledates">生成计划日程</el-button>
@@ -107,11 +107,6 @@
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         scheduleMonth:moment().format("YYYY-MM"),
-        pickerOptions:{
-          disabledDate(time) {
-            return time.getTime() > moment();
-          }
-        },
       }
     },
     created(){
@@ -156,6 +151,7 @@
           }
         }).then(res =>{
           var data = JSON.parse(res.data)
+          console.log(data)
           that.events = []
           data.rows.forEach(item =>{
             that.events.push({
