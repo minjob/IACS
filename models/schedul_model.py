@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy import create_engine, ForeignKey, Table, Column, DateTime, Integer, String, Unicode, Float
+from sqlalchemy import create_engine, ForeignKey, Table, Column, DateTime, Integer, String, Unicode, Float, BigInteger
 from sqlalchemy.dialects.mssql.base import BIT
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -213,5 +213,71 @@ class ParentTagMaintain(Base):
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 描述
     Desc = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
+
+class WeatherSimulater(Base):
+    __tablename__ = "WeatherSimulater"
+
+    # ID:
+    ID = Column(BigInteger, primary_key=True, autoincrement=True, nullable=False)
+
+    # 录入时间:
+    WeatherDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    #最高温度
+    WDHlimit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    #最低温度
+    WDLlimit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 天气
+    Weather = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 风向
+    Wind = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    #备注
+    Comment = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
+
+
+class PeopleSimulater(Base):
+    __tablename__ = "PeopleSimulater"
+
+    # ID:
+    ID = Column(BigInteger, primary_key=True, autoincrement=True, nullable=False)
+
+    # 晚高峰
+    Week = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 录入时间:
+    PeopleDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    #进站人数
+    PeopleInNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 出站人数
+    PeopleOutNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 全天总人数
+    PeopleTotal = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 早高峰
+    MorningPeakNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 早高峰
+    MorningPeakInNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 早高峰
+    MorningPeakOutNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 晚高峰人数
+    EveningPeakNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 晚高峰
+    EveningPeakInNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 晚高峰
+    EveningPeakOutNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
