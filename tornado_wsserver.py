@@ -1,6 +1,7 @@
 import redis
 import json
 from dbset.database import constant
+from models.schedul_model import TagMaintain
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
 from dbset.database.db_operate import db_session
@@ -48,55 +49,14 @@ class SendThread(threading.Thread):
         while True:
 
             try:
-                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags")))
+                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tag_list")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
                     oc_dict_i = {}
-                    oc_dict_i["flowValue"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "F"))  # 蒸汽瞬时流量
-                    sumvalue = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "S"))  # 蒸汽累计流量
-                    if oc == 'S_Area_GLF_45_3_502':
-                        sumvalue = round(sumvalue/1000, 4)
-                    oc_dict_i["sumValue"] = sumvalue  # 蒸汽累计流量
-                    oc_dict_i["SteamWD"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "WD"))  # 蒸汽体积
+                    oc_dict_i[oc] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc))  # 蒸汽瞬时流量
                     oc_dict_i_tag[oc] = oc_dict_i
-                water_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_water_tags")))
-                oc_dict_i_water_tag = {}
-                for oc in water_oclass:
-                    oc_water_dict_i = {}
-                    oc_water_dict_i["flowValue"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "F"))
-                    oc_water_dict_i["sumValue"] = abs(strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "S")))
-                    oc_dict_i_water_tag[oc] = oc_water_dict_i
-                electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_electric_tags")))
-                oc_dict_i_electric_tag = {}
-                for oc in electric_oclass:
-                    oc_electric_dict_i = {}
-                    oc_electric_dict_i["ZGL"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_ZGL"))
-                    oc_electric_dict_i["AU"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_AU"))
-                    oc_electric_dict_i["AI"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_AI"))
-                    oc_electric_dict_i["BU"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_BU"))
-                    oc_electric_dict_i["BI"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_BI"))
-                    oc_electric_dict_i["CU"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_CU"))
-                    oc_electric_dict_i["CI"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_CI"))
-                    oc_dict_i_electric_tag[oc] = oc_electric_dict_i
-                oc_dict = {}
-                oc_dict["steam"] = oc_dict_i_tag
-                oc_dict["water"] = oc_dict_i_water_tag
-                oc_dict["electric"] = oc_dict_i_electric_tag
-                area_list = []
-                area_list.append(oc_dict)
-                json_data = json.dumps(area_list)
+                json_data = json.dumps(oc_dict_i_tag)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
@@ -179,28 +139,18 @@ def returnb(rod):
 if __name__ == "__main__":
     # tornado.options.parse_command_line()
     # 将所有的tag写入redis
-    Tags = db_session.query(TagDetail).filter().all()
-    tag_steam_list = []
-    tag_water_list = []
-    tag_electric_list = []
+    Tags = db_session.query(TagMaintain).filter().all()
+    tag_list = []
     for tag in Tags:
-        EnergyClass = str(tag.TagClassValue)[0:1]
-        if EnergyClass == "S":
-            tag_steam_list.append(tag.TagClassValue)
-        elif EnergyClass == "W":
-            tag_water_list.append(tag.TagClassValue)
-        elif EnergyClass == "E":
-            tag_electric_list.append(tag.TagClassValue)
-    redis_conn.hset(constant.REDIS_TABLENAME, "all_steam_tags", str(tag_steam_list))
-    redis_conn.hset(constant.REDIS_TABLENAME, "all_water_tags", str(tag_water_list))
-    redis_conn.hset(constant.REDIS_TABLENAME, "all_electric_tags", str(tag_electric_list))
-    areas = db_session.query(AreaTable).all()
-    for area in areas:
-        tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
-        area_tag_list = []
-        for ta in tagareas:
-            area_tag_list.append(ta.TagClassValue)
-        redis_conn.hset(constant.REDIS_TABLENAME, area.AreaName, str(area_tag_list))
+        tag_list.append(tag.TagCode)
+    redis_conn.hset(constant.REDIS_TABLENAME, "tag_list", str(tag_list))
+    # areas = db_session.query(AreaTable).all()
+    # for area in areas:
+    #     tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
+    #     area_tag_list = []
+    #     for ta in tagareas:
+    #         area_tag_list.append(ta.TagClassValue)
+    #     redis_conn.hset(constant.REDIS_TABLENAME, area.AreaName, str(area_tag_list))
 
     app = tornado.web.Application([
         (r"/", IndexHandler),

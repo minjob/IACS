@@ -610,6 +610,37 @@ class ModulMenus(Base):
     Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+# 电价格维护表:
+class ElectricPrice(Base):
+    __tablename__ = "ElectricPrice"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 价格名称:
+    PriceName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格值:
+    PriceValue = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格类型:
+    PriceType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True, default="电")
+
+    # 开始时间:
+    StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 结束时间:
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否启用:
+    IsEnabled = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

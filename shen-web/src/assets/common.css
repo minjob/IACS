@@ -265,3 +265,12 @@ border-radius: 4px;
 .mainShow .el-submenu__title{
   padding-left: 0px!important;
 }
+.block .el-input__prefix{
+  left: -3px;
+}
+.block .el-input--prefix .el-input__inner {
+  padding-left: 20px;
+}
+.mainShow .el-submenu__title{
+  background:#3D4048;
+}
