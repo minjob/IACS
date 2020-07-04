@@ -105,6 +105,9 @@
 .blackComponents .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li{
   color: #fff;
 }
+.blackComponents .fc-unthemed .fc-today {
+    background: #727786;
+  }
 
 /* 公用组件样式 */
 .platformContainer{

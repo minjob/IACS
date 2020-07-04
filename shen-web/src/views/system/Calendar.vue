@@ -6,6 +6,16 @@
           <span style="margin-left: 10px;" class="text-size-normol">工作日历</span>
         </div>
       </el-col>
+      <el-col :span="24">
+        <el-form :inline="true">
+          <el-form-item label="选择月份：">
+            <el-date-picker type="month" v-model="scheduleMonth" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="mini" @click="addscheduledates">生成计划日程</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
       <el-col :span="5">
         <div class="scheduleContainer" style="height: 730px;">
           <div id='external-events' class="itemMarginBottom">
@@ -22,7 +32,7 @@
         </div>
       </el-col>
       <el-col :span="19">
-        <div class="platformContainer">
+        <div class="platformContainer blackComponents">
           <FullCalendar :plugins="calendarPlugins"
                         :droppable="true"
                         locale="zh-cn"
@@ -95,6 +105,12 @@
           left:'prev,next today',
           center:'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        scheduleMonth:moment().format("YYYY-MM"),
+        pickerOptions:{
+          disabledDate(time) {
+            return time.getTime() > moment();
+          }
         },
       }
     },
@@ -237,12 +253,40 @@
           }
         })
       },
+      addscheduledates(){
+        let that = this
+        that.$confirm('此操作将一次生成'+ moment(that.scheduleMonth).format("YYYY-MM") +'的工作日程, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.axios.get("/api/addscheduledates",{
+            params: {
+              month: moment(that.scheduleMonth).format("YYYY-MM"),
+            }
+          }).then(res =>{
+            if(res.data == "OK"){
+              that.$message({
+                type: 'success',
+                message: '生成成功'
+              });
+              that.getScheduling()
+            }
+          },res =>{
+            console.log("请求错误")
+          })
+        }).catch(() => {
+          that.$message({
+            type: 'info',
+            message: '已取消生成'
+          });
+        });
+      }
     }
   }
 </script>
 
+
 <style scoped>
-  .fc-unthemed td.fc-today {
-    background: #727786;
-  }
+
 </style>
