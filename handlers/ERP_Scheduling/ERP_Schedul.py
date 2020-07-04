@@ -247,7 +247,7 @@ def addscheduledates():
                     sc.color = color
                     db_session.add(sc)
                     db_session.commit()
-                db_session.remove()
+                db_session.close()
             return 'OK'
         except Exception as e:
             db_session.rollback()
