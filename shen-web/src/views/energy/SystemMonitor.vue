@@ -2,12 +2,17 @@
 <div>
   <el-row :gutter="15">
       <el-col :span="24">
-       <div class="navOptionsItem">
-        <ul>
-          <li v-for="item in navOptions" @click="showPage(item.value)" :key='item.value'><a href="javascript:;" :class="{ active:item.value===navOptionsCurrent }" v-html="item.name"></a></li>
-        </ul>
-      </div>
-      </el-col>   
+         <TabControl :TabControl="TabControl"></TabControl>
+         <div class="platformContainer" v-if="TabControl.TabControlCurrent === '冷水机组加减载'">
+              <span class="color-lightgreen">大系统</span>
+            </div>
+            <div class="platformContainer" v-if="TabControl.TabControlCurrent === '深度学习模型'">
+              <span class="color-lightgreen">小系统</span>
+            </div>
+            <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量模型'">
+              <span class="color-lightgreen">冷却系统</span>
+            </div>
+            </el-col>
       <el-col :span="24">
         <div class="color-mainbgc ">
            <el-button v-for="item in modelOption" @click="selectModel(item.value)"  :key='item.value' :class="{'el-button--primary':item.value===modelOptionCurrent}">{{item.name}}</el-button>
@@ -109,10 +114,20 @@
 
 <script>
   var moment = require('moment');
+  import TabControl from '@/components/TabControl'
   export default {
-    name: "Home",
+    name: "SystemMonitor",
+    components:{TabControl},
     data(){
       return {
+        TabControl:{
+          TabControlCurrent:"",
+          TabControlOptions:[
+            {name:"大系统"},
+            {name:"小系统"},
+            {name:"冷却系统"},
+          ],
+        },
         navOptionsCurrent:1,
         modelOptionCurrent:1,
         navOptions:[

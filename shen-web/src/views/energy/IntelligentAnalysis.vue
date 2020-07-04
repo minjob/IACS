@@ -1,45 +1,52 @@
 <template>
   <el-row :gutter="15">
-      <el-col :span="24">
-       <div class="navOptionsItem">
-        <ul>
-          <li v-for="item in navOptions" @click="showPage(item.value)"><a href="javascript:;" :class="{ active:item.value===navOptionsCurrent }" v-html="item.name"></a></li>
-        </ul>
-      </div>
-      </el-col>
-      <div v-if="navOptionsCurrent==1" class="mainshow"><img src="../../assets/img/IntelligentAnalysis.png"></div>
-      <div v-if="navOptionsCurrent==2" class="mainshow"><img src="../../assets/img/IntelligentAnalysis2.png"></div>
-      <div v-if="navOptionsCurrent==3" class="mainshow"><img src="../../assets/img/IntelligentAnalysis3.png"></div>
+    <el-col :span="24">
+      <TabControl :TabControl="TabControl"></TabControl>
+        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '能耗分析'">
+          <span class="color-lightgreen">能耗分析</span>
+        </div>
+        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '设备效率分析'">
+          <span class="color-lightgreen">设备效率分析</span>
+        </div>
+        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量分析'">
+          <span class="color-lightgreen">制冷量分析</span>
+        </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
+  import TabControl from '@/components/TabControl'
   var moment = require('moment');
   export default {
-    name: "Home",
+    name: "IntelligentAnalysis",
+    components:{TabControl},
     data(){
       return {
-        navOptionsCurrent:1,
-        navOptions:[
-          {name:"能耗分析",value:1},
-          {name:"设备效率分析",value:2},
-          {name:"制冷量分析",value:3}
-        ],
+        TabControl:{
+          TabControlCurrent:"",
+          TabControlOptions:[
+            {name:"能耗分析"},
+            {name:"设备效率分析"},
+            {name:"制冷量分析"}
+          ],
+        }
       }
     },
     created(){
 
     },
+    mounted(){
+
+    },
     watch:{
 
     },
-    computed:{ //计算属性
+    computed:{
 
     },
     methods: {
-      showPage(index) {
-        this.navOptionsCurrent = index
-      }
+
     }
   }
 </script>
