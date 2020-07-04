@@ -244,3 +244,21 @@ border-radius: 4px;
   letter-spacing: 2px;
   text-align:center;
 }
+.block .el-input__inner{
+  padding-right: 5px;
+}
+.block .demonstration{
+  text-align:left;
+}
+.block .el-input__suffix{
+  right: 2px;
+}
+.block .el-icon-circle-close{
+  width: 18px;
+}
+.mainShow  .el-submenu__title, .mainShow .el-submenu__title:hover{
+  font-size: 14px;
+}
+.mainShow .el-submenu__title{
+  padding-left: 0px!important;
+}
