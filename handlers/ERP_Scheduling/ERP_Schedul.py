@@ -247,8 +247,10 @@ def addscheduledates():
                     sc.color = color
                     db_session.add(sc)
                     db_session.commit()
+                db_session.remove()
             return 'OK'
         except Exception as e:
+            db_session.rollback()
             logger.error(e)
             insertSyslog("error", "添加工作日休息日报错Error：" + str(e), current_user.Name)
             return json.dumps("添加工作日休息日报错", cls=AlchemyEncoder, ensure_ascii=False)
