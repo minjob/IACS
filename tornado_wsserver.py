@@ -49,7 +49,7 @@ class SendThread(threading.Thread):
         while True:
 
             try:
-                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tag_list")))
+                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tags_list")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
                     oc_dict_i = {}
@@ -57,8 +57,6 @@ class SendThread(threading.Thread):
                         redis_conn.hget(constant.REDIS_TABLENAME, oc))  # 蒸汽瞬时流量
                     oc_dict_i_tag[oc] = oc_dict_i
                 json_data = json.dumps(oc_dict_i_tag)
-                # bytemsg = bytes(json_data, encoding="utf8")
-                # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
                 for key in clients.keys():
                     clients[key]["object"].write_message(bytemsg)
@@ -140,18 +138,10 @@ if __name__ == "__main__":
     # tornado.options.parse_command_line()
     # 将所有的tag写入redis
     Tags = db_session.query(TagMaintain).filter().all()
-    tag_list = []
+    tags_list = []
     for tag in Tags:
-        tag_list.append(tag.TagCode)
-    redis_conn.hset(constant.REDIS_TABLENAME, "tag_list", str(tag_list))
-    # areas = db_session.query(AreaTable).all()
-    # for area in areas:
-    #     tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
-    #     area_tag_list = []
-    #     for ta in tagareas:
-    #         area_tag_list.append(ta.TagClassValue)
-    #     redis_conn.hset(constant.REDIS_TABLENAME, area.AreaName, str(area_tag_list))
-
+        tags_list.append(tag.TagCode)
+    redis_conn.hset(constant.REDIS_TABLENAME, "tags_list", str(tags_list))
     app = tornado.web.Application([
         (r"/", IndexHandler),
         (r"/socket", ChatHandler),
