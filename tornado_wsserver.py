@@ -5,7 +5,6 @@ from models.schedul_model import TagMaintain
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
 from dbset.database.db_operate import db_session
-from models.core import TagDetail, AreaTable
 import ast
 from datetime import datetime
 import os
