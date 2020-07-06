@@ -3,6 +3,7 @@ from flask_restful import reqparse, abort, Api, Resource
 from flask_login import login_required
 from dbset.account import auth_lib
 from handlers.ERP_Scheduling.ERP_Schedul import erp_schedul
+from handlers.SystemManagement.ai_repair import repair
 from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment, Role_management
@@ -47,6 +48,8 @@ app.register_blueprint(cale)
 app.register_blueprint(user_manager)
 # 计划排产
 app.register_blueprint(erp_schedul)
+# 维保
+app.register_blueprint(repair)
 
 
 @app.route('/')

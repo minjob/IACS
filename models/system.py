@@ -641,6 +641,7 @@ class ElectricPrice(Base):
     # 单位:
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 class Equipment(Base):
     __tablename__ = "Equipment"
 
@@ -658,7 +659,31 @@ class Equipment(Base):
 
     # 注释:
     Comment = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 设备状态（良好,异常）
+    Status = Column(Unicode(32), default="良好")
+    # 提醒状态（待提醒，已提醒）
+    RemindStatus = Column(Unicode(32), default="待提醒", nullable=True)
+    # 预工作时间
+    WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
+
+class Record(Base):
+    __tablename__ = 'Record'
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 设备编码:
+    EquipmentCode = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
+    # 确认人
+    Name = Column(Unicode(32), nullable=True)
+    # 设备状态（良好,异常）
+    Status = Column(Unicode(32), default="良好")
+    # 班组
+    WorkNo = Column(Unicode(32), nullable=False)
+    # 工单类型(维修，保养)
+    Type = Column(Unicode(32), nullable=True)
+    # 工作时间
+    WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 # 生成表单的执行语句
