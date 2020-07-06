@@ -641,6 +641,25 @@ class ElectricPrice(Base):
     # 单位:
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+class Equipment(Base):
+    __tablename__ = "Equipment"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 设备编码:
+    EquipmentCode = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
+
+    # 功率:
+    Power = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 数量:
+    Quantity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 注释:
+    Comment = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

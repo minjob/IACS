@@ -2,15 +2,15 @@
   <el-row :gutter="15">
     <el-col :span="24">
       <TabControl :TabControl="TabControl"></TabControl>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '冷水机组加减载'">
-          <span class="color-lightgreen">冷水机组加减载</span>
-        </div>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '深度学习模型'">
-          <span class="color-lightgreen">深度学习模型</span>
-        </div>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量模型'">
-          <span class="color-lightgreen">制冷量模型</span>
-        </div>
+      <div class="platformContainer" v-if="TabControl.TabControlCurrent === '冷水机组加减载'">
+        <span class="color-lightgreen">冷水机组加减载</span>
+      </div>
+      <div class="platformContainer" v-if="TabControl.TabControlCurrent === '深度学习模型'">
+        <span class="color-lightgreen">深度学习模型</span>
+      </div>
+      <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量模型'">
+        <span class="color-lightgreen">制冷量模型</span>
+      </div>
     </el-col>
   </el-row>
 </template>

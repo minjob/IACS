@@ -8,7 +8,7 @@
             <router-link :to="{name:'home'}" class="fa fa-home" style="font-size: 24px;"></router-link>
           </div>
           <div :style="selfHeight" class="aside-menu">
-            <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true">
+            <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true" @select="menuSelect">
               <template v-for="item in subMenulist">
                 <el-menu-item v-if="!item.children" :index="item.url"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
                 <el-submenu v-if="!item.url" :index="item.name">
@@ -56,7 +56,7 @@
         </div>
       </el-header>
       <!-- 页面主体 -->
-      <el-main style="clear: both;">
+      <el-main style="clear: both;padding-top: 0;margin-top: 10px;">
         <transition name="move" mode="out-in">
          <!--渲染子页面-->
           <router-view :key="$route.fullPath"></router-view>
@@ -152,6 +152,11 @@ export default {
   methods:{
     getMenuHeight(){
       this.selfHeight.height = window.innerHeight - 230+'px';
+    },
+    menuSelect(key,keyPath){  //点击菜单跳转时  添加query参数避免相同路由跳转时报错
+      this.$router.push({
+        query:moment()
+      })
     },
     clickSubMenu(areaName){  //点击左菜单传区域给子组件
       this.areaObj.areaName = areaName

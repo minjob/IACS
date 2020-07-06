@@ -5,7 +5,6 @@ from models.schedul_model import TagMaintain
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
 from dbset.database.db_operate import db_session
-from models.core import TagDetail, AreaTable
 import ast
 from datetime import datetime
 import os
@@ -47,22 +46,19 @@ class SendThread(threading.Thread):
         msg = ''
         # asyncio.set_event_loop(loop)
         while True:
-
             try:
-                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tag_list")))
-                oc_dict_i_tag = {}
-                for oc in oclass:
-                    oc_dict_i = {}
-                    oc_dict_i[oc] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc))  # 蒸汽瞬时流量
-                    oc_dict_i_tag[oc] = oc_dict_i
-                json_data = json.dumps(oc_dict_i_tag)
-                # bytemsg = bytes(json_data, encoding="utf8")
-                # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
-                bytemsg = bytes(json_data,encoding="utf-8")
                 for key in clients.keys():
+                    oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tags_list")))
+                    oc_dict_i_tag = {}
+                    for oc in oclass:
+                        oc_dict_i = {}
+                        oc_dict_i[oc] = strtofloat(
+                            redis_conn.hget(constant.REDIS_TABLENAME, oc))
+                        oc_dict_i_tag[oc] = oc_dict_i
+                    json_data = json.dumps(oc_dict_i_tag)
+                    bytemsg = bytes(json_data, encoding="utf-8")
                     clients[key]["object"].write_message(bytemsg)
-                runcount = runcount + 1
+                    runcount = runcount + 1
                 time.sleep(2)
             except Exception as e:
                 print(e)
@@ -140,20 +136,12 @@ if __name__ == "__main__":
     # tornado.options.parse_command_line()
     # 将所有的tag写入redis
     Tags = db_session.query(TagMaintain).filter().all()
-    tag_list = []
+    tags_list = []
     for tag in Tags:
-        tag_list.append(tag.TagCode)
-    redis_conn.hset(constant.REDIS_TABLENAME, "tag_list", str(tag_list))
-    # areas = db_session.query(AreaTable).all()
-    # for area in areas:
-    #     tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
-    #     area_tag_list = []
-    #     for ta in tagareas:
-    #         area_tag_list.append(ta.TagClassValue)
-    #     redis_conn.hset(constant.REDIS_TABLENAME, area.AreaName, str(area_tag_list))
-
+        tags_list.append(tag.TagCode)
+    redis_conn.hset(constant.REDIS_TABLENAME, "tags_list", str(tags_list))
     app = tornado.web.Application([
-        (r"/", IndexHandler),
+        # (r"/", IndexHandler),
         (r"/socket", ChatHandler),
     ],
         static_path=os.path.join(os.path.dirname(__file__), "static"),

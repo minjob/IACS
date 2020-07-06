@@ -3,7 +3,7 @@
     <div class="login-img-bg">
       <div class="login-mask-bg"></div>
       <div class="login-form-box">
-        <div class="login-form-title">辽宁好护士能耗管理系统</div>
+        <div class="login-form-title">能耗智能分析控制系统</div>
         <div class="login-form-mask"></div>
         <div class="login-form">
           <el-form ref="ruleForm" :model="loginForm" :rules="rules" style="width: 100%;">

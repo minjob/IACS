@@ -279,5 +279,9 @@ class PeopleSimulater(Base):
     EveningPeakOutNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+
+
+
+
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
