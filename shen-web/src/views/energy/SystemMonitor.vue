@@ -10,7 +10,7 @@
               <span class="color-lightgreen">小系统</span>
             </div>
             <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量模型'">
-              <span class="color-lightgreen">冷却系统</span>
+              <span class="color-lightgreen">冷水系统</span>
             </div>
             </el-col>
       <el-col :span="24">
