@@ -20,83 +20,83 @@
       </el-col>
       <el-col :span="24" style="overflow:auto">
         <div class="MainContain BorderRadius4 SysMonbg">
-          <div class="hf-6 box1 color-boxbgc"> 
+          <div class="hf-6 box1 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box2 color-boxbgc"> 
+          <div class="hf-6 box2 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box3 color-boxbgc"> 
+          <div class="hf-6 box3 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box4 color-boxbgc"> 
+          <div class="hf-6 box4 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box5 color-boxbgc"> 
+          <div class="hf-6 box5 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box6 color-mainbgc"> 
+          <div class="hf-6 box6 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box7 color-mainbgc"> 
+          <div class="hf-6 box7 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box8 color-mainbgc"> 
+          <div class="hf-6 box8 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box9 color-mainbgc"> 
+          <div class="hf-6 box9 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box10 color-mainbgc"> 
+          <div class="hf-6 box10 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box11 color-mainbgc"> 
+          <div class="hf-6 box11 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box12 color-mainbgc"> 
+          <div class="hf-6 box12 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box13 color-mainbgc"> 
+          <div class="hf-6 box13 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box14 color-mainbgc"> 
+          <div class="hf-6 box14 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box15 color-mainbgc"> 
+          <div class="hf-6 box15 color-mainbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box16 color-boxbgc"> 
+          <div class="hf-6 box16 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box17 color-boxbgc"> 
+          <div class="hf-6 box17 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box18 color-boxbgc"> 
+          <div class="hf-6 box18 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box19 color-boxbgc"> 
+          <div class="hf-6 box19 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
-          <div class="hf-6 box191 color-boxbgc"> 
+          <div class="hf-6 box191 color-boxbgc">
               <div class='smalllbox color-white'>28.6</div>
               <div class='smalllbox color-lightgreen'>66.2%</div>
           </div>
@@ -175,15 +175,6 @@
 .mainshow img{
     width: 100%;
     height: 100%;
-}
-.el-row {
-  margin-bottom: 10px;
-}
-.el-row:last-child {
-  margin-bottom: 0;
-}
-.navOptionsItem{
-  margin-bottom: 20px;
 }
 .box1{
   top:55px;

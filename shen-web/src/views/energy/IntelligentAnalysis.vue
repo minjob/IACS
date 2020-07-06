@@ -3,7 +3,7 @@
     <el-col :span="24">
       <TabControl :TabControl="TabControl"></TabControl>
         <div class="platformContainer" v-if="TabControl.TabControlCurrent === '能耗分析'">
-          <span class="color-lightgreen">能耗分析</span>
+
         </div>
         <div class="platformContainer" v-if="TabControl.TabControlCurrent === '设备效率分析'">
           <span class="color-lightgreen">设备效率分析</span>

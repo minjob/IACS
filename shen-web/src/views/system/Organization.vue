@@ -62,7 +62,7 @@
         <div style="padding: 20px;">
           <h3>{{ drawerTitle }}</h3>
           <el-form :model="departmentForm" label-width="80px" :rules="rules" ref="ruleForm">
-            <el-form-item label="所属厂区">
+            <el-form-item label="所属区域">
               <el-input v-model="departmentForm.factory_name" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="部门名称" prop="department_name">
@@ -249,7 +249,7 @@
           column:[
             {prop:"DepartName",label:"部门名称"},
             {prop:"DepartCode",label:"部门编码"},
-            {prop:"DepartLoad",label:"所属厂区"}
+            {prop:"DepartLoad",label:"所属区域"}
           ],
           data:[],
           limit:5,
