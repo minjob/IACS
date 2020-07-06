@@ -641,6 +641,45 @@ class ElectricPrice(Base):
     # 单位:
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+class Equipment(Base):
+    __tablename__ = "Equipment"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 设备编码:
+    EQPCode = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备名称:
+    EQPName = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # OpcTag:
+    BatchOpcTag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # OpcTag:
+    BrandOpcTag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 供应商:
+    SupplierName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备状态:
+    Equipment_State = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 基本参数:
+    Equipment_Model = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 成本归属:
+    CostAttach = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采购日期:
+    Procurement_Date = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+    # 工艺段ID:
+    PUID = Column(Integer, primary_key=False, nullable=True)
+
+    # 备注说明:
+    Desc = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

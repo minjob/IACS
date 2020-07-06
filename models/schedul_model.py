@@ -279,5 +279,49 @@ class PeopleSimulater(Base):
     EveningPeakOutNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+# 电增量表
+class IncrementElectricTable(Base):
+    __tablename__ = "IncrementElectricTable"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 增量值:
+    IncremenValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量类型:
+    IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格表ID:
+    PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+
+
+
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
