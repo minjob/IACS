@@ -56,7 +56,7 @@
         </div>
       </el-header>
       <!-- 页面主体 -->
-      <el-main style="clear: both;">
+      <el-main style="clear: both;padding-top: 0;margin-top: 10px;">
         <transition name="move" mode="out-in">
          <!--渲染子页面-->
           <router-view :key="$route.fullPath"></router-view>
