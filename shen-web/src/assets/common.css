@@ -138,8 +138,15 @@
   border-radius: 4px;
   padding: 15px;
 }
-.itemMarginBottom{
+.cardContainer{
+  width: 100%;
+  background: #585B62;
+  color: #fff;
+  border-radius: 4px;
+  padding: 15px;
   margin-bottom: 15px;
+  clear: both;
+  overflow: hidden;
 }
 .floatLeft{
   float: left;
@@ -187,6 +194,9 @@
 }
 .color-offwhite{
   color:#F9F9F9;
+}
+.color-grayblack{
+  color: #9B9B9B;
 }
 .color-darkblue{
   color:#228AD5;
