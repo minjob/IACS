@@ -135,6 +135,11 @@
     computed:{ //计算属性
 
     },
+    destroyed() {
+      if(this.websock){
+        this.websock.close() //离开路由之后断开websocket连接
+      }
+    },
     methods: {
       move(e){
         let odiv = e.target; //获取目标元素
@@ -161,7 +166,7 @@
       },
       initWebSocket(){ //初始化weosocket
         // this.websock = new WebSocket('ws://' + location.host + '/socket');
-        this.websock = new WebSocket('ws://127.0.0.1:5002');
+        this.websock = new WebSocket('ws://127.0.0.1:5002/socket');
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
         this.websock.onerror = this.websocketonerror;
@@ -174,8 +179,8 @@
         console.log("websocket连接失败")
       },
       websocketonmessage(e){ //数据接收
-        console.log(e.data)
         var resdata = JSON.parse(e.data);
+        console.log(resdata)
 
       },
       websocketsend(Data){//数据发送

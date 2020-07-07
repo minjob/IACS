@@ -11,3 +11,4 @@ templates/index.html
 node_modules/
 desktop.ini
 shuju.py
+tornado_wsserver.py
