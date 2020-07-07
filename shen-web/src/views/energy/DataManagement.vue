@@ -119,6 +119,11 @@
                   <div id="mainechart" style="width:100%;height:100%;">
 
                   </div>
+                <div class="showstatic">
+                  <p>max:{{maxvalue}}</p>
+                  <p>average:{{averagevalue}}</p>
+                  <p>comparetime:{{comparetime}}</p>
+                </div>
                 </div>
               </el-main>
             </el-container>
@@ -156,6 +161,11 @@ import echarts from '@/assets/js/echarts.js'
         controldate:true,
         checked1:true,
         checked2:true,//多选框的值绑定
+        maxvalue:10,
+        averagevalue:0,
+        comparevalue:0,
+        dataIndex:0,
+        comparetime:'2020-04-18',
         navOptionsCurrent:1,
         navOptions:[
             {name:"趋势分析",value:1},
@@ -248,6 +258,7 @@ import echarts from '@/assets/js/echarts.js'
                   color: 'green'
               }
           },
+         
           series: [
               {
                   name: 'MA5',
@@ -268,12 +279,28 @@ import echarts from '@/assets/js/echarts.js'
                   lineStyle: {
                       width: 1
                   }
+              },
+              {
+	          name: '平行于y轴的对比线',
+            type: 'line',
+            markLine: {
+                name: 'cc',
+                symbol:'none',//去掉箭头
+                lineStyle:{
+                        type:"solid",
+                        color:"#FF4B5C",
+                    },
+                data: [[
+                    { coord: [this.dates[0],42000000] },
+                    { coord: [this.dates[0],52000000] }
+                ]]
+            }
               }
           ]
       };
     var j = 0; 
     var max = Math.max.apply(Math, this.data1); //数据的最大值
-    option.series[0].data = this.data1; 
+    option.series[0].data = this.data1;
     option.visualMap.pieces[0] = {gte: 42742569, lte: max, color: 'yellow'} //数据大于42742569显示黄色
 
 //数据中的某一项为某个值时 分段显示
@@ -287,13 +314,78 @@ import echarts from '@/assets/js/echarts.js'
 //         j++; 
 //     }
 // }
-
-    myChart.setOption(option);
-    myChart.off("legendselected");//解绑事件处理函数（可根据情况而定是否需要，这里我这边会重绘几次表，所以需要解绑事件处理函数）。
-    myChart.on('brushSelected', renderBrushed);
-    function renderBrushed(params) {
-          console.log(params)
+    var that=this
+     myChart.on('updateAxisPointer', function (event) {  //拉着tooltips 触发滑动事件
+       if(event.axesInfo.length!=0){
+         var index=event.dataIndex
+        if(index>that.dataIndex){
+          var arr=that.data1.slice(that.dataIndex,index)
+          var index1=index-that.dataIndex
+        }else{
+          var arr=that.data1.slice(index, that.dataIndex)
+          var index1=that.dataIndex-index
         }
+        var num=0
+        for(var i=0;i<arr.length;i++){
+            num=num+arr[i]
+         }
+         that.averagevalue=num/index1
+        //  console.log(that.averagevalue)
+        //  console.log(that.dates[index])//当前的日期
+        //  console.log(that.data1[index])//当前的第一个值
+        //  console.log(that.comparevalue)//对比天的值
+        //  console.log(that.data2[index])//当前的第二个值
+       }
+     })
+
+    // var xAxisInfo=event.axesInfo //echarts官方样例
+    // if (xAxisInfo) {
+    //         var dimension = xAxisInfo.value + 1;
+    //         myChart.setOption({
+    //             series: {
+    //                 id: 'pie',
+    //                 label: {
+    //                     formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+    //                 },
+    //                 encode: {
+    //                     value: dimension,
+    //                     tooltip: dimension
+    //                 }
+    //             }
+    //         });
+    //     }
+
+    //  });
+
+    myChart.off("click");//解绑事件处理函数（可根据情况而定是否需要，这里我这边会重绘几次表，所以需要解绑事件处理函数）。
+    myChart.on('click', renderBrushed);
+    function renderBrushed(params) {
+      var time=params.name
+      var datas=params.data
+      var index=params.dataIndex
+      that.dataIndex=params.dataIndex
+      that.comparetime=params.name
+      that.comparevalue=that.data1[index]
+       myChart.setOption({
+          series:{
+	          name: '平行于y轴的对比线',
+            type: 'line',
+            markLine: {
+                name: 'cc',
+                symbol:'none',//去掉箭头
+                lineStyle:{
+                        type:"solid",
+                        color:"#FF4B5C",
+                    },
+                data: [[
+                    { coord: [that.comparetime,42000000] },
+                    { coord: [that.comparetime,52000000] }
+                ]]
+            }
+              }
+       })
+        }
+    myChart.setOption(option);
       },
       showPage(index) {
         this.navOptionsCurrent = index
@@ -318,6 +410,7 @@ import echarts from '@/assets/js/echarts.js'
           this.dates = rows.map(function (item) {
             return item[0];
           });
+          console.log(this.dates)
           this.data1 = rows.map(function (item) {
             return +item[1];
           });
@@ -402,6 +495,15 @@ import echarts from '@/assets/js/echarts.js'
   height: 100%;
   padding-top: 22px;
   padding-left: 17px;
+}
+.myechart .showstatic{
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  background-color: #fff;
+  top:170px;
+  right: 30px;
+  z-index: 100;
 }
 
 </style>
