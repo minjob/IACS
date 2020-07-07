@@ -88,6 +88,10 @@
   border: 1px solid #585B62;
   color: #fff;
 }
+/* 表单样式 */
+.blackComponents .el-form-item__label{
+  color: #ffffff;
+}
 /* 分页 */
 .blackComponents .paginationClass{
   text-align: right;
@@ -106,9 +110,16 @@
   color: #fff;
 }
 .blackComponents .fc-unthemed .fc-today {
-    background: #727786;
-  }
-
+  background: #727786;
+}
+/* 树形控件 */
+.blackComponents .el-tree{
+  background-color: #3D4048;
+  color: #fff;
+}
+.blackComponents .el-tree-node:focus>.el-tree-node__content,.blackComponents .el-tree-node__content:hover{
+  background-color: #727786;
+}
 /* 公用组件样式 */
 .platformContainer{
   width: 100%;
@@ -116,6 +127,7 @@
   color: #fff;
   border-radius: 4px;
   padding: 15px;
+  margin-bottom: 15px;
   clear: both;
   overflow: hidden;
 }
@@ -150,8 +162,12 @@
   float: right;
   line-height: 48px;
 }
+/* 字体大小 */
 .text-size-12{
   font-size: 12px;
+}
+.text-size-14{
+  font-size: 14px;
 }
 .text-size-16{
   font-size: 16px;
@@ -165,55 +181,48 @@
 .text-size-24{
   font-size: 24px;
 }
-.color-lightbluebgc{
-  background-color:#00CAFA;
+/* 字体颜色 */
+.color-white{
+  color:#fff;
+}
+.color-offwhite{
+  color:#F9F9F9;
+}
+.color-darkblue{
+  color:#228AD5;
 }
 .color-lightgreen{
   color:#00FAE7;
 }
-.color-white{
-  color:#fff;
+.color-orange{
+  color:#FA7D00;
 }
-.color-asidebgc{
-  background-color:#1B1E27;
+.color-red{
+  color:#FB3A06;
 }
-.color-mainbgc{
+/* 背景颜色 */
+.bg-grayblack{
   background-color:#34383E;
 }
-.color-boxbgc{
-  background-color:#585B62;
+.bg-black{
+  background-color:#1B1E27;
 }
-.color-yellowbgc{
-  background-color:#F8D200;
+/* 间距 */
+.marginTop{
+  margin-top: 15px;
 }
-.color-greenbgc{
-  background-color:#15CC48;
+.marginBottom{
+  margin-bottom: 15px;
 }
-.color-brownbgc{
-  background-color:#D8D8D8;
-}
-.color-orangebgc{
-  background-color:#FB8A06;
-}
-.MarginTop20{
-  margin-top: 20px;
-}
-.MarginBottom{
-  margin-bottom: 50px;
-}
+
 .MainContain{
   position: relative;
   width: 1450px;
   height: 887px;
 }
-.BorderRadius4{
-border-radius: 4px;
-}
 .SysMonbg{
   background:#34383E url('../assets/img/Containerbgc.png') no-repeat scroll center center;
-}
-.PaddingRight20px{
-  padding-right:20px;
+  cursor: move;
 }
 .hf-6{
   position: absolute;

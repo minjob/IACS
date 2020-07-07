@@ -7,7 +7,7 @@
         </div>
       </el-col>
       <el-col :span="24">
-        <el-form :inline="true">
+        <el-form :inline="true" class="blackComponents">
           <el-form-item label="选择月份：">
             <el-date-picker type="month" v-model="scheduleMonth" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
           </el-form-item>
