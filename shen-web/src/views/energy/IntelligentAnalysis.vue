@@ -2,8 +2,8 @@
   <el-row :gutter="15">
     <el-col :span="24">
       <TabControl :TabControl="TabControl"></TabControl>
-      <el-row :gutter="15">
-        <el-col :span="24" v-if="TabControl.TabControlCurrent === '能耗分析'">
+      <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '能耗分析'">
+        <el-col :span="24">
           <el-form :inline="true" class="blackComponents">
             <el-form-item label="选择时间：">
               <el-date-picker type="date" v-model="formParameters.energyDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change=""></el-date-picker>
@@ -85,47 +85,49 @@
           </div>
         </el-col>
       </el-row>
-      <el-col :span="24" v-if="TabControl.TabControlCurrent === '制冷量分析'">
-        <el-form :inline="true" class="blackComponents">
-          <el-form-item label="选择时间：">
-            <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change=""></el-date-picker>
-          </el-form-item>
-        </el-form>
-        <div class="platformContainer">
-          <ve-line :data="chartRefrigerationData" :extend="refrigerationExtend" height="350px"></ve-line>
-        </div>
-        <el-row :gutter="15">
-          <el-col :span="5">
-            <div class="platformContainer">
-              <p class="color-offwhite text-size-16 marginBottom">今日制冷总量</p>
-              <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
-              <p class="color-offwhite text-size-16 marginBottom">选择日制冷总量</p>
-              <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
-              <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
-              <p class="color-darkblue text-size-18 marginBottom">234234kwh</p>
-              <p class="color-offwhite text-size-16 marginBottom">对比</p>
-              <p class="text-size-16 marginBottom">+1.12%</p>
-            </div>
-          </el-col>
-          <el-col :span="5">
-            <div class="platformContainer">
-              <p class="color-offwhite text-size-16 marginBottom">今日热负载总量</p>
-              <p class="color-lightgreen text-size-20 marginBottom">234234</p>
-              <p class="color-offwhite text-size-16 marginBottom">选择日热负载总量</p>
-              <p class="color-lightgreen text-size-20 marginBottom">234234</p>
-              <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
-              <p class="color-darkblue text-size-18 marginBottom">234234</p>
-              <p class="color-offwhite text-size-16 marginBottom">对比</p>
-              <p class="text-size-16 marginBottom">+1.12%</p>
-            </div>
-          </el-col>
-          <el-col :span="14">
-            <div class="platformContainer">
-               <ve-histogram :data="chartRefrigerationStatisticsData" :extend="RefrigerationStatisticsExtend" height="300px"></ve-histogram>
-            </div>
-          </el-col>
-        </el-row>
-      </el-col>
+      <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '制冷量分析'">
+        <el-col :span="24">
+          <el-form :inline="true" class="blackComponents">
+            <el-form-item label="选择时间：">
+              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change=""></el-date-picker>
+            </el-form-item>
+          </el-form>
+          <div class="platformContainer">
+            <ve-line :data="chartRefrigerationData" :extend="refrigerationExtend" height="350px"></ve-line>
+          </div>
+          <el-row :gutter="15">
+            <el-col :span="5">
+              <div class="platformContainer">
+                <p class="color-offwhite text-size-16 marginBottom">今日制冷总量</p>
+                <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
+                <p class="color-offwhite text-size-16 marginBottom">选择日制冷总量</p>
+                <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
+                <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
+                <p class="color-darkblue text-size-18 marginBottom">234234kwh</p>
+                <p class="color-offwhite text-size-16 marginBottom">对比</p>
+                <p class="text-size-16 marginBottom">+1.12%</p>
+              </div>
+            </el-col>
+            <el-col :span="5">
+              <div class="platformContainer">
+                <p class="color-offwhite text-size-16 marginBottom">今日热负载总量</p>
+                <p class="color-lightgreen text-size-20 marginBottom">234234</p>
+                <p class="color-offwhite text-size-16 marginBottom">选择日热负载总量</p>
+                <p class="color-lightgreen text-size-20 marginBottom">234234</p>
+                <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
+                <p class="color-darkblue text-size-18 marginBottom">234234</p>
+                <p class="color-offwhite text-size-16 marginBottom">对比</p>
+                <p class="text-size-16 marginBottom">+1.12%</p>
+              </div>
+            </el-col>
+            <el-col :span="14">
+              <div class="platformContainer">
+                 <ve-histogram :data="chartRefrigerationStatisticsData" :extend="RefrigerationStatisticsExtend" height="300px"></ve-histogram>
+              </div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
     </el-col>
   </el-row>
 </template>
