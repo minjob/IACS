@@ -188,6 +188,7 @@ import echarts from '@/assets/js/echarts.js'
       var myChart = echarts.init(document.getElementById('mainechart'));
       var option = {
           backgroundColor: '#21202D',
+          color:['#2db7f5','#ff6600'], 
           legend: {
               data: ['MA5', 'MA10'],
               inactiveColor: '#777',
@@ -217,7 +218,7 @@ import echarts from '@/assets/js/echarts.js'
                       }
                   }
               },
-              brush: {
+          brush: {
                   xAxisIndex: 'all',
                   brushLink: 'all',
                   outOfBrush: {
@@ -239,6 +240,14 @@ import echarts from '@/assets/js/echarts.js'
               top:80
           },
           animation: false,
+          visualMap: {
+              show: false,
+              dimension: 1,
+              pieces: [],  //pieces的值由动态数据决定
+              outOfRange: {
+                  color: 'green'
+              }
+          },
           series: [
               {
                   name: 'MA5',
@@ -262,7 +271,29 @@ import echarts from '@/assets/js/echarts.js'
               }
           ]
       };
+    var j = 0; 
+    var max = Math.max.apply(Math, this.data1); //数据的最大值
+    option.series[0].data = this.data1; 
+    option.visualMap.pieces[0] = {gte: 42742569, lte: max, color: 'yellow'} //数据大于42742569显示黄色
+
+//数据中的某一项为某个值时 分段显示
+// var j = 0; 
+// option.series[0].data = this.data1; 
+// //连续为300时，颜色变为红色
+// var arr=this.data1
+// for(let i = 0; i < arr.length; i++) {
+//     if(arr[i] === 300 && arr[i + 1] === 300) {
+//         option.visualMap.pieces[j] =  {gte:i,lte:i+1,color:'red'}; 
+//         j++; 
+//     }
+// }
+
     myChart.setOption(option);
+    myChart.off("legendselected");//解绑事件处理函数（可根据情况而定是否需要，这里我这边会重绘几次表，所以需要解绑事件处理函数）。
+    myChart.on('brushSelected', renderBrushed);
+    function renderBrushed(params) {
+          console.log(params)
+        }
       },
       showPage(index) {
         this.navOptionsCurrent = index
