@@ -2,15 +2,22 @@
   <el-row :gutter="15">
     <el-col :span="24">
       <TabControl :TabControl="TabControl"></TabControl>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '能耗分析'">
+      <el-col :span="24" style="padding: 0;" v-if="TabControl.TabControlCurrent === '能耗分析'">
+        <el-form :inline="true">
+          <el-form-item label="选择时间：">
+            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change=""></el-date-picker>
+          </el-form-item>
+        </el-form>
+        <div class="platformContainer">
 
         </div>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '设备效率分析'">
-          <span class="color-lightgreen">设备效率分析</span>
-        </div>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量分析'">
-          <span class="color-lightgreen">制冷量分析</span>
-        </div>
+      </el-col>
+      <div class="platformContainer" v-if="TabControl.TabControlCurrent === '设备效率分析'">
+        <span class="color-lightgreen">设备效率分析</span>
+      </div>
+      <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量分析'">
+        <span class="color-lightgreen">制冷量分析</span>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -30,6 +37,14 @@
             {name:"设备效率分析"},
             {name:"制冷量分析"}
           ],
+        },
+        formParameters:{
+          date:moment()
+        },
+        pickerOptions:{
+          disabledDate(time) {
+            return time.getTime() > moment();
+          }
         }
       }
     },

@@ -13,11 +13,6 @@ import 'font-awesome/css/font-awesome.min.css'
 import VCharts from 'v-charts'
 import store from './store'
 import $ from 'jquery'
-import 'jquery-ui/ui/widgets/draggable'
-import 'jquery-ui/ui/widgets/droppable'
-import 'jquery-ui/ui/widgets/resizable'
-import '../static/css/fullcalendar.min.css'
-import '../static/script/fullcalendar.min.js'
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
