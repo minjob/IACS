@@ -122,7 +122,6 @@ class ElectronicBatch(Base):
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
-
 # 审计追踪
 class AuditTrace(Base):
     __tablename__ = 'AuditTrace'
@@ -146,6 +145,7 @@ class AuditTrace(Base):
 
     # 其他:
     Other = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 流程确认表
 class FlowConfirm(Base):
@@ -301,6 +301,29 @@ class FieldType(Base):
     Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+# 用户班组表
+class UserShiftsGroup(Base):
+    __tablename__ = 'UserShiftsGroup'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 用户ID:
+    UserID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 用户名:
+    Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 班组ID:
+    ShiftsGroupID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 班组名称
+    ShiftsGroupName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
+                        default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
 # 权限表
 class Permission(Base):
     __tablename__ = 'Permission'
@@ -342,6 +365,7 @@ class RolePermission(Base):
     # 创建时间
     CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
                         default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
 
 # 角色用户表
 class RoleUser(Base):
@@ -396,6 +420,9 @@ class User(Base):
 
     # 所属厂区:
     FactoryName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 班组类型
+    ShiftsGroupType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 上次登录时间:
     LastLoginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -509,6 +536,7 @@ class BatchMaintainTask(Base):
     # 结束时间:
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 class BrandMaintain(Base):
     '''品名维护表'''
     __tablename__ = "BrandMaintain"
@@ -524,6 +552,7 @@ class BrandMaintain(Base):
 
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 class PUIDMaintain(Base):
     '''工艺维护表'''
@@ -557,10 +586,11 @@ class Shifts(Base):
     ShiftsCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 班次名称
     ShiftsName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-    #班次开始时间
+    # 班次开始时间
     BeginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 班次结束时间
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 班制
 class ShiftsClass(Base):
@@ -577,6 +607,22 @@ class ShiftsClass(Base):
     BeginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 班制结束时间
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 班组
+class ShiftsGroup(Base):
+    __tablename__ = "ShiftsGroup"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 班组编码
+    ShiftsGroupCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班组名称
+    ShiftsGroupName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班组类型
+    ShiftsGroupType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 模块菜单表
@@ -659,8 +705,38 @@ class Equipment(Base):
 
     # 注释:
     Comment = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-    # 设备状态（良好,异常）
-    Status = Column(Unicode(32), default="良好")
+
+    # 设备名称
+    Name = Column(Unicode(32), nullable=True)
+    # 设备型号
+    Model = Column(Unicode(128), nullable=True)
+    # 生产商
+    Manufacturer = Column(Unicode(32), nullable=True)
+    # SAP号
+    Sap = Column(Unicode(64), nullable=True)
+    # 固定资产编号
+    FixedAssetsNo = Column(Unicode(128), nullable=True)
+    # 固定资产名称s
+    FixedAssetsName = Column(Unicode(32), nullable=True)
+    # 区域
+    Area = Column(Unicode(32), nullable=True)
+    # 进厂日期
+    IntoTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+class Plan(Base):
+    __tablename__ = 'Plan'
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 设备编码:
+    EquipmentCode = Column(Unicode(30), nullable=True)
+    # 班组
+    WorkNo = Column(Unicode(32), nullable=False)
+    # 工单类型(维修，保养)
+    Type = Column(Unicode(32), nullable=True)
+    # 计划状态（良好,异常）
+    Status = Column(Unicode(32), default="待处理")
     # 提醒状态（待提醒，已提醒）
     RemindStatus = Column(Unicode(32), default="待提醒", nullable=True)
     # 预工作时间
@@ -684,6 +760,57 @@ class Record(Base):
     Type = Column(Unicode(32), nullable=True)
     # 工作时间
     WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+class Repair(Base):
+    """维修申请表"""
+    __tablename__ = 'repair'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    # 工单号
+    no = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    # 设备编码
+    EquipmentCode = Column(Unicode(128), nullable=True)
+    # 设备名称
+    Name = Column(Unicode(32), nullable=True)
+    # 设备型号
+    Model = Column(Unicode(32), nullable=True)
+    # 区域
+    Area = Column(Unicode(32), nullable=True)
+    # 故障阐述
+    FaultExpound = Column(Unicode(128), nullable=True)
+    # 申请人
+    Worker = Column(Unicode(32), nullable=True)
+    # 工单状态（待接单，已接单）
+    Status = Column(Unicode(32), default="待接单")
+    # 申请时间
+    Time = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+class RepairTask(Base):
+    __tablename__ = 'repairtask'
+    """维修任务表"""
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    # 工单号
+    no = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    # 设备编码
+    EquipmentCode = Column(Unicode(128), nullable=True)
+    # 设备名称
+    Name = Column(Unicode(32), nullable=True)
+    # 设备型号
+    Model = Column(Unicode(32), nullable=True)
+    # 区域
+    Area = Column(Unicode(32), nullable=True)
+    # 维修人
+    Worker = Column(Unicode(32), nullable=True)
+    # 工单状态（维修中，维修完成）
+    Status = Column(Unicode(32), default="待接单")
+    # 维修内容
+    content = Column(Unicode(128), nullable=True)
+    # 申请时间
+    ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 完成时间
+    EndTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 # 生成表单的执行语句

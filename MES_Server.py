@@ -8,6 +8,7 @@ from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment, Role_management
 from handlers.account.user_role import user_manager
+from handlers.energy_manager.energy_manager import energy
 from handlers.main import system_manage
 from handlers.SystemManagement.organization_model import organiza
 from handlers.SystemManagement.systemlog import systemlog
@@ -50,6 +51,8 @@ app.register_blueprint(user_manager)
 app.register_blueprint(erp_schedul)
 # 维保
 app.register_blueprint(repair)
+# 能耗管理
+app.register_blueprint(energy)
 
 
 @app.route('/')
