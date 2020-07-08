@@ -18,7 +18,7 @@
       </el-col>
       <el-col :span="5">
         <div class="scheduleContainer" style="height: 730px;">
-          <div id='external-events' class="itemMarginBottom">
+          <div id='external-events' class="marginBottom">
             <h4>可拖放的日程</h4>
             <a class='fc-event' v-for="item in scheduleTableData.data" style="padding: 5px;margin: 10px 0;cursor: pointer;" :color="item.color" :style="{ background:item.color,border:'1px solid ' +item.color }">{{item.DateTypeName}}</a>
           </div>
