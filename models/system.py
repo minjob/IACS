@@ -122,7 +122,6 @@ class ElectronicBatch(Base):
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
-
 # 审计追踪
 class AuditTrace(Base):
     __tablename__ = 'AuditTrace'
@@ -146,6 +145,7 @@ class AuditTrace(Base):
 
     # 其他:
     Other = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 流程确认表
 class FlowConfirm(Base):
@@ -343,6 +343,7 @@ class RolePermission(Base):
     CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
                         default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
+
 # 角色用户表
 class RoleUser(Base):
     __tablename__ = 'RoleUser'
@@ -509,6 +510,7 @@ class BatchMaintainTask(Base):
     # 结束时间:
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 class BrandMaintain(Base):
     '''品名维护表'''
     __tablename__ = "BrandMaintain"
@@ -524,6 +526,7 @@ class BrandMaintain(Base):
 
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 class PUIDMaintain(Base):
     '''工艺维护表'''
@@ -557,10 +560,11 @@ class Shifts(Base):
     ShiftsCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 班次名称
     ShiftsName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-    #班次开始时间
+    # 班次开始时间
     BeginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 班次结束时间
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 班制
 class ShiftsClass(Base):
@@ -659,8 +663,21 @@ class Equipment(Base):
 
     # 注释:
     Comment = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-    # 设备状态（良好,异常）
-    Status = Column(Unicode(32), default="良好")
+
+
+class Plan(Base):
+    __tablename__ = 'Plan'
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 设备编码:
+    EquipmentCode = Column(Unicode(30), nullable=True)
+    # 班组
+    # WorkNo = Column(Unicode(32), nullable=False)
+    # 工单类型(维修，保养)
+    # Type = Column(Unicode(32), nullable=True)
+    # 计划状态（良好,异常）
+    Status = Column(Unicode(32), default="待处理")
     # 提醒状态（待提醒，已提醒）
     RemindStatus = Column(Unicode(32), default="待提醒", nullable=True)
     # 预工作时间
@@ -684,6 +701,23 @@ class Record(Base):
     Type = Column(Unicode(32), nullable=True)
     # 工作时间
     WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+class Task(Base):
+    """任务表"""
+    __tablename__ = 'task'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    # 设备编码
+    EquipmentCode = Column(Unicode(128), nullable=False)
+    # 班组
+    WorkNo = Column(Unicode(32), nullable=False)
+    # 工单状态（待处理，待审核，执行中，已完成）
+    Status = Column(Unicode(32), default="待处理")
+    # 工单类型（维修，保养，润滑，巡检）
+    Type = Column(Unicode(32), nullable=True)
+    # 下发时间
+    FoundTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 # 生成表单的执行语句
