@@ -19,7 +19,7 @@ import time
 import gc
 import datetime
 
-pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
+pool = redis.ConnectionPool(host=constant.REDIS_HOST) #, password=constant.REDIS_PASSWORD
 redis_conn = redis.Redis(connection_pool=pool)
 
 clients = dict()  # 客户端Session字典
