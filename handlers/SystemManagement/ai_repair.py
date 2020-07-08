@@ -7,7 +7,7 @@ from flask import Blueprint, request
 
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.system import Record, Plan, Task
+from models.system import Record, Plan, Equipment
 
 repair = Blueprint('repair', __name__)
 
@@ -22,39 +22,40 @@ def get_time_stamp(s):
 def input_plan():
     json_data = request.values
     plan = Plan(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
-                RemindStatus=json_data.get('RemindStatus'), WorkTime=json_data.get('WorkTime'))
+                RemindStatus=json_data.get('RemindStatus'), WorkTime=json_data.get('WorkTime'),
+                Type=json_data.get('Type'), WorkNo=json_data.get('WorkNo'))
     db_session.add(plan)
     db_session.commit()
-    return json.dumps({'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
+    return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
-@repair.route('/task', methods=['GET', 'POST'])
-def task():
-    query_data = db_session.query(Plan).filter_by(Status='待处理').all()
-    if request.method == 'GET':
-        for item in query_data:
-            if get_time_stamp(item.work_time):
-                data = Task(EquipmentCode=item.EquipmentCode, WorkNo=item.WorkNo, Status=item.Status,
-                            Type=item.Type, FoundTime=item.WorkTime)
-                db_session.add(data)
-                db_session.commit()
-                # query_list.append(item)
-            else:
-                pass
-        return json.dumps({'code': '1000', 'message': '操作成功', 'data': query_data}, cls=AlchemyEncoder, ensure_ascii=True)
-    elif request.method == 'POST':
-        # query_list = [item if get_time_stamp(item.work_time) else '' for item in query_data]
-        # query_list = []
-        for item in query_data:
-            if get_time_stamp(item.work_time):
-                data = Task(EquipmentCode=item.EquipmentCode, WorkNo=item.WorkNo, Status=item.Status,
-                            Type=item.Type, FoundTime=item.WorkTime)
-                db_session.add(data)
-                db_session.commit()
-                # query_list.append(item)
-            else:
-                pass
-        return json.dumps({'code': '1000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+# @repair.route('/task', methods=['GET', 'POST'])
+# def task():
+#     query_data = db_session.query(Plan).filter_by(Status='待处理').all()
+#     if request.method == 'GET':
+#         for item in query_data:
+#             if get_time_stamp(item.work_time):
+#                 data = Task(EquipmentCode=item.EquipmentCode, WorkNo=item.WorkNo, Status=item.Status,
+#                             Type=item.Type, FoundTime=item.WorkTime)
+#                 db_session.add(data)
+#                 db_session.commit()
+#                 # query_list.append(item)
+#             else:
+#                 pass
+#         return json.dumps({'code': '1000', 'message': '操作成功', 'data': query_data}, cls=AlchemyEncoder, ensure_ascii=True)
+#     elif request.method == 'POST':
+#         # query_list = [item if get_time_stamp(item.work_time) else '' for item in query_data]
+#         # query_list = []
+#         for item in query_data:
+#             if get_time_stamp(item.work_time):
+#                 data = Task(EquipmentCode=item.EquipmentCode, WorkNo=item.WorkNo, Status=item.Status,
+#                             Type=item.Type, FoundTime=item.WorkTime)
+#                 db_session.add(data)
+#                 db_session.commit()
+#                 # query_list.append(item)
+#             else:
+#                 pass
+#         return json.dumps({'code': '1000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
 # @repair.route('/record', methods=['GET', 'POST'])
