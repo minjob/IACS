@@ -109,7 +109,7 @@ def selectUserShiftsGroup():
             pids = db_session.query(UserShiftsGroup).filter(UserShiftsGroup.UserID == int(userID)).all()
             perids_list = []
             for pid in pids:
-                perids_list.append(pid.PermissionID)
+                perids_list.append(pid.ShiftsGroupID)
             if len(perids_list) > 0:
                 existingRows = db_session.query(ShiftsGroup).filter(ShiftsGroup.ID.in_(perids_list)).all()
                 dir["existingRows"] = existingRows

@@ -156,6 +156,8 @@ def energyanalysis():
                 row1_list = []
                 row1_list.append({"电表": "LS1机组电表", "今日": round(curr_A_ACR_10_count, 2), "对比日": round(comp_A_ACR_10_count, 2)})
                 row1_list.append({"电表": "LS2机组电表", "今日": round(curr_A_ACR_13_count, 2), "对比日": round(comp_A_ACR_13_count, 2)})
+                row1_list.append(
+                    {"电表": "总和", "今日": round(curr_A_ACR_13_count+curr_A_ACR_10_count, 2), "对比日": round(comp_A_ACR_13_count+comp_A_ACR_10_count, 2)})
                 dir["histogramChartRows"] = row1_list
                 return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
             else:
