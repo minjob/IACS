@@ -14,6 +14,11 @@ import VCharts from 'v-charts'
 import store from './store'
 import $ from 'jquery'
 
+//iview 的按需引入
+import 'view-design/dist/styles/iview.css'
+import { DatePicker} from 'view-design';
+Vue.component('DatePicker', DatePicker);
+
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
 Vue.prototype.qs = qs

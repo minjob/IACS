@@ -266,30 +266,21 @@
   letter-spacing: 2px;
   text-align:center;
 }
-.block .el-input__inner{
-  padding-right: 5px;
+.Datepick .ivu-picker-panel-body{
+  background-color: #3D4048;
+  width: 250px;
 }
-.block .demonstration{
-  text-align:left;
+.blackComponents .el-tree-node__label {
+  font-size: 12px;
 }
-.block .el-input__suffix{
-  right: 2px;
+.Datepick .ivu-input-wrapper{
+  display: none;
 }
-.block .el-icon-circle-close{
-  width: 18px;
+.Datepick .ivu-select-dropdown{
+  top:10px!important;
+  width:200px!important;
+  box-shadow: none;
 }
-.mainShow  .el-submenu__title, .mainShow .el-submenu__title:hover{
-  font-size: 14px;
-}
-.mainShow .el-submenu__title{
-  padding-left: 0px!important;
-}
-.block .el-input__prefix{
-  left: -3px;
-}
-.block .el-input--prefix .el-input__inner {
-  padding-left: 20px;
-}
-.mainShow .el-submenu__title{
-  background:#3D4048;
+.Datepick .ivu-date-picker-cells{
+  margin:10px auto;
 }
