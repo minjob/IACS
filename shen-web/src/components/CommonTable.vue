@@ -3,7 +3,7 @@
     <el-form :inline="true">
       <el-form-item>
         <el-select v-model="tableData.searchProp" placeholder="请选择搜索字段" size="small">
-          <el-option v-for="(item,index) in tableData.column" :label="item.label" :value="item.prop" :key="index" v-if="item.searchProp"></el-option>
+          <el-option v-for="(item,index) in tableData.column" :label="item.label" :value="item.prop" :key="index" v-if="item.searchProp != false"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -18,7 +18,7 @@
     </el-form>
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
-      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false || item.showField"></el-table-column>
+      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false"></el-table-column>
     </el-table>
     <div class="paginationClass">
       <el-pagination background  layout="total, sizes, prev, pager, next, jumper"

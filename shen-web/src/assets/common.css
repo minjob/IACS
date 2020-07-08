@@ -1,4 +1,10 @@
 /* 侧边导航栏 */
+.menu-ul .el-menu{
+  background-color: #1B1E27;
+}
+.menu-ul .menu-ul .el-menu-item.is-active{
+  background-color: #1B1E27;
+}
 .menu-ul .el-menu-item,.el-submenu__title,.el-submenu__title:hover{
   background: #1B1E27;
   color: #fff;
