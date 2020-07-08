@@ -301,6 +301,29 @@ class FieldType(Base):
     Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+# 用户班组表
+class UserShiftsGroup(Base):
+    __tablename__ = 'UserShiftsGroup'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 用户ID:
+    UserID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 用户名:
+    Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 班组ID:
+    ShiftsGroupID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 班组名称
+    ShiftsGroupName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
+                        default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
 # 权限表
 class Permission(Base):
     __tablename__ = 'Permission'

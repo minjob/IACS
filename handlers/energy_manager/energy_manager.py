@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session, relationship, sessionmaker
 from sqlalchemy import create_engine
 from flask import render_template, request, make_response
 
+from dbset.database.constant import myHours
 from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
@@ -105,25 +106,58 @@ def energyanalysis():
     if request.method == 'GET':
         data = request.values
         try:
-            CollectionDate = data.get("CollectionDate")
-            if CollectionDate:
-                begin = CollectionDate + " 00:00:00"
-                end = CollectionDate + " 23:59:59"
+            CompareTime = data.get("CompareTime")
+            if CompareTime:
+                begin = CompareTime + " 00:00:00"
+                end = CompareTime + " 23:59:59"
                 beginnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
                 endnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 23:59:59"
-                tag_str = "`MB2TCP3.A_ACR_10.Ep_total` AS A_ACR_10,`MB2TCP3.A_ACR_13.Ep_total` AS A_ACR_13"
+                tag_str = "SUM(`MB2TCP3.A_ACR_10.Ep_total`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_13.Ep_total`) AS A_ACR_13"
                 sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '"\
                       + begin + "' AND '" + end + "' OR CollectionDate BETWEEN '" + beginnow + "' AND '" + endnow + "' group by CollectionHour order by CollectionHour"
                 re = db_session.execute(sql).fetchall()
-                dict_list = []
-                for i in range(len(re)):
-                    dict_i = {}
-                    begin = datetime.datetime.strptime(begin,'%Y-%m-%d %H:%M:%S')
-                    if datetime.datetime.strptime(beginnow,'%Y-%m-%d %H:%M:%S')<=re[i]["SampleTime"]<datetime.datetime.strptime(endnow,'%Y-%m-%d %H:%M:%S'):#当前天数据
-                        dict_i["时间"] = datetime.datetime.strftime(re[i]["CollectionHour"], '%Y-%m-%d %H')
-                        dict_i[""]
-                    dict_list.append(dict_i)
-            return json.dumps(dict_list, cls=AlchemyEncoder, ensure_ascii=False)
+                dict_i = {}
+                curr_A_ACR_10_count = 0
+                curr_A_ACR_13_count = 0
+                comp_A_ACR_10_count = 0
+                comp_A_ACR_13_count = 0
+                for i in re:
+                    dict_i[i["CollectionHour"]] = \
+                        round(float(0 if i["A_ACR_10"] == None else i["A_ACR_10"]) + float(
+                            0 if i["A_ACR_13"] == None else i["A_ACR_13"]), 2)
+                    if datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S") <= i["CollectionDate"] <= datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S"):
+                        comp_A_ACR_10_count = comp_A_ACR_10_count + float(0 if i["A_ACR_10"] == None else i["A_ACR_10"])
+                        comp_A_ACR_13_count = comp_A_ACR_13_count + float(0 if i["A_ACR_13"] == None else i["A_ACR_13"])
+                    if datetime.datetime.strptime(beginnow, "%Y-%m-%d %H:%M:%S") <= i["CollectionDate"] <= datetime.datetime.strptime(endnow, "%Y-%m-%d %H:%M:%S"):
+                        curr_A_ACR_10_count = curr_A_ACR_10_count + float(0 if i["A_ACR_10"] == None else i["A_ACR_10"])
+                        curr_A_ACR_13_count = curr_A_ACR_13_count + float(0 if i["A_ACR_13"] == None else i["A_ACR_13"])
+                dir_list = []
+                for h in myHours:
+                    dict_h = {}
+                    currhour = datetime.datetime.now().strftime("%Y-%m-%d") + " " + h
+                    dict_h["时间"] = currhour
+                    comphour = CompareTime + " " + h
+                    if currhour in dict_i.keys():
+                        dict_h["今日能耗"] = dict_i[currhour]
+                    else:
+                        if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') > datetime.datetime.now():
+                            dict_h["今日能耗"] = ""
+                        else:
+                            dict_h["今日能耗"] = 0
+                    if comphour in dict_i.keys():
+                        dict_h["对比日能耗"] = dict_i[comphour]
+                    else:
+                        dict_h["对比日能耗"] = 0
+                    dir_list.append(dict_h)
+                dir = {}
+                dir["lineChartRows"] = dir_list
+                row1_list = []
+                row1_list.append({"电表": "LS1机组电表", "今日": round(curr_A_ACR_10_count, 2), "对比日": round(comp_A_ACR_10_count, 2)})
+                row1_list.append({"电表": "LS2机组电表", "今日": round(curr_A_ACR_13_count, 2), "对比日": round(comp_A_ACR_13_count, 2)})
+                dir["histogramChartRows"] = row1_list
+                return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+            else:
+                return json.dumps("请选择对比日", cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
             insertSyslog("error", "能耗分析报错Error：" + str(e), current_user.Name)
