@@ -398,6 +398,9 @@ class User(Base):
     # 所属厂区:
     FactoryName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
 
+    # 班组类型
+    ShiftsGroupType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 上次登录时间:
     LastLoginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
@@ -581,6 +584,22 @@ class ShiftsClass(Base):
     BeginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 班制结束时间
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 班组
+class ShiftsGroup(Base):
+    __tablename__ = "ShiftsGroup"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 班组编码
+    ShiftsGroupCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班组名称
+    ShiftsGroupName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班组类型
+    ShiftsGroupType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 模块菜单表
