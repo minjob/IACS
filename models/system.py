@@ -768,7 +768,7 @@ class Repair(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     # 工单号
-    no = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
     # 设备编码
     EquipmentCode = Column(Unicode(128), nullable=True)
     # 设备名称
@@ -784,7 +784,7 @@ class Repair(Base):
     # 工单状态（待接单，已接单）
     Status = Column(Unicode(32), default="待接单")
     # 申请时间
-    Time = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 class RepairTask(Base):
@@ -792,7 +792,7 @@ class RepairTask(Base):
     """维修任务表"""
     id = Column(Integer, autoincrement=True, primary_key=True)
     # 工单号
-    no = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
     # 设备编码
     EquipmentCode = Column(Unicode(128), nullable=True)
     # 设备名称
@@ -806,9 +806,9 @@ class RepairTask(Base):
     # 工单状态（维修中，维修完成）
     Status = Column(Unicode(32), default="待接单")
     # 维修内容
-    content = Column(Unicode(128), nullable=True)
+    Content = Column(Unicode(128), nullable=True)
     # 申请时间
-    ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    ApplyTime = Column(Unicode(32), nullable=True)
     # 完成时间
     EndTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
