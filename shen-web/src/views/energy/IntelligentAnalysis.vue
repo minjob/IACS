@@ -6,7 +6,7 @@
         <el-col :span="24">
           <el-form :inline="true" class="blackComponents">
             <el-form-item label="选择时间：">
-              <el-date-picker type="date" v-model="formParameters.energyDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change=""></el-date-picker>
+              <el-date-picker type="date" v-model="formParameters.energyDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getEnergyAnalysisCharts(),getEnergyData()"></el-date-picker>
             </el-form-item>
           </el-form>
           <div class="platformContainer">
@@ -15,14 +15,14 @@
           <el-row :gutter="15">
             <el-col :span="5">
               <div class="platformContainer">
-                <p class="color-offwhite text-size-16 marginBottom">今日能耗总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日能耗总量（全天）</p>
-                <p class="color-darkblue text-size-20 marginBottom">234234kwh</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
-                <p class="color-darkblue text-size-18 marginBottom">234234kwh</p>
-                <p class="color-offwhite text-size-16 marginBottom">对比</p>
-                <p class="text-size-16 marginBottom">+1.12%</p>
+                <p class="color-offwhite text-size-14 marginBottom">今日能耗总量</p>
+                <p class="color-lightgreen text-size-16 marginBottom">{{ todayEnergy }}kwh</p>
+                <p class="color-offwhite text-size-14 marginBottom">选择日能耗总量（全天）</p>
+                <p class="color-darkblue text-size-16 marginBottom">{{ compareAllDateEnergy }}kwh</p>
+                <p class="color-offwhite text-size-14 marginBottom">选择日截止{{ nowTime }}能耗</p>
+                <p class="color-darkblue text-size-16 marginBottom">{{ compareEnergy }}kwh</p>
+                <p class="color-offwhite text-size-14 marginBottom">对比</p>
+                <p class="text-size-16 marginBottom" :class="todayEnergy-compareEnergy>0?'color-red':'color-success'">{{ energyCompareRatio }}</p>
               </div>
             </el-col>
             <el-col :span="19">
@@ -149,8 +149,8 @@
           ],
         },
         formParameters:{
-          energyDate:moment(),
-          refrigerationDate:moment(),
+          energyDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
+          refrigerationDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
         },
         pickerOptions:{
           disabledDate(time) {
@@ -189,13 +189,7 @@
         },
         chartData:{
           columns:["时间","今日能耗","对比日能耗"],
-          rows:[
-            {"时间":"2020-07-02","今日能耗":254,"对比日能耗":299},
-            {"时间":"2020-07-03","今日能耗":345,"对比日能耗":455},
-            {"时间":"2020-07-04","今日能耗":574,"对比日能耗":666},
-            {"时间":"2020-07-05","今日能耗":451,"对比日能耗":315},
-            {"时间":"2020-07-06","今日能耗":"","对比日能耗":315},
-          ]
+          rows:[]
         },
         //能耗分析 能耗统计图表
         FacilityExtend: {
@@ -229,11 +223,7 @@
         },
         chartFacilityData:{
           columns:["电表","今日","对比日"],
-          rows:[
-            {"电表":"冷水机组1","今日":254,"对比日":299},
-            {"电表":"冷水机组2","今日":345,"对比日":455},
-            {"电表":"总和","今日":574,"对比日":666},
-          ]
+          rows:[]
         },
         //树形图数据
         TreeFacilityData:[
@@ -353,11 +343,16 @@
             {"统计":"制冷量","今日":254,"对比日":546},
             {"统计":"热负载","今日":345,"对比日":863},
           ]
-        }
+        },
+        nowTime:"",
+        todayEnergy:"",
+        compareEnergy:"",
+        compareAllDateEnergy:""
       }
     },
     created(){
       this.getEnergyAnalysisCharts()
+      this.getEnergyData()
     },
     mounted(){
 
@@ -366,10 +361,25 @@
 
     },
     computed:{
-
+      energyCompareRatio(){
+        if(this.todayEnergy > 0){
+          var compare = (this.todayEnergy - this.compareEnergy) / this.todayEnergy * 100
+          if(this.todayEnergy - this.compareEnergy > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.compareEnergy > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      }
     },
     methods: {
-      getEnergyAnalysisCharts(){
+      getEnergyAnalysisCharts(){  //获取能耗分析的两个图表
         var that = this
         var params = {
           CompareTime:moment(this.formParameters.energyDate).format("YYYY-MM-DD")
@@ -377,32 +387,35 @@
         this.axios.get("/api/energyanalysis",{
           params: params
         }).then(res =>{
-          var data = JSON.parse(res.data)
-          console.log(data)
+          that.chartData.rows = res.data.lineChartRows
+          that.chartFacilityData.rows = res.data.histogramChartRows
         },res =>{
           console.log("请求错误")
         })
+      },
+      getEnergyData(){ //获取今天和选择天的能耗量
+        var that = this
+        var api = "/api/energyselectbytime"
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm')
+        var todayEndTime = moment().day(moment().day()).endOf('day').format('YYYY-MM-DD HH:mm')
+        var compareDateStartTime = moment(this.formParameters.energyDate).day(moment(this.formParameters.energyDate).day()).startOf('day').format('YYYY-MM-DD HH:mm')
+        var compareDateEndTime = moment(this.formParameters.energyDate).format('YYYY-MM-DD ') + nowTime
+        var compareDateEndAllTime = moment(this.formParameters.energyDate).day(moment(this.formParameters.energyDate).day()).endOf('day').format('YYYY-MM-DD HH:mm')
+        this.nowTime = nowTime
+        this.axios.all([
+          this.axios.get(api,{params: {begin: todayStartTime,end:todayEndTime}}),//获取今天能耗
+          this.axios.get(api,{params: {begin: compareDateStartTime,end:compareDateEndTime}}),//获取对比天截止当前时间能耗
+          this.axios.get(api,{params: {begin: compareDateStartTime,end:compareDateEndAllTime}}),//获取对比整天能耗
+        ]).then(this.axios.spread((todayData,CompareData,CompareAllData) =>{
+          that.todayEnergy = todayData.data
+          that.compareEnergy = CompareData.data
+          that.compareAllDateEnergy = CompareAllData.data
+        }))
       }
     }
   }
 </script>
 <style>
- .second-header{
-    background-color: skyblue;
-    height: 57px;
-    width:100%;
-    background:rgba(52,56,62,1);
-    border-radius:4px;
-  }
-.home-container{
-  background-color: #1B1E27;
-}
-.mainshow{
-    width: 100%;
-    height: 100%;
-}
-.mainshow img{
-    width: 100%;
-    height: 100%;
-}
+
 </style>
