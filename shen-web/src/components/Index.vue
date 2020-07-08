@@ -11,7 +11,7 @@
             <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true" @select="menuSelect">
               <template v-for="item in subMenulist">
                 <el-menu-item v-if="!item.children" :index="item.url"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
-                <el-submenu v-if="!item.url" :index="item.name">
+                <el-submenu v-if="item.children" :index="item.name">
                   <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
                   <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="child.url" @click="clickSubMenu(child.name)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
                 </el-submenu>
@@ -93,8 +93,13 @@ export default {
         {name: "系统监控", icon: "el-icon-zoom-in",url:"/SystemMonitor"},
         {name: "智能分析", icon: "el-icon-data-analysis", url: "/IntelligentAnalysis"},
         {name: "智能运行", icon: "el-icon-document", url: "/IntelligentOperation"},
-        {name: "智能维保", icon: "el-icon-set-up", url: "/IntelligentMaintenance"},
-        {name: "参数配置", icon: "el-icon-s-operation", url: "/ParameterConfiguration"},
+        {name: "智能维保", icon: "el-icon-set-up",children:[
+            {name:"设备台账", url: "/IntelligentMaintenance"},
+            {name:"设备维修任务", url: "/1"},
+            {name:"设备维修记录", url: "/2"},
+            {name:"设备保养任务", url: "/3"},
+            {name:"设备保养记录", url: "/4"},
+          ]},
         {name: "数据管理", icon: "el-icon-data-analysis", url: "DataManagement"},
         {name: "服务诊断", icon: "el-icon-service", url: "/ServiceDiagnosis"},
         {name: "智能模型", icon: "el-icon-suitcase-1", url: "/IntelligentModel"},
@@ -103,6 +108,7 @@ export default {
       systemMenulist:[
         {name:"组织架构",icon:"el-icon-office-building",url:"/Organization"},
         {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
+        {name:"班组管理",icon:"el-icon-receiving",url:"/TeamGroup"},
         {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],

@@ -357,7 +357,7 @@
       }
     },
     created(){
-      this.getTagMaintain()
+      this.getEnergyAnalysisCharts()
     },
     mounted(){
 
@@ -369,15 +369,18 @@
 
     },
     methods: {
-      getTagMaintain(){
-        let that = this
+      getEnergyAnalysisCharts(){
+        var that = this
         var params = {
-          tableName:'ParentTagMaintain',
-          limit:1000,
-          offset:0
+          CompareTime:moment(this.formParameters.energyDate).format("YYYY-MM-DD")
         }
-        this.axios.get("/api/CUID",{params:params}).then(res => {
-          console.log(JSON.parse(res.data))
+        this.axios.get("/api/energyanalysis",{
+          params: params
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          console.log(data)
+        },res =>{
+          console.log("请求错误")
         })
       }
     }
