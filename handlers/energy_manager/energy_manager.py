@@ -191,3 +191,70 @@ def energyselectbytime():
             logger.error(e)
             insertSyslog("error", "根据时间段查询能耗值报错Error：" + str(e), current_user.Name)
             return json.dumps("根据时间段查询能耗值报错", cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@energy.route('/makecoolanalysis', methods=['GET', 'POST'])
+def makecoolanalysis():
+    '''
+    制冷分析
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            CompareTime = data.get("CompareTime")
+            if CompareTime:
+                begin = CompareTime + " 00:00:00"
+                end = CompareTime + " 23:59:59"
+                beginnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
+                endnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 23:59:59"
+                tag_str = "SUM(TotalHotLoad) AS TotalHotLoad,SUM(ZLLLoad) AS ZLLLoad"
+                sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '"\
+                      + begin + "' AND '" + end + "' OR CollectionDate BETWEEN '" + beginnow + "' AND '" + endnow + "' group by CollectionHour order by CollectionHour"
+                re = db_session.execute(sql).fetchall()
+                dict_i = {}
+                curr_TotalHotLoad_count = 0
+                curr_ZLLLoad_count = 0
+                comp_TotalHotLoad_count = 0
+                comp_ZLLLoad_count = 0
+                for i in re:
+                    #柱状图数据获取
+                    if datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M:%S") <= i["CollectionDate"] <= datetime.datetime.strptime(end, "%Y-%m-%d %H:%M:%S"):
+                        dict_i[i["CollectionHour"]] = round(
+                            float(0 if i["TotalHotLoad"] == None else i["TotalHotLoad"]), 2)
+                        dict_i[i["CollectionHour"] + "cool"] = round(float(0 if i["ZLLLoad"] == None else i["ZLLLoad"]),
+                                                                     2)
+                        comp_TotalHotLoad_count = comp_TotalHotLoad_count + float(0 if i["TotalHotLoad"] == None else i["TotalHotLoad"])
+                        comp_ZLLLoad_count = comp_ZLLLoad_count + float(0 if i["ZLLLoad"] == None else i["ZLLLoad"])
+                    if datetime.datetime.strptime(beginnow, "%Y-%m-%d %H:%M:%S") <= i["CollectionDate"] <= datetime.datetime.strptime(endnow, "%Y-%m-%d %H:%M:%S"):
+                        curr_TotalHotLoad_count = curr_TotalHotLoad_count + float(0 if i["TotalHotLoad"] == None else i["TotalHotLoad"])
+                        curr_ZLLLoad_count = curr_ZLLLoad_count + float(0 if i["ZLLLoad"] == None else i["ZLLLoad"])
+                dir_list = []
+                for h in myHours:
+                    dict_h = {}
+                    comphour = CompareTime + " " + h
+                    dict_h["时间"] = comphour
+                    if comphour in dict_i.keys():
+                        dict_h["制冷量"] = dict_i[comphour+"cool"]
+                        dict_h["热负载"] = dict_i[comphour]
+                    else:
+                        if datetime.datetime.strptime(comphour, '%Y-%m-%d %H') > datetime.datetime.now():
+                            dict_h["制冷量"] = ""
+                            dict_h["热负载"] = ""
+                        else:
+                            dict_h["制冷量"] = 0
+                            dict_h["热负载"] = 0
+                    dir_list.append(dict_h)
+                dir = {}
+                dir["lineChartRows"] = dir_list
+                row1_list = []
+                row1_list.append({"统计": "制冷量", "今日": round(curr_ZLLLoad_count, 2), "对比日": round(comp_ZLLLoad_count, 2)})
+                row1_list.append({"统计": "热负载", "今日": round(curr_TotalHotLoad_count, 2), "对比日": round(comp_TotalHotLoad_count, 2)})
+                dir["histogramChartRows"] = row1_list
+                return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+            else:
+                return json.dumps("请选择对比日", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            logger.error(e)
+            insertSyslog("error", "制冷分析报错Error：" + str(e), current_user.Name)
+            return json.dumps("制冷分析报错", cls=AlchemyEncoder, ensure_ascii=False)
