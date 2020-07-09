@@ -4,6 +4,7 @@ import time
 
 import xlrd
 from flask import Blueprint, request
+from flask_login import current_user
 
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -20,13 +21,17 @@ def get_time_stamp(s):
 
 @repair.route('/repair', methods=['GET', 'POST'])
 def repairs():
-    json_data = request.values
-    data = Repair(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
-                  Worker=json_data.get('Worker'), Name=json_data.get('Name'), Model=json_data.get('Model'),
-                  Area=json_data.get('Area'), FaultExpound=json_data.get('FaultExpound'))
-    db_session.add(data)
-    db_session.commit()
-    return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+    if request.method == 'GET':
+        data = db_session.query(Repair).all()
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
+    if request.method == 'POST':
+        json_data = request.get_data()
+        data = Repair(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
+                      Worker=current_user.Name, Name=json_data.get('Name'), Model=json_data.get('Model'),
+                      Area=json_data.get('Area'), FaultExpound=json_data.get('FaultExpound'))
+        db_session.add(data)
+        db_session.commit()
+        return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
 @repair.route('/repair_task', methods=['GET', 'POST'])
