@@ -193,6 +193,8 @@ class TagMaintain(Base):
     TagName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 所属设备
     Equipment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    # Tag编码
+    ParentTagCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # Tag区域
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
     # 描述

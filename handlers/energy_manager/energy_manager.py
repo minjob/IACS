@@ -258,3 +258,29 @@ def makecoolanalysis():
             logger.error(e)
             insertSyslog("error", "制冷分析报错Error：" + str(e), current_user.Name)
             return json.dumps("制冷分析报错", cls=AlchemyEncoder, ensure_ascii=False)
+
+@energy.route('/makecoolselectbytime', methods=['GET', 'POST'])
+def makecoolselectbytime():
+    '''
+    根据时间段查询制冷分析值
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            TagCode = data.get("TagCode")
+            begin = data.get("begin")
+            end = data.get("end")
+            tag_str = "SUM(TotalHotLoad) AS TotalHotLoad,SUM(ZLLLoad) AS ZLLLoad"
+            sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
+                  + begin + "' AND '" + end + "' group by CollectionHour order by CollectionHour"
+            re = db_session.execute(sql).fetchall()
+            count = 0
+            for i in re:
+                count = round(float(0 if i["A_ACR_10"] == None else i["A_ACR_10"]) + float(
+                    0 if i["A_ACR_13"] == None else i["A_ACR_13"]), 2)
+            return json.dumps(count, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            logger.error(e)
+            insertSyslog("error", "根据时间段查询制冷分析值报错Error：" + str(e), current_user.Name)
+            return json.dumps("根据时间段查询制冷分析值报错", cls=AlchemyEncoder, ensure_ascii=False)
