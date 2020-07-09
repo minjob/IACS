@@ -209,8 +209,8 @@ def makecoolanalysis():
                 beginnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
                 endnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 23:59:59"
                 tag_str = "SUM(TotalHotLoad) AS TotalHotLoad,SUM(ZLLLoad) AS ZLLLoad"
-                sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '"\
-                      + begin + "' AND '" + end + "' OR CollectionDate BETWEEN '" + beginnow + "' AND '" + endnow + "' group by CollectionHour order by CollectionHour"
+                sql = "SELECT  " + tag_str + ",SampleTime AS CollectionDate,CollectionHour AS CollectionHour FROM datahistory WHERE SampleTime BETWEEN '"\
+                      + begin + "' AND '" + end + "' OR SampleTime BETWEEN '" + beginnow + "' AND '" + endnow + "' group by CollectionHour order by CollectionHour"
                 re = db_session.execute(sql).fetchall()
                 dict_i = {}
                 curr_TotalHotLoad_count = 0
@@ -271,14 +271,12 @@ def makecoolselectbytime():
             TagCode = data.get("TagCode")
             begin = data.get("begin")
             end = data.get("end")
-            tag_str = "SUM(TotalHotLoad) AS TotalHotLoad,SUM(ZLLLoad) AS ZLLLoad"
-            sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
-                  + begin + "' AND '" + end + "' group by CollectionHour order by CollectionHour"
+            tag_str = "SUM("+TagCode+") AS "+TagCode
+            sql = "SELECT  " + tag_str + " FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "'"
             re = db_session.execute(sql).fetchall()
             count = 0
             for i in re:
-                count = round(float(0 if i["A_ACR_10"] == None else i["A_ACR_10"]) + float(
-                    0 if i["A_ACR_13"] == None else i["A_ACR_13"]), 2)
+                count = round(float(0 if i[TagCode] == None else i[TagCode]), 2)
             return json.dumps(count, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
