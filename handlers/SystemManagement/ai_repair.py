@@ -25,7 +25,7 @@ def repairs():
         data = db_session.query(Repair).all()
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
     if request.method == 'POST':
-        json_data = request.json
+        json_data = request.json.get('params')
         data = Repair(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
                       Worker=current_user.Name, Name=json_data.get('Name'), Model=json_data.get('Model'),
                       Area=json_data.get('Area'), FaultExpound=json_data.get('FaultExpound'))
