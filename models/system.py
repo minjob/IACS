@@ -812,6 +812,30 @@ class RepairTask(Base):
     # 完成时间
     EndTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
+class CollectionPoint(Base):
+    __tablename__ = "CollectionPoint"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 采集点名称:
+    CollectionPointName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点编码:
+    CollectionPointCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集位置:
+    CollectionPosition = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 厂区:
+    FactoryName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 车间:
+    Workshop = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 位置描述:
+    PositionDescription = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
