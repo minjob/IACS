@@ -16,8 +16,9 @@ import $ from 'jquery'
 
 //iview 的按需引入
 import 'view-design/dist/styles/iview.css'
-import { DatePicker} from 'view-design';
+import { DatePicker,TimePicker} from 'view-design';
 Vue.component('DatePicker', DatePicker);
+Vue.component('TimePicker', TimePicker);
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
