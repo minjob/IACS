@@ -19,6 +19,10 @@ def get_time_stamp(s):
     return 0 < int(time.time()) - time_stamp < 86400
 
 
+def get_no(no):
+    return str(str(str(no).replace('-', '')).replace(':', '')).replace(' ', '')
+
+
 @repair.route('/repair', methods=['GET', 'POST'])
 def repairs():
     if request.method == 'GET':
@@ -26,8 +30,8 @@ def repairs():
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
     if request.method == 'POST':
         json_data = request.json.get('params')
-        data = Repair(EquipmentCode=json_data.get('EquipmentCode'), Name=json_data.get('Name'),
-                      Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
+        data = Repair(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
+                      Name=json_data.get('Name'), Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                       FaultExpound=json_data.get('FaultExpound'))
         db_session.add(data)
         db_session.commit()
