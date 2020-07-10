@@ -41,7 +41,7 @@ def repairs():
         return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
-@repair.route('/repair_task/<p>', methods=['GET', 'POST'])
+@repair.route('/repair_task/<p>', methods=['PATCH'])
 def repair_tasks(p):
     if p == 'jiedan':
         no = request.args.get('No')
