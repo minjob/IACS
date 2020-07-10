@@ -63,7 +63,7 @@ def repair_tasks(p):
                           EndTime=request.args.get('EndTime'))
         equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
         equipment.Status = '运行中'
-        db_session.add(equipment)
+        db_session.add_all([task, equipment])
         db_session.delete(data)
         db_session.commit()
         db_session.close()
