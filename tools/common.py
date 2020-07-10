@@ -186,6 +186,7 @@ def select(data):#table, page, rows, fieid, param
         inipage = pages * rowsnumber + 0  # 起始页
         endpage = pages * rowsnumber + rowsnumber  # 截止页
         newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
+        db_session.commit()
         if (param == "" or param == None):
             total = db_session.query(newTable).count()
             oclass = db_session.query(newTable).filter().order_by(desc("ID")).all()[inipage:endpage]
