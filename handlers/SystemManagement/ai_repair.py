@@ -41,14 +41,14 @@ def repairs():
 @repair.route('/repair_task/<p>', methods=['GET', 'POST'])
 def repair_tasks(p):
     if p == 'jiedan':
-        no = request.agrs.get('No')
+        no = request.args.get('No')
         data = db_session.query(Repair).filter_by(No=no).first()
         data.Status = '维修中'
         data.ReceiveTime = request.args.get('Time')
         db_session.add(data)
         db_session.commit()
     if p == 'over':
-        no = request.agrs.get('No')
+        no = request.args.get('No')
         data = db_session.query(Repair).filter_by(No=no).first()
         task = RepairTask(EquipmentCode=data.EquipmentCode, No=data.No, Status='维修完成', Worker=data.Worker,
                           ReceiveWorker=data.ReceiveWorker, Content=request.args.get('Content'), Name='',
