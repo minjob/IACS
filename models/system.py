@@ -773,8 +773,6 @@ class Repair(Base):
     No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
     # 设备编码
     EquipmentCode = Column(Unicode(128), nullable=True)
-    # 设备名称
-    Name = Column(Unicode(32), nullable=True)
     # 申请人
     Worker = Column(Unicode(32), nullable=True)
     # 故障阐述
