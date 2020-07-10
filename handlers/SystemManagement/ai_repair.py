@@ -74,14 +74,14 @@ def repair_tasks(p):
 @repair.route('/record/<p>', methods=['GET', 'POST'])
 def record(p):
     # 每页多少条
-    limit = request.values.get('limit')
+    limit = int(request.values.get('limit'))
     # 当前页
-    offset = request.values.get('offset')
-    data = db_session.query(RepairTask).filter_by(EquipmentCode=p).all()
-    # data = db_session.query(RepairTask).order_by(RepairTask.id.desc()).paginate(
-    #     offset, limit, error_out=True
-    # )
-    return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data, 'total': len(data)}}, cls=AlchemyEncoder, ensure_ascii=True)
+    offset = int(request.values.get('offset'))
+    total = db_session.query(RepairTask).filter_by(EquipmentCode=p).count()
+    data = db_session.query(RepairTask).filter(RepairTask.EquipmentCode == p).order_by(RepairTask.ApplyTime.desc()).limit(limit).offset((offset-1)*limit)
+    return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}}, cls=AlchemyEncoder, ensure_ascii=True)
+
+
 # @repair.route('/task', methods=['GET', 'POST'])
 # def task():
 #     query_data = db_session.query(Plan).filter_by(Status='待处理').all()
