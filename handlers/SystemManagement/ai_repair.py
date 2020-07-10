@@ -48,6 +48,7 @@ def repair_tasks(p):
         data.ReceiveTime = request.args.get('Time')
         db_session.add(data)
         db_session.commit()
+        db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     if p == 'over':
         no = request.args.get('No')
@@ -58,6 +59,7 @@ def repair_tasks(p):
                           EndTime=request.args.get('EndTime'))
         db_session.add(task)
         db_session.commit()
+        db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
