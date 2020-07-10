@@ -814,6 +814,7 @@ class RepairTask(Base):
     # 完成时间
     EndTime = Column(Unicode(32), nullable=True)
 
+
 class CollectionPoint(Base):
     __tablename__ = "CollectionPoint"
 

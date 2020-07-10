@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.system import Repair, Plan, Equipment
+from models.system import Repair, Plan, RepairTask
 
 repair = Blueprint('repair', __name__)
 
@@ -41,24 +41,32 @@ def repairs():
 @repair.route('/repair_task/<p>', methods=['GET', 'POST'])
 def repair_tasks(p):
     if p == 'jiedan':
-        json_data = request.values
-        data = db_session.query(Repair).filter_by(No='工单号').first()
+        no = request.agrs.get('No')
+        data = db_session.query(Repair).filter_by(No=no).first()
         data.Status = '维修中'
+        data.ReceiveTime = request.args.get('Time')
         db_session.add(data)
         db_session.commit()
     if p == 'over':
-        json_data = request.values
-        data = db_session.query(Repair).filter_by(No='工单号').first()
-        data.Status = '已完成'
-        db_session.add(data)
-        db_session.commit()
-        plan = Plan(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
-                    RemindStatus=json_data.get('RemindStatus'), WorkTime=json_data.get('WorkTime'),
-                    Type=json_data.get('Type'), WorkNo=json_data.get('WorkNo'))
-        db_session.add(plan)
+        no = request.agrs.get('No')
+        data = db_session.query(Repair).filter_by(No=no).first()
+        task = RepairTask(EquipmentCode=data.EquipmentCode, No=data.No, Status='维修完成', Worker=data.Worker,
+                          ReceiveWorker=data.ReceiveWorker, Content=request.args.get('Content'), Name='',
+                          ApplyTime=data.ApplyTime, ReceiveTime=data.ReceiveTime,
+                          EndTime=request.args.get('EndTime'))
+        db_session.add(task)
         db_session.commit()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
+
+@repair.route('/record/<p>', methods=['GET', 'POST'])
+def record(p):
+    # 每页多少条
+    limit = request.args.get('limit')
+    # 当前页
+    offset = request.args.get('offset')
+    data = db_session.query(RepairTask).filter_by(EquipmentCode=p).all()
+    return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data, 'total': len(data)}}, cls=AlchemyEncoder, ensure_ascii=True)
 # @repair.route('/task', methods=['GET', 'POST'])
 # def task():
 #     query_data = db_session.query(Plan).filter_by(Status='待处理').all()
