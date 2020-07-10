@@ -44,25 +44,25 @@ def repairs():
 @repair.route('/repair_task/<p>', methods=['PATCH'])
 def repair_tasks(p):
     if p == 'jiedan':
-        no = request.args.get('No')
-        data = db_session.query(Repair).filter_by(No=no).first()
+        json_data = request.json.get('params')
+        data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         data.Status = '维修中'
         data.Worker = current_user.Name
-        data.ReceiveTime = request.args.get('Time')
-        equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
+        data.ReceiveTime = json_data.get('Time')
+        equipment = db_session.query(Equipment).filter_by(EquipmentCode=json_data.get('EquipmentCode')).first()
         equipment.Status = '维修中'
         db_session.add_all([data, equipment])
         db_session.commit()
         db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     if p == 'over':
-        no = request.args.get('No')
-        data = db_session.query(Repair).filter_by(No=no).first()
+        json_data = request.json.get('params')
+        data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         task = RepairTask(EquipmentCode=data.EquipmentCode, No=data.No, Status='维修完成', Worker=data.Worker,
                           ReceiveWorker=data.ReceiveWorker, Content=request.args.get('Content'),
                           ApplyTime=data.ApplyTime, ReceiveTime=data.ReceiveTime,
-                          EndTime=request.args.get('EndTime'))
-        equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
+                          EndTime=json_data.get('EndTime'))
+        equipment = db_session.query(Equipment).filter_by(EquipmentCode=json_data.get('EquipmentCode')).first()
         equipment.Status = '运行中'
         db_session.add_all([task, equipment])
         db_session.delete(data)
