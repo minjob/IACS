@@ -47,6 +47,7 @@ def repair_tasks(p):
         no = request.args.get('No')
         data = db_session.query(Repair).filter_by(No=no).first()
         data.Status = '维修中'
+        data.Worker = current_user
         data.ReceiveTime = request.args.get('Time')
         equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
         equipment.Status = '维修中'
