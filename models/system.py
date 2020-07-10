@@ -706,10 +706,12 @@ class Equipment(Base):
     # 注释:
     Comment = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 设备状态（运行中，维修中）
+    Status = Column(Unicode(32), default="运行中", nullable=True)
     # 设备名称
-    Name = Column(Unicode(32), nullable=True)
+    # Name = Column(Unicode(32), nullable=True)
     # 设备型号
-    Model = Column(Unicode(128), nullable=True)
+    # Model = Column(Unicode(128), nullable=True)
     # 生产商
     Manufacturer = Column(Unicode(32), nullable=True)
     # SAP号
@@ -773,18 +775,18 @@ class Repair(Base):
     EquipmentCode = Column(Unicode(128), nullable=True)
     # 设备名称
     Name = Column(Unicode(32), nullable=True)
-    # 设备型号
-    Model = Column(Unicode(32), nullable=True)
-    # 区域
-    Area = Column(Unicode(32), nullable=True)
-    # 故障阐述
-    FaultExpound = Column(Unicode(128), nullable=True)
     # 申请人
     Worker = Column(Unicode(32), nullable=True)
+    # 故障阐述
+    FaultExpound = Column(Unicode(128), nullable=True)
     # 工单状态（待接单，已接单）
     Status = Column(Unicode(32), default="待接单")
     # 申请时间
     ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 接单人
+    ReceiveWorker = Column(Unicode(32), nullable=True)
+    # 接单时间
+    ReceiveTime = Column(Unicode(32), nullable=True, default='尚未接单')
 
 
 class RepairTask(Base):
@@ -792,25 +794,25 @@ class RepairTask(Base):
     """维修任务表"""
     id = Column(Integer, autoincrement=True, primary_key=True)
     # 工单号
-    No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    No = Column(Unicode(128), nullable=True)
     # 设备编码
     EquipmentCode = Column(Unicode(128), nullable=True)
     # 设备名称
     Name = Column(Unicode(32), nullable=True)
-    # 设备型号
-    Model = Column(Unicode(32), nullable=True)
-    # 区域
-    Area = Column(Unicode(32), nullable=True)
-    # 维修人
+    # 申请人
     Worker = Column(Unicode(32), nullable=True)
-    # 工单状态（维修中，维修完成）
-    Status = Column(Unicode(32), default="待接单")
+    # 维修人
+    ReceiveWorker = Column(Unicode(32), nullable=True)
+    # 工单状态（维修完成）
+    Status = Column(Unicode(32), default="维修完成")
     # 维修内容
     Content = Column(Unicode(128), nullable=True)
     # 申请时间
     ApplyTime = Column(Unicode(32), nullable=True)
+    # 接单时间
+    ReceiveTime = Column(Unicode(32), nullable=True)
     # 完成时间
-    EndTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    EndTime = Column(Unicode(32), nullable=True)
 
 class CollectionPoint(Base):
     __tablename__ = "CollectionPoint"

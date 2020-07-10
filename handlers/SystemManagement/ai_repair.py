@@ -38,15 +38,26 @@ def repairs():
         return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
-@repair.route('/repair_task', methods=['GET', 'POST'])
-def repair_task():
-    json_data = request.values
-    plan = Plan(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
-                RemindStatus=json_data.get('RemindStatus'), WorkTime=json_data.get('WorkTime'),
-                Type=json_data.get('Type'), WorkNo=json_data.get('WorkNo'))
-    db_session.add(plan)
-    db_session.commit()
-    return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+@repair.route('/repair_task/<p>', methods=['GET', 'POST'])
+def repair_tasks(p):
+    if p == 'jiedan':
+        json_data = request.values
+        data = db_session.query(Repair).filter_by(No='工单号').first()
+        data.Status = '维修中'
+        db_session.add(data)
+        db_session.commit()
+    if p == 'over':
+        json_data = request.values
+        data = db_session.query(Repair).filter_by(No='工单号').first()
+        data.Status = '已完成'
+        db_session.add(data)
+        db_session.commit()
+        plan = Plan(EquipmentCode=json_data.get('EquipmentCode'), Status=json_data.get('Status'),
+                    RemindStatus=json_data.get('RemindStatus'), WorkTime=json_data.get('WorkTime'),
+                    Type=json_data.get('Type'), WorkNo=json_data.get('WorkNo'))
+        db_session.add(plan)
+        db_session.commit()
+        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 # @repair.route('/task', methods=['GET', 'POST'])
 # def task():
