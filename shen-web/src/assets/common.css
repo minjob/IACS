@@ -317,3 +317,7 @@
 .Datepick .ivu-date-picker-cells{
   margin:10px auto;
 }
+.Timepick .ivu-picker-panel-body{
+  background-color: #3D4048;
+  width: 198px;
+}

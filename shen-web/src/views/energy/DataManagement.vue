@@ -4,12 +4,11 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="Datepick platformContainer blackComponents" style="height:500px;">
-                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="default" @on-ok="getSelectDate" :open=true :confirm=true></DatePicker>
-                
+                <div class="Datepick platformContainer blackComponents" style="height:310px;">
+                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="default" @on-ok="getSelectDate" :open='true' :confirm='true'></DatePicker>
+                    
                 </div>
-
-                <div class="platformContainer blackComponents" style="height:750px;">
+                <div class="platformContainer blackComponents asidetree" style="height:750px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
@@ -23,8 +22,11 @@
                 </div>
               </el-col>
               <el-col :span="18">
-                <div class="platformContainer blackComponents">
+                <div class="platformContainer blackComponents" style="position:relative;">
                    <div id="main" style="width:100%; height:800px; backgroundColor:#3D4048;">数据图表</div>
+                   <div class="Timepick" style="height:33px;width:175px">
+                      <TimePicker  placeholder="选择时间" style="width: 168px" v-model='valuetime' :confirm='true' @on-ok="getSelectTime" ></TimePicker>
+                  </div>
                    <div class="staticbox" style="width:100%; height:245px;">
                      <div class="platformContainer blackComponents" >
                        <div class="containBottom ">
@@ -89,14 +91,21 @@
         },
         valuedate:'',
         dates:[],
-        rawdata:[],
         data1:[],
         data2:[],
         maxvalue:10,
         averagevalue:0,
         comparevalue:0,
         dataIndex:0,
-        comparetime:'2020-04-18',
+        comparetime:'2020-06-18',
+        valuetime:'23:59:59',
+        date1:'',
+        endtime:'2020-06-20 08:30:00',
+        starttime:'2020-06-20 00:00:00',
+        childrentree:[],
+        TagCodes:'',
+        treenumber:[],
+        dateset:[]
       }
     },
     mounted(){
@@ -106,6 +115,7 @@
 
     },
     computed:{ //计算属性
+
 
     },
     methods: {
@@ -308,32 +318,58 @@
           limit:1000,
           offset:0
         }
-        var params1={
-          TagCodes:'MB2TCP3.A_ACR_10.Ep_total'+','+'MB2TCP3.A_ACR_13.Ep_total',
-          begin:'2020-06-20 00:00:00',
-          end:'2020-06-20 08:00:00',
-          TagFlag:'first'
-        }
-        var params2={
+         this.axios.get('/api/CUID',{params}).then((res) => {
+           var arr=JSON.parse(res.data).rows
+           for(var i=0;i<arr.length;i++){
+            this.getTagcode(arr[i].ParentTagCode)
+           }
+           this.treedata=arr.map((item, index) => {
+              return { id:item.ParentTagCode,label: item.ParentTagName,children:[]}
+            })
+         })
+      },
+      getTagcode(ParentTag){
+         var params2={
           tableName:'TagMaintain',
-          ParentTagCode:'LQ4',
+          field:'ParentTagCode',
+          fieldvalue:ParentTag,
           limit:100,
           offset:0
         }
-         this.axios.get('/api/CUID',{params}).then((res) => {
-           var arr=JSON.parse(res.data).rows
-           console.log(arr)
-           this.treedata=arr.map((item, index) => {
-              return { id: index+1,label: item.ParentTagName,children:[{id:index+12,label:'Tag1'},{id:index+23,label:'Tag2'}]}
+        this.axios.get('/api/CUID',{params:params2}).then((value) => {
+              var arr=JSON.parse(value.data).rows
+              this.childrentree=arr.map((item, index) => {
+              return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
             })
-            this.axios.get('/api/CUID',{params:params2}).then((value) => {
-              console.log('---------------')
-              var arr=JSON.parse(value.data)
-                console.log(arr)
+            for(var i=0;i<this.treedata.length;i++){
+              for(var j=0;j<this.childrentree.length;j++){
+                if(this.treedata[i].id===this.childrentree[j].ParentTagCode){
+                  this.treedata[i].children=this.childrentree
+                }
+              }
+            }
             })
+      },
+      getChecked(){
+        var arr=this.$refs.tree.getCheckedNodes()
+        var j=0
+        this.dateset=[]
+        for(var i=0;i<arr.length;i++){
+          if(arr[i].hasOwnProperty('ParentTagCode')){
+            this.TagCodes=this.TagCodes+arr[i].id+','
+            j++
+          }
+        }
+        this.treenumber=j
+        this.TagCodes=this.TagCodes.slice(0,-1)
+          var params1={
+            TagCodes:this.TagCodes,
+            begin:this.starttime,
+            end:this.endtime,
+            TagFlag:'first'
+          }
             this.axios.get('/api/energytrendtu',{params:params1}).then((res) => {
               var rows=res.data
-              this.rawdata=res.data
               this.dates = rows.map(function (item) {
                 return item[0];
               });
@@ -345,29 +381,38 @@
               });
               this.drawLine(this.data1,this.data2)
                 })
-         })
-      },
-      getChecked(){
-        console.log(this.$refs.tree.getCheckedNodes());
+        
       },
       getSelectDate(){
-        console.log(this.valuedate)
-        for(let i of this.valuedate){
-          if(i===false){
-            console.log('请选择你的日期')
+        if(this.valuedate[0]===false){
+          console.log('请选择你的日期')
             return;
+          }else if(this.treenumber>=2){
+            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
+            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
+        }else{
+          var arr=[]
+          console.log(this.valuedate)
+          for(let j in this.valuedate){
+            this.date1=moment(this.valuedate[j]).format('YYYY-MM-DD')
+            this.starttime=moment(this.valuedate[j]).format('YYYY-MM-DD 00:00:00')
+            this.endtime=this.date1+' '+this.valuetime
+            arr.push(this.date1);
           }
-          console.log(moment(i).format('YYYY-MM-DD 23:59:00'))
+          this.dateset=arr.reverse()
         }
+        console.log(this.dateset)
+        console.log(this.starttime)
+        console.log(this.endtime)
+      },
+      getSelectTime(){
+        this.endtime=this.date1+' '+this.valuetime
       }
     
     }
   }
 </script>
 <style scoped>
-.ivu-date-picker-focused{
-  width: 469px!important;
-}
 .containBottom{
   float: left;
   width:33%;
@@ -387,5 +432,13 @@
 }
 .staticbox .cardContainer{
   padding-left:0px;
+}
+.Timepick{
+    width: 175px;
+    position: absolute;
+    top: 10px;
+}
+.asidetree{
+  overflow: auto;
 }
 </style>
