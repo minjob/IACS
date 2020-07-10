@@ -47,7 +47,7 @@ def repair_tasks(p):
         json_data = request.json.get('params')
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         data.Status = '维修中'
-        data.Worker = current_user.Name
+        data.ReceiveWorker = current_user.Name
         data.ReceiveTime = json_data.get('Time')
         equipment = db_session.query(Equipment).filter_by(EquipmentCode=json_data.get('EquipmentCode')).first()
         equipment.Status = '维修中'
