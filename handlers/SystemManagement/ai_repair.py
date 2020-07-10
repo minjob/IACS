@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.system import Repair, Plan, RepairTask
+from models.system import Repair, Equipment, RepairTask
 
 repair = Blueprint('repair', __name__)
 
@@ -33,7 +33,9 @@ def repairs():
         data = Repair(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                       Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                       FaultExpound=json_data.get('FaultExpound'))
-        db_session.add(data)
+        equipment = db_session.query(Equipment).filter_by(EquipmentCode=json_data.get('EquipmentCode')).first()
+        equipment.Status = '待接单'
+        db_session.add_all([data, equipment])
         db_session.commit()
         db_session.close()
         return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
@@ -46,7 +48,9 @@ def repair_tasks(p):
         data = db_session.query(Repair).filter_by(No=no).first()
         data.Status = '维修中'
         data.ReceiveTime = request.args.get('Time')
-        db_session.add(data)
+        equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
+        equipment.Status = '维修中'
+        db_session.add_all([data, equipment])
         db_session.commit()
         db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
@@ -57,7 +61,9 @@ def repair_tasks(p):
                           ReceiveWorker=data.ReceiveWorker, Content=request.args.get('Content'), Name='',
                           ApplyTime=data.ApplyTime, ReceiveTime=data.ReceiveTime,
                           EndTime=request.args.get('EndTime'))
-        db_session.add(task)
+        equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
+        equipment.Status = '运行中'
+        db_session.add(equipment)
         db_session.delete(data)
         db_session.commit()
         db_session.close()
