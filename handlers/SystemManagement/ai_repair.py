@@ -58,7 +58,7 @@ def repair_tasks(p):
         no = request.args.get('No')
         data = db_session.query(Repair).filter_by(No=no).first()
         task = RepairTask(EquipmentCode=data.EquipmentCode, No=data.No, Status='维修完成', Worker=data.Worker,
-                          ReceiveWorker=data.ReceiveWorker, Content=request.args.get('Content'), Name='',
+                          ReceiveWorker=data.ReceiveWorker, Content=request.args.get('Content'),
                           ApplyTime=data.ApplyTime, ReceiveTime=data.ReceiveTime,
                           EndTime=request.args.get('EndTime'))
         equipment = db_session.query(Equipment).filter_by(EquipmentCode=request.args.get('EquipmentCode')).first()
@@ -73,10 +73,13 @@ def repair_tasks(p):
 @repair.route('/record/<p>', methods=['GET', 'POST'])
 def record(p):
     # 每页多少条
-    limit = request.args.get('limit')
+    limit = request.values.get('limit')
     # 当前页
-    offset = request.args.get('offset')
+    offset = request.values.get('offset')
     data = db_session.query(RepairTask).filter_by(EquipmentCode=p).all()
+    # data = db_session.query(RepairTask).order_by(RepairTask.id.desc()).paginate(
+    #     offset, limit, error_out=True
+    # )
     return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data, 'total': len(data)}}, cls=AlchemyEncoder, ensure_ascii=True)
 # @repair.route('/task', methods=['GET', 'POST'])
 # def task():

@@ -713,17 +713,17 @@ class Equipment(Base):
     # 设备型号
     # Model = Column(Unicode(128), nullable=True)
     # 生产商
-    Manufacturer = Column(Unicode(32), nullable=True)
+    # Manufacturer = Column(Unicode(32), nullable=True)
     # SAP号
-    Sap = Column(Unicode(64), nullable=True)
+    # Sap = Column(Unicode(64), nullable=True)
     # 固定资产编号
-    FixedAssetsNo = Column(Unicode(128), nullable=True)
+    # FixedAssetsNo = Column(Unicode(128), nullable=True)
     # 固定资产名称s
-    FixedAssetsName = Column(Unicode(32), nullable=True)
+    # FixedAssetsName = Column(Unicode(32), nullable=True)
     # 区域
-    Area = Column(Unicode(32), nullable=True)
+    # Area = Column(Unicode(32), nullable=True)
     # 进厂日期
-    IntoTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # IntoTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 class Plan(Base):
@@ -796,7 +796,7 @@ class RepairTask(Base):
     # 设备编码
     EquipmentCode = Column(Unicode(128), nullable=True)
     # 设备名称
-    Name = Column(Unicode(32), nullable=True)
+    # Name = Column(Unicode(32), nullable=True)
     # 申请人
     Worker = Column(Unicode(32), nullable=True)
     # 维修人
