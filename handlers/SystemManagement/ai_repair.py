@@ -35,6 +35,7 @@ def repairs():
                       FaultExpound=json_data.get('FaultExpound'))
         db_session.add(data)
         db_session.commit()
+        db_session.close()
         return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
