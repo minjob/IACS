@@ -47,6 +47,7 @@ def repair_tasks(p):
         data.ReceiveTime = request.args.get('Time')
         db_session.add(data)
         db_session.commit()
+        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     if p == 'over':
         no = request.args.get('No')
         data = db_session.query(Repair).filter_by(No=no).first()
