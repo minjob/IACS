@@ -31,7 +31,7 @@ def repairs():
     if request.method == 'POST':
         json_data = request.json.get('params')
         data = Repair(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
-                      Name=json_data.get('Name'), Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
+                      Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                       FaultExpound=json_data.get('FaultExpound'))
         db_session.add(data)
         db_session.commit()
