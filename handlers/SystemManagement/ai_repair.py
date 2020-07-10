@@ -58,6 +58,7 @@ def repair_tasks(p):
                           ApplyTime=data.ApplyTime, ReceiveTime=data.ReceiveTime,
                           EndTime=request.args.get('EndTime'))
         db_session.add(task)
+        db_session.delete(data)
         db_session.commit()
         db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
