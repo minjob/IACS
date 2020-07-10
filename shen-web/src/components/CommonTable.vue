@@ -102,6 +102,9 @@
         if(this.tableData.tableSelectionRadio){
           this.$refs.multipleTable.clearSelection();
           this.$refs.multipleTable.toggleRowSelection(row)
+          if(this.tableData.rowClick){
+            this.$emit(this.tableData.rowClick)
+          }
         }else{
           this.$refs.multipleTable.toggleRowSelection(row)
         }

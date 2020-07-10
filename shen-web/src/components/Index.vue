@@ -85,7 +85,7 @@ export default {
       isactive:"0", //主菜单选中索引值
       defaultActiveUrl:"",
       mainMenuList:[ //主菜单导航列表
-        {text:"能源管理"},
+        {text:"智能管理"},
         {text:"系统管理"}
       ],
       subMenulist:[], //子菜单导航列表
