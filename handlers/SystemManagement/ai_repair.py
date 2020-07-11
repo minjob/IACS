@@ -124,9 +124,10 @@ def task():
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}}, cls=AlchemyEncoder,
                           ensure_ascii=True)
     elif request.method == 'POST':
-        no = request.args.get('No')
-        endtime = request.args.get('EndTime')
-        content = request.args.get('Content')
+        json_data = request.json.get('params')
+        no = json_data.get('No')
+        endtime = json_data.get('EndTime')
+        content = json_data.get('Content')
         item = db_session.query(KeepTask).filter_by(No=no).first()
         data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成',
                           KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
