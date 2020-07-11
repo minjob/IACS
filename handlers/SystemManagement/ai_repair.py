@@ -105,6 +105,10 @@ def keep_plans():
 def task():
     query_data = db_session.query(KeepPlan).filter_by(Status='待保养').all()
     if request.method == 'GET':
+        # 每页多少条
+        limit = int(request.values.get('limit'))
+        # 当前页
+        offset = int(request.values.get('offset'))
         for item in query_data:
             if get_time_stamp(item.StartTime):
                 data = KeepTask(EquipmentCode=item.EquipmentCode, No=item.No, Worker=item.Worker, Status=item.Status,
@@ -114,8 +118,9 @@ def task():
                 db_session.commit()
             else:
                 pass
-        result = db_session.query(KeepTask).all()
-        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': '110'}}, cls=AlchemyEncoder,
+        data = db_session.query(KeepTask).order_by(RepairTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
+        total = db_session.query(KeepTask).count()
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}}, cls=AlchemyEncoder,
                           ensure_ascii=True)
     elif request.method == 'POST':
         no = request.args.get('No')
