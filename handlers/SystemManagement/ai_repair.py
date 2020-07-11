@@ -110,7 +110,8 @@ def task():
         # 当前页
         offset = int(request.values.get('offset'))
         for item in query_data:
-            if get_time_stamp(item.StartTime):
+            q = db_session.query(KeepTask).filter_by(No=item.No).first()
+            if not q and get_time_stamp(item.StartTime):
                 data = KeepTask(EquipmentCode=item.EquipmentCode, No=item.No, Worker=item.Worker, Status=item.Status,
                                 ApplyTime=item.ApplyTime, StartTime=item.StartTime, Content=item.Content,
                                 WeekTime=item.WeekTime)
