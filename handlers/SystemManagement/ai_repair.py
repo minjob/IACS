@@ -93,7 +93,7 @@ def keep_plans():
     json_data = request.json.get('params')
     data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                     Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
-                    StartTime=json_data.get('StartTime'), Content=json_data.get('Content'),
+                    StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
                     WeekTime=json_data.get('WeekTime'))
     db_session.add(data)
     db_session.commit()
@@ -126,10 +126,11 @@ def task():
     elif request.method == 'POST':
         no = request.args.get('No')
         endtime = request.args.get('EndTime')
+        content = request.args.get('Content')
         item = db_session.query(KeepTask).filter_by(No=no).first()
         data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成',
                           KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
-                          Content=item.Content, WeekTime=item.WeekTime, EndTime=endtime)
+                          Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=endtime)
         db_session.add(data)
         db_session.commit()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)

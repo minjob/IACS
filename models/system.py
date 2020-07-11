@@ -784,7 +784,7 @@ class KeepPlan(Base):
     # 任务开始时间（递增）
     StartTime = Column(Unicode(32), nullable=True)
     # 计划描述
-    Content = Column(Unicode(128), nullable=True)
+    Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
 
@@ -811,7 +811,7 @@ class KeepTask(Base):
     # 任务开始时间（递增）
     StartTime = Column(Unicode(32), nullable=True, default='尚未接单')
     # 计划描述
-    Content = Column(Unicode(128), nullable=True)
+    Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
     # # 接单人
@@ -842,6 +842,8 @@ class KeepRecord(Base):
     # 任务开始时间（递增）
     StartTime = Column(Unicode(32), nullable=True)
     # 计划描述
+    Describe = Column(Unicode(128), nullable=True)
+    # 保养内容
     Content = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
