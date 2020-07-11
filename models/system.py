@@ -780,7 +780,7 @@ class KeepPlan(Base):
     # 制定计划时间
     ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     # 保养班组
-    Group = Column(Unicode(32), nullable=True)
+    # Group = Column(Unicode(32), nullable=True)
     # 任务开始时间（递增）
     StartTime = Column(Unicode(32), nullable=True)
     # 计划描述
