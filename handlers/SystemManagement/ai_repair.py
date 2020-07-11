@@ -115,7 +115,7 @@ def task():
             else:
                 pass
         result = db_session.query(KeepTask).all()
-        return json.dumps({'code': '10001', 'message': '操作成功', 'data': result}, cls=AlchemyEncoder,
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': '110'}}, cls=AlchemyEncoder,
                           ensure_ascii=True)
     elif request.method == 'POST':
         no = request.args.get('No')
