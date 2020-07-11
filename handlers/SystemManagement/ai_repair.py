@@ -92,7 +92,7 @@ def keep_plans():
     # if request.method == 'POST':
     json_data = request.json.get('params')
     data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
-                    Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'), Group=json_data.get('Group'),
+                    Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                     StartTime=json_data.get('StartTime'), Content=json_data.get('Content'),
                     WeekTime=json_data.get('WeekTime'))
     db_session.add(data)
