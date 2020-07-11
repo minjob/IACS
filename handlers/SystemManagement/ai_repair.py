@@ -14,7 +14,7 @@ repair = Blueprint('repair', __name__)
 
 
 def get_time_stamp(s):
-    time_array = time.strptime(s)
+    time_array = time.strptime(s, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
     return 0 < int(time.time()) - time_stamp < 604800
 
