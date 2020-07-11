@@ -782,7 +782,7 @@ class KeepPlan(Base):
     # 保养班组
     Group = Column(Unicode(32), nullable=True)
     # 任务开始时间（递增）
-    StartTime = Column(Unicode(32), nullable=True, default='尚未接单')
+    StartTime = Column(Unicode(32), nullable=True)
     # 计划描述
     Content = Column(Unicode(128), nullable=True)
     # 工作周期
@@ -803,7 +803,7 @@ class KeepTask(Base):
     # 保养班组
     Group = Column(Unicode(32), nullable=True)
     # 工单状态
-    Status = Column(Unicode(32), default="待保养")
+    Status = Column(Unicode(32), nullable=True)
     # 制定计划时间
     ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     # 保养确认人
