@@ -101,7 +101,7 @@ def keep_plans():
     return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
-@repair.route('/keep_task', methods=['GET'])
+@repair.route('/keep_task', methods=['GET', 'POST'])
 def task():
     query_data = db_session.query(KeepPlan).filter_by(Status='待保养').all()
     if request.method == 'GET':
