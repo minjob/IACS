@@ -118,7 +118,7 @@ def task():
                 db_session.commit()
             else:
                 pass
-        data = db_session.query(KeepTask).order_by(RepairTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
+        data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
         total = db_session.query(KeepTask).count()
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}}, cls=AlchemyEncoder,
                           ensure_ascii=True)
