@@ -849,7 +849,6 @@ class KeepRecord(Base):
     EndTime = Column(Unicode(32), nullable=True)
 
 
-
 class Repair(Base):
     """维修申请表"""
     __tablename__ = 'repair'

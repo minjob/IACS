@@ -130,7 +130,7 @@ def task():
 
 
 @repair.route('/keep_record/<no>', methods=['GET'])
-def record(no):
+def keep_record(no):
     # 每页多少条
     limit = int(request.values.get('limit'))
     # 当前页
