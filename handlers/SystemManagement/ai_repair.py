@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.system import Repair, Equipment, RepairTask
+from models.system import Repair, Equipment, RepairTask, KeepPlan
 
 repair = Blueprint('repair', __name__)
 
@@ -78,9 +78,27 @@ def record(p):
     # 当前页
     offset = int(request.values.get('offset'))
     total = db_session.query(RepairTask).filter_by(EquipmentCode=p).count()
-    data = db_session.query(RepairTask).filter(RepairTask.EquipmentCode == p).order_by(RepairTask.ApplyTime.desc()).limit(limit).offset((offset-1)*limit)
-    return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}}, cls=AlchemyEncoder, ensure_ascii=True)
+    data = db_session.query(RepairTask).filter(RepairTask.EquipmentCode == p).order_by(
+        RepairTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
+    return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
+                      cls=AlchemyEncoder, ensure_ascii=True)
 
+
+@repair.route('/keep_plan', methods=['POST'])
+def keep_plans():
+    # if request.method == 'GET':
+    #     data = db_session.query(Repair).all()
+    #     return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
+    # if request.method == 'POST':
+    json_data = request.json.get('params')
+    data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
+                    Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'), Group=json_data.get('Group'),
+                    StartTime=json_data.get('StartTime'), Content=json_data.get('Content'),
+                    WeekTime=json_data.get('WeekTime'))
+    db_session.add(data)
+    db_session.commit()
+    db_session.close()
+    return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 # @repair.route('/task', methods=['GET', 'POST'])
 # def task():

@@ -745,23 +745,109 @@ class Plan(Base):
     WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
-class Record(Base):
-    __tablename__ = 'Record'
+# class Record(Base):
+#     __tablename__ = 'Record'
+# 
+#     # ID:
+#     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+#     # 设备编码:
+#     EquipmentCode = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
+#     # 确认人
+#     Name = Column(Unicode(32), nullable=True)
+#     # 设备状态（良好,异常）
+#     Status = Column(Unicode(32), default="良好")
+#     # 班组
+#     WorkNo = Column(Unicode(32), nullable=False)
+#     # 工单类型(维修，保养)
+#     Type = Column(Unicode(32), nullable=True)
+#     # 工作时间
+#     WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
-    # ID:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
-    # 设备编码:
-    EquipmentCode = Column(Unicode(30), primary_key=False, autoincrement=False, nullable=True)
-    # 确认人
-    Name = Column(Unicode(32), nullable=True)
-    # 设备状态（良好,异常）
-    Status = Column(Unicode(32), default="良好")
-    # 班组
-    WorkNo = Column(Unicode(32), nullable=False)
-    # 工单类型(维修，保养)
-    Type = Column(Unicode(32), nullable=True)
-    # 工作时间
-    WorkTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+class KeepPlan(Base):
+    """保养计划表"""
+    __tablename__ = 'keepplan'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    # 工单号
+    No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    # 设备编码
+    EquipmentCode = Column(Unicode(128), nullable=True)
+    # 制定计划人
+    Worker = Column(Unicode(32), nullable=True)
+    # 工单状态
+    Status = Column(Unicode(32), default="待保养")
+    # 制定计划时间
+    ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 保养班组
+    Group = Column(Unicode(32), nullable=True)
+    # 任务开始时间（递增）
+    StartTime = Column(Unicode(32), nullable=True, default='尚未接单')
+    # 计划描述
+    Content = Column(Unicode(128), nullable=True)
+    # 工作周期
+    WeekTime = Column(Unicode(128), nullable=True)
+
+
+class KeepTask(Base):
+    """保养任务表"""
+    __tablename__ = 'keeptask'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    # 工单号
+    No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    # 设备编码
+    EquipmentCode = Column(Unicode(128), nullable=True)
+    # 制定计划人
+    Worker = Column(Unicode(32), nullable=True)
+    # 保养班组
+    Group = Column(Unicode(32), nullable=True)
+    # 工单状态
+    Status = Column(Unicode(32), default="待保养")
+    # 制定计划时间
+    ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 保养确认人
+    # KeepWorker = Column(Unicode(32), nullable=True)
+    # 任务开始时间（递增）
+    StartTime = Column(Unicode(32), nullable=True, default='尚未接单')
+    # 计划描述
+    Content = Column(Unicode(128), nullable=True)
+    # 工作周期
+    WeekTime = Column(Unicode(128), nullable=True)
+    # # 接单人
+    # ReceiveWorker = Column(Unicode(32), nullable=True)
+    # # 接单时间
+    # ReceiveTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+class KeepRecord(Base):
+    __tablename__ = 'keeprecord'
+    """保养记录表"""
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    # 工单号
+    No = Column(Unicode(128), nullable=True, default=datetime.now().strftime('%Y%m%d%H%M%S'))
+    # 设备编码
+    EquipmentCode = Column(Unicode(128), nullable=True)
+    # 制定计划人
+    Worker = Column(Unicode(32), nullable=True)
+    # 保养班组
+    Group = Column(Unicode(32), nullable=True)
+    # 工单状态
+    Status = Column(Unicode(32), default="已完成")
+    # 制定计划时间
+    ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 保养确认人
+    KeepWorker = Column(Unicode(32), nullable=True)
+    # 任务开始时间（递增）
+    StartTime = Column(Unicode(32), nullable=True)
+    # 计划描述
+    Content = Column(Unicode(128), nullable=True)
+    # 工作周期
+    WeekTime = Column(Unicode(128), nullable=True)
+    # 完成时间
+    EndTime = Column(Unicode(32), nullable=True)
+
 
 
 class Repair(Base):
