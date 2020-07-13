@@ -19,10 +19,11 @@
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
       <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false">
-        <template scope="scope" v-if="item.dataJudge">
-          <div v-for="spanItem in item.dataJudge" :key="spanItem.value">
-            <span v-if="scope.row[item.prop] === spanItem.value" :style="{ color:spanItem.color }">{{ scope.row[item.prop] }}</span>
+        <template slot-scope="scope">
+          <div v-for="spanItem in item.dataJudge" :key="spanItem.value" v-if="scope.row[item.prop] === spanItem.value">
+            <span :style="{ color:spanItem.color }">{{ scope.row[item.prop] }}</span>
           </div>
+          <span v-if="!item.hasOwnProperty('dataJudge') || item.dataJudge.length === 0">{{ scope.row[item.prop] }}</span>
         </template>
       </el-table-column>
     </el-table>
