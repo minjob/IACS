@@ -89,7 +89,7 @@
         <el-col :span="24">
           <el-form :inline="true" class="blackComponents">
             <el-form-item label="选择时间：">
-              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getmakecoolanalysis"></el-date-picker>
+              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getmakecoolanalysis(),getmakecoolanalysisData()"></el-date-picker>
             </el-form-item>
           </el-form>
           <div class="platformContainer">
@@ -347,13 +347,20 @@
         nowTime:"",
         todayEnergy:"",
         compareEnergy:"",
-        compareAllDateEnergy:""
+        compareAllDateEnergy:"",
+        ZLtodayData:"",
+        ZLcompareData:"",
+        ZLcompareAllDateData:"",
+        hottodayData:"",
+        hotcompareData:"",
+        hotcompareAllDateData:""
       }
     },
     created(){
       this.getEnergyAnalysisCharts()
       this.getEnergyData()
       this.getmakecoolanalysis()
+      this.getmakecoolanalysisData()
     },
     mounted(){
 
@@ -428,7 +435,33 @@
         },res =>{
           console.log("请求错误")
         })
-      }
+      },
+      getmakecoolanalysisData(){ //获取今天和选择天的能耗量
+        var that = this
+        var api = "/api/makecoolselectbytime"
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm')
+        var todayEndTime = moment().day(moment().day()).endOf('day').format('YYYY-MM-DD HH:mm')
+        var compareDateStartTime = moment(this.formParameters.refrigerationDate).day(moment(this.formParameters.refrigerationDate).day()).startOf('day').format('YYYY-MM-DD HH:mm')
+        var compareDateEndTime = moment(this.formParameters.refrigerationDate).format('YYYY-MM-DD ') + nowTime
+        var compareDateEndAllTime = moment(this.formParameters.refrigerationDate).day(moment(this.formParameters.refrigerationDate).day()).endOf('day').format('YYYY-MM-DD HH:mm')
+        this.nowTime = nowTime
+        this.axios.all([
+          this.axios.get(api,{params: {begin: todayStartTime,end:todayEndTime,TagCode:"ZLLLoad"}}),//获取今天制冷量
+          this.axios.get(api,{params: {begin: compareDateStartTime,end:compareDateEndTime,TagCode:"ZLLLoad"}}),//获取对比天截止当前时间制冷量
+          this.axios.get(api,{params: {begin: compareDateStartTime,end:compareDateEndAllTime,TagCode:"ZLLLoad"}}),//获取对比整天制冷量
+          this.axios.get(api,{params: {begin: todayStartTime,end:todayEndTime,TagCode:"TotalHotLoad"}}),//获取今天热负载
+          this.axios.get(api,{params: {begin: compareDateStartTime,end:compareDateEndTime,TagCode:"TotalHotLoad"}}),//获取对比天截止当前时间热负载
+          this.axios.get(api,{params: {begin: compareDateStartTime,end:compareDateEndAllTime,TagCode:"TotalHotLoad"}}),//获取对比整天热负载
+        ]).then(this.axios.spread((todayData,CompareData,CompareAllData,hottodayData,hotCompareData,hotCompareAllData) =>{
+          that.ZLtodayData = todayData.data
+          that.ZLcompareData = CompareData.data
+          that.ZLcompareAllDateData = CompareAllData.data
+          that.hottodayData = hottodayData.data
+          that.hotcompareData = hotCompareData.data
+          that.hotcompareAllDateData = hotCompareAllData.data
+        }))
+      },
     }
   }
 </script>
