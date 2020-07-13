@@ -139,14 +139,14 @@ def task():
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
-@repair.route('/keep_record/<no>', methods=['GET'])
-def keep_record(no):
+@repair.route('/keep_record/<p>', methods=['GET'])
+def keep_record(p):
     # 每页多少条
     limit = int(request.values.get('limit'))
     # 当前页
     offset = int(request.values.get('offset'))
-    total = db_session.query(KeepRecord).filter_by(No=no).count()
-    data = db_session.query(KeepRecord).filter(KeepRecord.No == no).order_by(
+    total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
+    data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
         KeepRecord.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
     return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
                       cls=AlchemyEncoder, ensure_ascii=True)
