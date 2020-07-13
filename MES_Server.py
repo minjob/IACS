@@ -5,6 +5,7 @@ from dbset.account import auth_lib
 from handlers.ERP_Scheduling.ERP_Schedul import erp_schedul
 from handlers.SystemManagement.ai_repair import repair
 from handlers.SystemManagement.calendar import cale
+from handlers.SystemManagement.monitor import opc
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment, Role_management
 from handlers.account.user_role import user_manager
@@ -51,6 +52,8 @@ app.register_blueprint(user_manager)
 app.register_blueprint(erp_schedul)
 # 维保
 app.register_blueprint(repair)
+# 机组开关
+app.register_blueprint(opc)
 # 能耗管理
 app.register_blueprint(energy)
 
