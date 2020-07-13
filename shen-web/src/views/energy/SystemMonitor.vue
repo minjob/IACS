@@ -1,5 +1,4 @@
 <template>
-<div>
   <el-row :gutter="15">
       <el-col :span="24">
         <TabControl :TabControl="TabControl"></TabControl>
@@ -93,15 +92,101 @@
             <div class="text-box color-mainbgc" style="top:581px;left:1322px;">排风亭</div>
          </div>
         </el-col>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '深度学习模型'">
-          <span class="color-lightgreen">小系统</span>
-        </div>
-        <div class="platformContainer" v-if="TabControl.TabControlCurrent === '制冷量模型'">
-          <span class="color-lightgreen">冷却系统</span>
-        </div>
+        <el-col :span="24" style="background: #34383E;overflow: hidden;" v-if="TabControl.TabControlCurrent === '小系统'">
+
+        </el-col>
+        <el-col :span="24" style="background: #34383E;overflow: hidden;" v-if="TabControl.TabControlCurrent === '冷却系统'">
+          <div class="MainContain BorderRadius4 SysMonbg" @mousedown="move" data-move>
+            <div class="hf-6 color-boxbgc" style="top:55px;left: 53px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left:162px;top:96px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left: 429px;top:149px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left:339px;top:287px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left:343px;top:586px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 573px;top: 94px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 802px;top: 94px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 799px;top: 249px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 685px;top: 191px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 573px;top: 249px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 573px;top: 572px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 802px;top: 572px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 685px;top: 630px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 573px;top: 771px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-mainbgc" style="left: 799px;top: 771px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left: 946px;top: 149px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left: 1038px;top: 586px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left: 1214px;top: 96px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left: 1038px;top: 287px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="top:56px;left:1323px;">
+                <div class='smalllbox color-white'>28.6</div>
+                <div class='smalllbox color-lightgreen'>66.2%</div>
+            </div>
+            <div class="BorderRadius4 color-lightbluebgc sfs" style="top:95px;left:260px;">湿风室</div>
+            <div class="BorderRadius4 color-lightbluebgc sfs" style="top:95px;left:1142px;">湿风室</div>
+            <div class="text-box color-mainbgc" style="top:118px;left:53px;">新风亭</div>
+            <div class="text-box color-mainbgc" style="top:581px;left:53px;">排风亭</div>
+            <div class="text-box color-mainbgc" style="top:118px;left:1322px;">新风亭</div>
+            <div class="text-box color-mainbgc" style="top:581px;left:1322px;">排风亭</div>
+          </div>
+        </el-col>
       </el-col>
   </el-row>
-</div>
 </template>
 
 <script>

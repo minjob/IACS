@@ -89,7 +89,7 @@
         <el-col :span="24">
           <el-form :inline="true" class="blackComponents">
             <el-form-item label="选择时间：">
-              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change=""></el-date-picker>
+              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getmakecoolanalysis"></el-date-picker>
             </el-form-item>
           </el-form>
           <div class="platformContainer">
@@ -353,6 +353,7 @@
     created(){
       this.getEnergyAnalysisCharts()
       this.getEnergyData()
+      this.getmakecoolanalysis()
     },
     mounted(){
 
@@ -412,6 +413,21 @@
           that.compareEnergy = CompareData.data
           that.compareAllDateEnergy = CompareAllData.data
         }))
+      },
+      getmakecoolanalysis(){ //获取制冷量分析两个图表
+        var that = this
+        var params = {
+          CompareTime:moment(this.formParameters.refrigerationDate).format("YYYY-MM-DD")
+        }
+        this.axios.get("/api/makecoolanalysis",{
+          params: params
+        }).then(res =>{
+          console.log(res.data)
+          that.chartRefrigerationData.rows = res.data.lineChartRows
+          that.chartRefrigerationStatisticsData.rows = res.data.histogramChartRows
+        },res =>{
+          console.log("请求错误")
+        })
       }
     }
   }

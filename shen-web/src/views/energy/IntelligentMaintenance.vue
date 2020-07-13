@@ -3,9 +3,9 @@
     <el-col :span="24">
       <TabControl :TabControl="TabControl"></TabControl>
       <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '设备台账'">
-        <el-col :span="24" v-if="!showRepairsForm && !showMaintainForm">
+        <el-col :span="24" v-if="!showRepairsForm && !showMaintainForm && !showKeepPlanForm">
           <div class="platformContainer">
-            <tableView class="blackComponents" :tableData="TableData" @getTableData="getEQTable" @repairs="repairs" @handleEQRowClick="handleEQRowClick"></tableView>
+            <tableView class="blackComponents" :tableData="TableData" @getTableData="getEQTable" @repairs="repairs" @handleEQRowClick="handleEQRowClick" @drawUpKeepPlan="drawUpKeepPlan"></tableView>
           </div>
           <el-form :inline="true" class="marginBottom">
             <el-radio-group v-model="showLogTypeValue" size="mini" :border="false">
@@ -33,8 +33,21 @@
               </el-pagination>
             </div>
           </div>
-          <div class="platformContainer" v-if="showLogTypeValue === '保养记录'">
-
+          <div class="platformContainer blackComponents" v-if="showLogTypeValue === '保养记录'">
+            <el-table :data="keepLogTableData.data" border ref="multipleTableKeepLog" @selection-change="handleKeepLogSelectionChange" @row-click="handleKeepLogRowClick">
+              <el-table-column type="selection"></el-table-column>
+              <el-table-column v-for="(item,index) in keepLogTableData.column" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
+            </el-table>
+            <div class="paginationClass">
+              <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+               :total="keepLogTableData.total"
+               :current-page="keepLogTableData.offset"
+               :page-sizes="[5,10,20]"
+               :page-size="keepLogTableData.limit"
+               @size-change="handleKeepLogSizeChange"
+               @current-change="handleKeepLogCurrentChange">
+              </el-pagination>
+            </div>
           </div>
         </el-col>
         <el-col :span="24" v-if="showRepairsForm">
@@ -76,11 +89,71 @@
             </table>
           </div>
         </el-col>
+        <el-col :span="24" v-if="showKeepPlanForm">
+          <el-button @click="showKeepPlanForm = false" icon="el-icon-back" size="small" class="marginBottom">返回列表</el-button>
+          <div class="platformContainer blackComponents">
+            <el-divider>制定保养计划</el-divider>
+            <table class="elementTable marginBottom">
+              <tr>
+                <td>设备编码：{{ TableData.multipleSelection[0].EquipmentCode }}</td>
+                <td>任务开始时间：<el-date-picker v-model="keepTaskStartTime" type="datetime" size="mini" :clearable="false" :editable="false"></el-date-picker></td>
+              </tr>
+              <tr>
+                <td>
+                  <el-form :inline="true">
+                    <el-form-item label="保养周期：" style="margin-bottom: 0;">
+                      <el-input v-model="weekNumber"></el-input>
+                    </el-form-item>
+                    <el-form-item style="margin-bottom: 0;">
+                      <el-select v-model="weekTime" placeholder="请选择">
+                        <el-option v-for="item in weekTimeType" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-form>
+                </td>
+                <td>
+                  <el-form>
+                    <el-form-item label="计划描述：" style="margin-bottom: 0;">
+                      <el-input type="textarea" v-model="KeekPlanContent"></el-input>
+                    </el-form-item>
+                  </el-form>
+                </td>
+              </tr>
+            </table>
+            <el-button @click="submitKeekPlan" type="primary" size="small">提交保养计划</el-button>
+          </div>
+        </el-col>
       </el-row>
       <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '设备维修任务'">
         <el-col :span="24">
           <div class="platformContainer">
             <tableView class="blackComponents" :tableData="RepairTableData" @getTableData="getRepairTable" @takeOrder="takeOrder" @maintainOK="maintainOK"></tableView>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '设备保养任务'">
+        <el-col :span="24">
+          <div class="platformContainer blackComponents">
+            <el-form :inline="true">
+              <el-form-item>
+                <el-button type="primary" size="small" @click="KeepOK">保养完成</el-button>
+              </el-form-item>
+            </el-form>
+            <el-table :data="KeepTaskTableData.data" border ref="multipleTableKeepTask" @selection-change="handleKeepTaskSelectionChange" @row-click="handleKeepTaskRowClick">
+              <el-table-column type="selection"></el-table-column>
+              <el-table-column v-for="(item,index) in KeepTaskTableData.column" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
+            </el-table>
+            <div class="paginationClass">
+              <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+               :total="KeepTaskTableData.total"
+               :current-page="KeepTaskTableData.offset"
+               :page-sizes="[5,10,20]"
+               :page-size="KeepTaskTableData.limit"
+               @size-change="handleKeepTaskSizeChange"
+               @current-change="handleKeepTaskCurrentChange">
+              </el-pagination>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -112,7 +185,7 @@
             {prop:"EquipmentCode",label:"设备编码",type:"input",value:""},
             {prop:"Quantity",label:"数量",type:"input",value:""},
             {prop:"Power",label:"功率",type:"input",value:""},
-            {prop:"Comment",label:"描述",type:"input",value:""},
+            {prop:"Comment",label:"描述",type:"input",value:"",dataJudge:[]},
             {prop:"Status",label:"设备状态",type:"input",value:"",dataJudge:[{value:"维修中",color:"#228AD5"},{value:"待接单",color:"#FA7D00"},{value:"运行中",color:"#00FAE7"}]},
           ],
           data:[],
@@ -127,7 +200,7 @@
           handleType:[
             {type:"warning",label:"快速报修",clickEvent:"repairs"},
             {type:"primary",label:"下发保养任务"},
-            {type:"primary",label:"制定保养计划"},
+            {type:"primary",label:"制定保养计划",clickEvent:"drawUpKeepPlan"},
           ],
           rowClick:"handleEQRowClick"
         },
@@ -181,11 +254,58 @@
         showRepairsForm:false,
         faultCondition:"", //故障阐述内容
         showMaintainForm:false,
+        showKeepPlanForm:false,
+        KeepTaskTableData:{ //保养任务表参数
+          column:[
+            {prop:"Status",label:"工单状态"},
+            {prop:"No",label:"工单号"},
+            {prop:"EquipmentCode",label:"设备编码"},
+            {prop:"Worker",label:"制定计划人"},
+            {prop:"ApplyTime",label:"制定计划时间"},
+            {prop:"StartTime",label:"任务开始时间"},
+            {prop:"Describe",label:"计划描述"},
+            {prop:"Content",label:"保养内容"},
+            {prop:"WeekTime",label:"工作周期"},
+          ],
+          data:[],
+          limit:5,
+          offset:1,
+          total:0,
+          multipleSelection:[],
+        },
+        keepTaskStartTime:moment().format("YYYY-MM-DD HH:ss:mm"),
+        weekNumber:"",
+        weekTime:"周",
+        weekTimeType:[
+          {label:"周",value:"周"},
+          {label:"月",value:"月"},
+          {label:"年",value:"年"},
+        ],
+        KeekPlanContent:"",
+        keepLogTableData:{
+          column:[
+            {prop:"No",label:"工单号"},
+            {prop:"EquipmentCode",label:"设备编码"},
+            {prop:"Worker",label:"制定计划人"},
+            {prop:"ApplyTime",label:"制定计划时间"},
+            {prop:"StartTime",label:"任务开始时间"},
+            {prop:"Describe",label:"计划描述"},
+            {prop:"Content",label:"保养内容"},
+            {prop:"WeekTime",label:"工作周期"},
+            {prop:"Status",label:"工单状态"},
+          ],
+          data:[],
+          limit:5,
+          offset:1,
+          total:0,
+          multipleSelection:[],
+        }
       }
     },
     created(){
       this.getEQTable()
       this.getRepairTable()
+      this.getKeepTaskTable()
     },
     mounted(){
 
@@ -218,7 +338,7 @@
         var that = this
         var params = {
           limit:this.repairsLogTableData.limit,
-          offset:this.repairsLogTableData.offset - 1
+          offset:this.repairsLogTableData.offset
         }
         this.axios.get("/api/record/"+this.TableData.multipleSelection[0].EquipmentCode,{
           params: params
@@ -226,6 +346,20 @@
           if(res.data.code === "10001"){
             this.repairsLogTableData.data = res.data.data.rows
             this.repairsLogTableData.total = res.data.data.total
+          }
+        },res =>{
+          console.log("请求错误")
+        })
+        var params1 = {
+          limit:this.keepLogTableData.limit,
+          offset:this.keepLogTableData.offset
+        }
+        this.axios.get("/api/keep_record/"+this.TableData.multipleSelection[0].EquipmentCode,{
+          params: params1
+        }).then(res =>{
+          if(res.data.code === "10001"){
+            this.keepLogTableData.data = res.data.data.rows
+            this.keepLogTableData.total = res.data.data.total
           }
         },res =>{
           console.log("请求错误")
@@ -240,9 +374,11 @@
       },
       handleRepairsLogSizeChange(limit){
         this.repairsLogTableData.limit = limit
+        this.getKeepTaskTable()
       },
       handleRepairsLogCurrentChange(offset){
         this.repairsLogTableData.offset = offset
+        this.getKeepTaskTable()
       },
       seeMaintainForm(){ //查看维修单
         if(this.repairsLogTableData.multipleSelection.length === 1){
@@ -289,6 +425,46 @@
             this.showRepairsForm = false
             this.getEQTable()
             this.getRepairTable()
+          }else{
+            this.$message({
+              type: 'info',
+              message: res.data.message
+            });
+          }
+        },res =>{
+          console.log("请求错误")
+        })
+      },
+      drawUpKeepPlan(){ //制定保养计划
+        if(this.TableData.multipleSelection.length === 1){
+          this.showKeepPlanForm = true
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择设备来制定保养计划'
+          });
+        }
+      },
+      submitKeekPlan(){ //提交保养计划
+        var that = this
+        var params = {
+          EquipmentCode: this.TableData.multipleSelection[0].EquipmentCode,
+          StartTime:moment(this.keepTaskStartTime).format("YYYY-MM-DD HH:ss:mm"),
+          ApplyTime:moment().format("YYYY-MM-DD HH:ss:mm"),
+          WeekTime:this.weekNumber + this.weekTime,
+          Describe:this.KeekPlanContent
+        }
+        this.axios.post("/api/keep_plan",{
+          params: params
+        }).then(res =>{
+          if(res.data.code == 10001){
+            this.$message({
+              type: 'success',
+              message: res.data.message
+            });
+            this.showKeepPlanForm = false
+            this.getEQTable()
+            this.getKeepTaskTable()
           }else{
             this.$message({
               type: 'info',
@@ -414,27 +590,102 @@
             message: '请选择一项任务完成维修'
           });
         }
-      }
+      },
+      getKeepTaskTable(){ //获取保养任务表
+        var that = this
+        var params = {
+          limit:this.KeepTaskTableData.limit,
+          offset:this.KeepTaskTableData.offset
+        }
+        this.axios.get("/api/keep_task",{
+          params: params
+        }).then(res =>{
+          if(res.data.code === "10001"){
+            this.KeepTaskTableData.data = res.data.data.rows
+            this.KeepTaskTableData.total = res.data.data.total
+          }
+        },res =>{
+          console.log("请求错误")
+        })
+      },
+      handleKeepTaskSelectionChange(val){ //选中保养任务
+        this.KeepTaskTableData.multipleSelection = val;
+      },
+      handleKeepTaskRowClick(row){ //点击保养任务行
+        this.$refs.multipleTableKeepTask.clearSelection();
+        this.$refs.multipleTableKeepTask.toggleRowSelection(row)
+      },
+      handleKeepTaskSizeChange(limit){
+        this.KeepTaskTableData.limit = limit
+        this.getKeepTaskTable()
+      },
+      handleKeepTaskCurrentChange(offset){
+        this.KeepTaskTableData.offset = offset
+        this.getKeepTaskTable()
+      },
+      KeepOK(){ //保养完成
+        if(this.KeepTaskTableData.multipleSelection.length === 1){
+          this.$prompt('确定完成此保养任务？请输入保养内容', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+          }).then(({value})  => {
+            this.axios.post("/api/keep_task",{
+              params: {
+                No:this.KeepTaskTableData.multipleSelection[0].No,
+                EndTime:moment().format("YYYY-MM-DD HH:mm:ss"),
+                Content:value
+              }
+            }).then(res =>{
+              if(res.data.code === "10001"){
+                this.$message({
+                  type: 'success',
+                  message: res.data.message
+                });
+                this.getEQTable()
+                this.getKeepTaskTable()
+              }else{
+                this.$message({
+                  type: 'info',
+                  message: res.data.message
+                });
+              }
+            },res =>{
+              console.log("请求错误")
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消完成操作'
+            });
+          });
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择一项保养任务'
+          });
+        }
+      },
+      getKeepLogTable(){ //获取保养记录表
+
+      },
+      handleKeepLogSelectionChange(val){ //选中保养记录
+        this.keepLogTableData.multipleSelection = val;
+      },
+      handleKeepLogRowClick(row){ //点击保养记录行
+        this.$refs.multipleTableKeepLog.clearSelection();
+        this.$refs.multipleTableKeepLog.toggleRowSelection(row)
+      },
+      handleKeepLogSizeChange(limit){
+        this.keepLogTableData.limit = limit
+        this.getKeepLogTable()
+      },
+      handleKeepLogCurrentChange(offset){
+        this.keepLogTableData.offset = offset
+        this.getKeepLogTable()
+      },
     }
   }
 </script>
 <style>
- .second-header{
-    background-color: skyblue;
-    height: 57px;
-    width:100%;
-    background:rgba(52,56,62,1);
-    border-radius:4px;
-  }
-.home-container{
-  background-color: #1B1E27;
-}
-.mainshow{
-    width: 100%;
-    height: 100%;
-}
-.mainshow img{
-    width: 100%;
-    height: 100%;
-}
+
 </style>
