@@ -13,9 +13,10 @@ from models.system import Repair, Equipment, RepairTask, KeepPlan, KeepTask, Kee
 repair = Blueprint('repair', __name__)
 
 
-def get_time_stamp(s):
+def get_time_stamp(s, week_time):
     time_array = time.strptime(s, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
+    # if week_time[]:
     return 0 < int(time.time()) - time_stamp < 604800
 
 
@@ -132,6 +133,7 @@ def task():
         data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成',
                           KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
                           Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=endtime)
+        # TODO: 任务完成后递增保养周期
         db_session.add(data)
         db_session.commit()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
@@ -145,7 +147,7 @@ def keep_record(no):
     offset = int(request.values.get('offset'))
     total = db_session.query(KeepRecord).filter_by(No=no).count()
     data = db_session.query(KeepRecord).filter(KeepRecord.No == no).order_by(
-        RepairTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
+        KeepRecord.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
     return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
                       cls=AlchemyEncoder, ensure_ascii=True)
 
