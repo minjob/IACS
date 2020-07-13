@@ -118,6 +118,7 @@
     },
     mounted(){
         this.getAsidemenu()
+        this.Singlr()
     },
     watch:{
 
@@ -361,6 +362,7 @@
         }
          this.axios.get('/api/CUID',{params}).then((res) => {
            var arr=JSON.parse(res.data).rows
+          //  console.log(arr)
            for(var i=0;i<arr.length;i++){
             this.getTagcode(arr[i].ParentTagCode)
            }
@@ -379,6 +381,7 @@
         }
         this.axios.get('/api/CUID',{params:params2}).then((value) => {
               var arr=JSON.parse(value.data).rows
+              // console.log(arr)
               this.childrentree=arr.map((item, index) => {
               return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
             })
@@ -393,7 +396,9 @@
       },
       getChecked(){
         var arr=this.$refs.tree.getCheckedNodes()
-       if(arr.length!==0){
+        if(arr.length==1){
+         console.log(123)
+       }else{
         this.TagChecked=this.$refs.tree.getCheckedNodes()
         var j=0
         this.TagCodes=''
@@ -405,10 +410,10 @@
         }
         this.treenumber=j
         this.TagCodes=this.TagCodes.slice(0,-1)
-        this.getTrenddata(this.TagCodes,this.starttime,this.endtime)
+        this.InitTrenddata(this.TagCodes,this.starttime,this.endtime)
        }
       },
-      getTrenddata(t,b,e){
+      InitTrenddata(t,b,e){
          var params1={
             TagCodes:t,
             begin:b,
@@ -466,8 +471,23 @@
       },
       getSelectTime(){     
         this.endtime=this.valuedate+' '+this.valuetime
+      },
+      Singlr(){
+          var params={
+            TagCode:'TY_CO2_AVG',
+            PointDates:"'2020-06-18'+','+'2020-06-19'+','+'2020-06-20'+','+'2020-06-21'+','+'2020-06-22'",
+            ParagraBegin :'08:00:00',
+            ParagraEnd :'12:00:00',
+
+           
+            
+          }
+          this.axios.get('/api/energytrendtu',{params:params}).then((res)=>{
+            console.log('----------------------')
+            console.log(res)
+            console.log('----------------------')
+          })
       }
-    
     }
   }
 </script>
