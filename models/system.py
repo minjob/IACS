@@ -787,6 +787,8 @@ class KeepPlan(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
+    # 预工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
 
 
 class KeepTask(Base):

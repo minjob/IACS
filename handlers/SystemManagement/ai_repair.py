@@ -13,14 +13,59 @@ from models.system import Repair, Equipment, RepairTask, KeepPlan, KeepTask, Kee
 repair = Blueprint('repair', __name__)
 
 
-def get_time_stamp(s, week_time):
-    time_array = time.strptime(s, "%Y-%m-%d %H:%M:%S")
+def add_date(week, work_time):
+    """
+    递增预工作时间
+    :param week: 工作周期
+    :param work_time: 工作时间
+    :return:
+    """
+    """递增周期"""
+    time_array = time.strptime(work_time, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
-    # if week_time[]:
-    return 0 < int(time.time()) - time_stamp < 604800
+    if week[1] == '周':
+        new_time_stamp = time_stamp + 604800 * int(week[0])
+        new_time_array = time.localtime(new_time_stamp)
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", new_time_array)
+        return new_time
+    elif week[1] == '月':
+        new_time_stamp = time_stamp + 86400 * 30 * int(week[0])
+        new_time_array = time.localtime(new_time_stamp)
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", new_time_array)
+        return new_time
+    elif week[1] == '年':
+        new_time_stamp = time_stamp + 86400 * 365 * int(week[0])
+        new_time_array = time.localtime(new_time_stamp)
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", new_time_array)
+        return new_time
+
+
+def get_time_stamp(work_time):
+    """
+    计算工作时间间隔
+    :param work_time: 预工作时间
+    :return:
+    """
+    time_array = time.strptime(work_time, "%Y-%m-%d %H:%M:%S")
+    time_stamp = int(time.mktime(time_array))
+    return 0 < time_stamp - int(time.time()) < 259200
+
+
+def get_work_time(week, start_time):
+    time_array = time.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+    time_stamp = int(time.mktime(time_array))
+    if week[1] == '周':
+        time_array = time.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+        time_stamp = int(time.mktime(time_array))
+        new_time_stamp = time_stamp + 86400 * 365 * int(week[0])
+        new_time_array = time.localtime(new_time_stamp)
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", new_time_array)
+        work_time = ''
+        return '1'
 
 
 def get_no(no):
+    """自动生成工单号"""
     return str(str(str(no).replace('-', '')).replace(':', '')).replace(' ', '')
 
 
@@ -73,7 +118,8 @@ def repair_tasks(p):
 
 
 @repair.route('/record/<p>', methods=['GET', 'POST'])
-def record(p):
+def repair_record(p):
+    """维修记录"""
     # 每页多少条
     limit = int(request.values.get('limit'))
     # 当前页
@@ -87,6 +133,7 @@ def record(p):
 
 @repair.route('/keep_plan', methods=['POST'])
 def keep_plans():
+    """保养计划"""
     # if request.method == 'GET':
     #     data = db_session.query(Repair).all()
     #     return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
@@ -95,7 +142,7 @@ def keep_plans():
     data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                     Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                     StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
-                    WeekTime=json_data.get('WeekTime'))
+                    WorkTime=json_data.get('ApplyTime'), WeekTime=json_data.get('WeekTime'))
     db_session.add(data)
     db_session.commit()
     db_session.close()
@@ -103,7 +150,7 @@ def keep_plans():
 
 
 @repair.route('/keep_task', methods=['GET', 'POST'])
-def task():
+def keep_tasks():
     query_data = db_session.query(KeepPlan).filter_by(Status='待保养').all()
     if request.method == 'GET':
         # 每页多少条
