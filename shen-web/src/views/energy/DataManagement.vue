@@ -475,12 +475,9 @@
       Singlr(){
           var params={
             TagCode:'TY_CO2_AVG',
-            PointDates:"'2020-06-18'+','+'2020-06-19'+','+'2020-06-20'+','+'2020-06-21'+','+'2020-06-22'",
-            ParagraBegin :'08:00:00',
-            ParagraEnd :'12:00:00',
-
-           
-            
+            PointDates:"2020-06-18,2020-06-19,2020-06-20,2020-06-21,2020-06-22",
+            ParagraBegin:'08:00:00',
+            ParagraEnd:'12:00:00',
           }
           this.axios.get('/api/energytrendtu',{params:params}).then((res)=>{
             console.log('----------------------')
