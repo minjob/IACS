@@ -99,25 +99,25 @@
             <el-col :span="5">
               <div class="platformContainer">
                 <p class="color-offwhite text-size-16 marginBottom">今日制冷总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
+                <p class="color-lightgreen text-size-20 marginBottom">{{ ZLtodayData }}</p>
                 <p class="color-offwhite text-size-16 marginBottom">选择日制冷总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">234234kwh</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
-                <p class="color-darkblue text-size-18 marginBottom">234234kwh</p>
+                <p class="color-lightgreen text-size-20 marginBottom">{{ ZLcompareAllDateData }}</p>
+                <p class="color-offwhite text-size-16 marginBottom">选择日截止{{ nowTime }}的制冷量</p>
+                <p class="color-darkblue text-size-18 marginBottom">{{ZLcompareData  }}</p>
                 <p class="color-offwhite text-size-16 marginBottom">对比</p>
-                <p class="text-size-16 marginBottom">+1.12%</p>
+                <p class="text-size-16 marginBottom" :class="ZLtodayData-ZLcompareData>0?'color-red':'color-success'">{{ ZLCompareRatio }}</p>
               </div>
             </el-col>
             <el-col :span="5">
               <div class="platformContainer">
                 <p class="color-offwhite text-size-16 marginBottom">今日热负载总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">234234</p>
+                <p class="color-lightgreen text-size-20 marginBottom">{{ hottodayData }}</p>
                 <p class="color-offwhite text-size-16 marginBottom">选择日热负载总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">234234</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日（截止14：10）</p>
-                <p class="color-darkblue text-size-18 marginBottom">234234</p>
+                <p class="color-lightgreen text-size-20 marginBottom">{{ hotcompareAllDateData }}</p>
+                <p class="color-offwhite text-size-16 marginBottom">选择日截止{{ nowTime }}的热负载</p>
+                <p class="color-darkblue text-size-18 marginBottom">{{ hotcompareData }}</p>
                 <p class="color-offwhite text-size-16 marginBottom">对比</p>
-                <p class="text-size-16 marginBottom">+1.12%</p>
+                <p class="text-size-16 marginBottom" :class="hottodayData-hotcompareData>0?'color-red':'color-success'">{{ hotCompareRatio }}</p>
               </div>
             </el-col>
             <el-col :span="14">
@@ -384,7 +384,39 @@
             return 0 + "%"
           }
         }
-      }
+      },
+      ZLCompareRatio(){
+        if(this.ZLtodayData > 0){
+          var compare = (this.ZLtodayData - this.ZLcompareData) / this.ZLtodayData * 100
+          if(this.ZLtodayData - this.ZLcompareData > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.ZLcompareData > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
+      hotCompareRatio(){
+        if(this.hottodayData > 0){
+          var compare = (this.hottodayData - this.hotcompareData) / this.hottodayData * 100
+          if(this.hottodayData - this.hotcompareData > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.hotcompareData > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
     },
     methods: {
       getEnergyAnalysisCharts(){  //获取能耗分析的两个图表
