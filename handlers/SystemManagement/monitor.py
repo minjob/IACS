@@ -2,6 +2,7 @@ import json
 
 import redis
 from flask import Blueprint, request
+from flask_login import current_user
 from opcua import ua, Client
 
 from dbset.database import constant
@@ -280,14 +281,16 @@ def change_run():
         json_data = request.json.get('params')
         equipment_code = json_data.get('EquipmentCode')
         status = json_data.get('Status')
+        ctrl = ScheduleCTRLWORD('TY')
         if equipment_code in ['LS1', 'LD1', 'LQT1']:
-            ScheduleCTRLWORD().Equip_LS1Control(equipment_code, status)
+
+            ctrl.Equip_LS1Control(equipment_code, status)
         elif equipment_code in ['LS2', 'LD2', 'LQT2']:
-            ScheduleCTRLWORD().Equip_LS2Control(equipment_code, status)
+            ctrl.Equip_LS2Control(equipment_code, status)
         return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
-        insertSyslog("error", "机组开关修改错误：" + str(e))
+        insertSyslog("error", "机组开关修改错误：" + str(e), current_user.Name)
 
 
 @opc.route('/change_status', methods=['POST'])
@@ -296,11 +299,12 @@ def change_status():
         json_data = request.json.get('params')
         equipment_code = json_data.get('EquipmentCode')
         hz = json_data.get('HZ')
+        ctrl = ScheduleCTRLWORD('TY')
         if equipment_code in ['LD1', 'LQ1']:
-            ScheduleCTRLWORD().Write_LS1_Params(equipment_code, hz)
+            ctrl.Write_LS1_Params(equipment_code, hz)
         elif equipment_code in ['LD2', 'LQ2']:
-            ScheduleCTRLWORD().Write_LS2_Params(equipment_code, hz)
+            ctrl.Write_LS2_Params(equipment_code, hz)
         return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
-        insertSyslog("error", "频率修改错误：" + str(e))
+        insertSyslog("error", "频率修改错误：" + str(e), current_user.Name)
