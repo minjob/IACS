@@ -277,8 +277,9 @@ class ScheduleCTRLWORD(object):
 @opc.route('/run', methods=['POST'])
 def change_run():
     try:
-        equipment_code = request.values.get('EquipmentCode')
-        status = request.values.get('Status')
+        json_data = request.json.get('params')
+        equipment_code = json_data.get('EquipmentCode')
+        status = json_data.get('Status')
         if equipment_code in ['LS1', 'LD1', 'LQT1']:
             ScheduleCTRLWORD().Equip_LS1Control(equipment_code, status)
         elif equipment_code in ['LS2', 'LD2', 'LQT2']:
@@ -292,8 +293,9 @@ def change_run():
 @opc.route('/change_status', methods=['POST'])
 def change_status():
     try:
-        equipment_code = request.values.get('EquipmentCode')
-        hz = request.values.get('HZ')
+        json_data = request.json.get('params')
+        equipment_code = json_data.get('EquipmentCode')
+        hz = json_data.get('HZ')
         if equipment_code in ['LD1', 'LQ1']:
             ScheduleCTRLWORD().Write_LS1_Params(equipment_code, hz)
         elif equipment_code in ['LD2', 'LQ2']:
