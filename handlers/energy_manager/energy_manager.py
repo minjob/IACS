@@ -49,7 +49,7 @@ def energytrendtu():
                 begin = data.get("begin")
                 end = data.get("end")
                 TagCodes = data.get("TagCodes")
-                TagCodes = TagCodes.split(",")
+                TagCodes = TagCodes.spilt(",")
                 tag_str = ""
                 for TagCode in TagCodes:
                     if tag_str == "":
@@ -69,27 +69,27 @@ def energytrendtu():
                     dict_list.append(oc_list)
             else:
                 TagCode = "`"+data.get("TagCode")+"`"
-                begin = data.get("begin")
-                end = data.get("end")
-                begin1 = data.get("begin1")
-                end1 = data.get("end1")
-                begin2 = data.get("begin2")
-                end2 = data.get("end2")
-                begin3 = data.get("begin3")
-                end3 = data.get("end3")
-                begin4 = data.get("begin4")
-                end4 = data.get("end4")
-                sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime " \
-                     "BETWEEN '" + begin + "' AND '" + end + "' OR SampleTime BETWEEN '" + begin1 + "' AND '" + end1 + \
-                      "' OR SampleTime BETWEEN '" + begin2 + "' AND '" + end2 + "' OR SampleTime BETWEEN '" + begin3 + \
-                      "' AND '" + end3 + "' OR SampleTime BETWEEN '" + begin4 + "' AND '" + end4 + "' order by ID"
-                re = db_session.execute(sql).fetchall()
+                PointDates = data.get("PointDates")
+                PointDates = PointDates.split(",")
+                ParagraBegin = data.get("ParagraBegin")
+                ParagraEnd = data.get("ParagraEnd")
+                parameter_str = ""
+                j = 0
+                for ponit in PointDates:
+                    if j == 0:
+                        parameter_str = "SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
+                    else:
+                        parameter_str = parameter_str + "' OR SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
+                    j = j + 1
+                parameter_str = parameter_str + "' order by ID"
+                sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE " + parameter_str
+                re = db_session.execute(sql)
                 dict_list = []
                 for i in re:
                     oc_list = []
-                    oc_list.append(datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
-                    if re[i]["SampleTime"] is not None:
-                        oc_list.append("-" if re["value"] is None else re[i]["value"])
+                    oc_list.append(datetime.datetime.strftime(i["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
+                    if i["SampleTime"] is not None:
+                        oc_list.append("-" if i["value"] is None else i["value"])
                         dict_list.append(oc_list)
             return json.dumps(dict_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
