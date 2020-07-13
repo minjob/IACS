@@ -283,11 +283,11 @@ def change_run():
         status = json_data.get('Status')
         ctrl = ScheduleCTRLWORD('TY')
         if equipment_code in ['LS1', 'LD1', 'LQT1']:
-
             ctrl.Equip_LS1Control(equipment_code, status)
+            return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
         elif equipment_code in ['LS2', 'LD2', 'LQT2']:
             ctrl.Equip_LS2Control(equipment_code, status)
-        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+            return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "机组开关修改错误：" + str(e), current_user.Name)
@@ -302,9 +302,10 @@ def change_status():
         ctrl = ScheduleCTRLWORD('TY')
         if equipment_code in ['LD1', 'LQ1']:
             ctrl.Write_LS1_Params(equipment_code, hz)
+            return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
         elif equipment_code in ['LD2', 'LQ2']:
             ctrl.Write_LS2_Params(equipment_code, hz)
-        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+            return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "频率修改错误：" + str(e), current_user.Name)
