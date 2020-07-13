@@ -87,7 +87,7 @@ def energytrendtu():
                 dict_list = []
                 for i in re:
                     oc_list = []
-                    oc_list.append(datetime.datetime.strftime(i["SampleTime"], '%Y-%m-%d %H:%M:%S')[11:])
+                    oc_list.append(datetime.datetime.strftime(i["SampleTime"], '%Y-%m-%d %H:%M:%S'))
                     if i["SampleTime"] is not None:
                         oc_list.append("-" if i["value"] is None else i["value"])
                         dict_list.append(oc_list)
