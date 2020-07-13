@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="24">
           <div class="aside-head">
-            <router-link :to="{name:'home'}" class="fa fa-home" style="font-size: 24px;"></router-link>
+            <router-link :to="{name:'SystemMonitor'}" class="fa fa-home" style="font-size: 24px;"></router-link>
           </div>
           <div :style="selfHeight" class="aside-menu">
             <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true" @select="menuSelect">
@@ -30,7 +30,7 @@
       <el-header>
         <div class="head-menu floatLeft">
           <ul>
-            <li><div class='item-title'>深圳桃源地铁站能耗智能分析控制系统</div></li>
+            <li><div class='item-title'>深圳桃园地铁站能耗智能分析控制系统</div></li>
             <li class="mainMenuList" v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
           </ul>
         </div>

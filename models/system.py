@@ -787,6 +787,8 @@ class KeepPlan(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
+    # 预工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
 
 
 class KeepTask(Base):
@@ -814,10 +816,6 @@ class KeepTask(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
-    # # 接单人
-    # ReceiveWorker = Column(Unicode(32), nullable=True)
-    # # 接单时间
-    # ReceiveTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 class KeepRecord(Base):
