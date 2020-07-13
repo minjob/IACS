@@ -17,7 +17,7 @@ def add_date(week, work_time):
     """
     递增预工作时间
     :param week: 工作周期
-    :param work_time: 工作时间
+    :param work_time: 预计工作时间
     :return:
     """
     """递增周期"""
@@ -48,20 +48,7 @@ def get_time_stamp(work_time):
     """
     time_array = time.strptime(work_time, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
-    return 0 < time_stamp - int(time.time()) < 259200
-
-
-def get_work_time(week, start_time):
-    time_array = time.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-    time_stamp = int(time.mktime(time_array))
-    if week[1] == '周':
-        time_array = time.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-        time_stamp = int(time.mktime(time_array))
-        new_time_stamp = time_stamp + 86400 * 365 * int(week[0])
-        new_time_array = time.localtime(new_time_stamp)
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", new_time_array)
-        work_time = ''
-        return '1'
+    return 0 < time_stamp - int(time.time()) < 604800
 
 
 def get_no(no):
@@ -134,15 +121,12 @@ def repair_record(p):
 @repair.route('/keep_plan', methods=['POST'])
 def keep_plans():
     """保养计划"""
-    # if request.method == 'GET':
-    #     data = db_session.query(Repair).all()
-    #     return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
-    # if request.method == 'POST':
     json_data = request.json.get('params')
+    work_time = add_date(json_data.get('WeekTime'), json_data.get('StartTime'))
     data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                     Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                     StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
-                    WorkTime=json_data.get('ApplyTime'), WeekTime=json_data.get('WeekTime'))
+                    WorkTime=work_time, WeekTime=json_data.get('WeekTime'))
     db_session.add(data)
     db_session.commit()
     db_session.close()
@@ -151,6 +135,7 @@ def keep_plans():
 
 @repair.route('/keep_task', methods=['GET', 'POST'])
 def keep_tasks():
+    """保养任务表"""
     query_data = db_session.query(KeepPlan).filter_by(Status='待保养').all()
     if request.method == 'GET':
         # 每页多少条
@@ -159,30 +144,30 @@ def keep_tasks():
         offset = int(request.values.get('offset'))
         for item in query_data:
             q = db_session.query(KeepTask).filter_by(No=item.No).first()
-            if not q and get_time_stamp(item.StartTime):
+            if not q and get_time_stamp(item.WorkTime):
                 data = KeepTask(EquipmentCode=item.EquipmentCode, No=item.No, Worker=item.Worker, Status=item.Status,
                                 ApplyTime=item.ApplyTime, StartTime=item.StartTime,
                                 WeekTime=item.WeekTime)
                 db_session.add(data)
                 db_session.commit()
-            else:
-                pass
         data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
         total = db_session.query(KeepTask).count()
-        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}}, cls=AlchemyEncoder,
-                          ensure_ascii=True)
-    elif request.method == 'POST':
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
+                          cls=AlchemyEncoder, ensure_ascii=True)
+    if request.method == 'POST':
         json_data = request.json.get('params')
         no = json_data.get('No')
-        endtime = json_data.get('EndTime')
+        end_time = json_data.get('EndTime')
         content = json_data.get('Content')
         item = db_session.query(KeepTask).filter_by(No=no).first()
         data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成',
                           KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
-                          Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=endtime)
-        # TODO: 任务完成后递增保养周期
-        db_session.add(data)
+                          Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=end_time)
+        keep_plan = db_session.query(KeepPlan).filter_by(No=no).first()
+        keep_plan.WorkTime = add_date(keep_plan.WeekTime, keep_plan.WorkTime)
+        db_session.add_all([data, keep_plan])
         db_session.commit()
+        db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
