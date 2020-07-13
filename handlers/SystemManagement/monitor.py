@@ -291,6 +291,7 @@ def change_run():
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "机组开关修改错误：" + str(e), current_user.Name)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
 @opc.route('/change_status', methods=['POST'])
@@ -309,3 +310,4 @@ def change_status():
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "频率修改错误：" + str(e), current_user.Name)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
