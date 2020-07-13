@@ -924,6 +924,28 @@ class CollectionPoint(Base):
     # 位置描述:
     PositionDescription = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
+#设备效率树型表
+class EquipmentEfficiencyTree(Base):
+    __tablename__ = "EquipmentEfficiencyTree"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 设备名称:
+    EquipmentName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备编码:
+    EquipmentCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 父节点:
+    ParentEquipmentCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreamName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
