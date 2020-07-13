@@ -98,25 +98,25 @@
           <el-row :gutter="15">
             <el-col :span="5">
               <div class="platformContainer">
-                <p class="color-offwhite text-size-16 marginBottom">今日制冷总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">{{ ZLtodayData }}</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日制冷总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">{{ ZLcompareAllDateData }}</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日截止{{ nowTime }}的制冷量</p>
-                <p class="color-darkblue text-size-18 marginBottom">{{ZLcompareData  }}</p>
-                <p class="color-offwhite text-size-16 marginBottom">对比</p>
+                <p class="color-offwhite text-size-14 marginBottom">今日制冷总量</p>
+                <p class="color-lightgreen text-size-16 marginBottom">{{ ZLtodayData }}</p>
+                <p class="color-offwhite text-size-14 marginBottom">选择日制冷总量</p>
+                <p class="color-lightgreen text-size-16 marginBottom">{{ ZLcompareAllDateData }}</p>
+                <p class="color-offwhite text-size-14 marginBottom">选择日截止{{ nowTime }}的制冷量</p>
+                <p class="color-darkblue text-size-16 marginBottom">{{ZLcompareData  }}</p>
+                <p class="color-offwhite text-size-14 marginBottom">对比</p>
                 <p class="text-size-16 marginBottom" :class="ZLtodayData-ZLcompareData>0?'color-red':'color-success'">{{ ZLCompareRatio }}</p>
               </div>
             </el-col>
             <el-col :span="5">
               <div class="platformContainer">
-                <p class="color-offwhite text-size-16 marginBottom">今日热负载总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">{{ hottodayData }}</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日热负载总量</p>
-                <p class="color-lightgreen text-size-20 marginBottom">{{ hotcompareAllDateData }}</p>
-                <p class="color-offwhite text-size-16 marginBottom">选择日截止{{ nowTime }}的热负载</p>
-                <p class="color-darkblue text-size-18 marginBottom">{{ hotcompareData }}</p>
-                <p class="color-offwhite text-size-16 marginBottom">对比</p>
+                <p class="color-offwhite text-size-14 marginBottom">今日热负载总量</p>
+                <p class="color-lightgreen text-size-16 marginBottom">{{ hottodayData }}</p>
+                <p class="color-offwhite text-size-14 marginBottom">选择日热负载总量</p>
+                <p class="color-lightgreen text-size-16 marginBottom">{{ hotcompareAllDateData }}</p>
+                <p class="color-offwhite text-size-14 marginBottom">选择日截止{{ nowTime }}的热负载</p>
+                <p class="color-darkblue text-size-16 marginBottom">{{ hotcompareData }}</p>
+                <p class="color-offwhite text-size-14 marginBottom">对比</p>
                 <p class="text-size-16 marginBottom" :class="hottodayData-hotcompareData>0?'color-red':'color-success'">{{ hotCompareRatio }}</p>
               </div>
             </el-col>
@@ -300,12 +300,7 @@
         },
         chartRefrigerationData:{
           columns: ["时间", "制冷量","热负载"],
-          rows:[
-            {"时间":"00:00","制冷量":254,"热负载":546},
-            {"时间":"01:00","制冷量":345,"热负载":863},
-            {"时间":"02:00","制冷量":574,"热负载":314},
-            {"时间":"03:00","制冷量":674,"热负载":414},
-          ]
+          rows:[]
         },
         // 制冷统计图表
         RefrigerationStatisticsExtend: {
@@ -339,10 +334,7 @@
         },
         chartRefrigerationStatisticsData:{
           columns: ["统计", "今日","对比日"],
-          rows:[
-            {"统计":"制冷量","今日":254,"对比日":546},
-            {"统计":"热负载","今日":345,"对比日":863},
-          ]
+          rows:[]
         },
         nowTime:"",
         todayEnergy:"",
