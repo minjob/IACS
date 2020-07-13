@@ -77,7 +77,6 @@ column:[] 字段集参数配置
   disabled:false   默认false，选择true时 在表单中此字段只能显示，无法输入和编辑
   showField:true   默认true，是否在表格展示此字段的表头
   searchProp:true  默认true，此字段是否可以搜索
-  canSubmit:true   默认true，此字段是否可以做添加修改
 
 handleType:[] 表格工具栏参数配置
   type        按钮颜色 primary、warning  参考elementui按钮的type

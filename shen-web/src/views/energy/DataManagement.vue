@@ -4,12 +4,11 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="Datepick platformContainer blackComponents" style="height:500px;">
-                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="default" @on-ok="getSelectDate" :open=true :confirm=true></DatePicker>
-                
+                <div class="Datepick platformContainer blackComponents" style="height:310px;">
+                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="default" @on-ok="getSelectDate" :open='true' :confirm='true'></DatePicker>
+                    
                 </div>
-
-                <div class="platformContainer blackComponents" style="height:750px;">
+                <div class="platformContainer blackComponents asidetree" style="height:750px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
@@ -23,35 +22,38 @@
                 </div>
               </el-col>
               <el-col :span="18">
-                <div class="platformContainer blackComponents">
+                <div class="platformContainer blackComponents" style="position:relative;">
                    <div id="main" style="width:100%; height:800px; backgroundColor:#3D4048;">数据图表</div>
+                   <div class="Timepick" style="height:33px;width:175px">
+                      <TimePicker  placeholder="选择时间" style="width: 168px" v-model='valuetime' :confirm='true' @on-ok="getSelectTime" ></TimePicker>
+                  </div>
                    <div class="staticbox" style="width:100%; height:245px;">
                      <div class="platformContainer blackComponents" >
                        <div class="containBottom ">
-                         <p>选择期间平均值</p>
-                         <div class="cardContainer">{{averagevalue}}</div>
+                         <p>{{dateset[0]}}期间平均值</p>
+                         <div class="cardContainer">{{averagevalue1}}</div>
                        </div>
                        <div class="containBottom ">
                          <p>选择期间对比时间</p>
                          <div class="cardContainer">{{comparetime}}</div>
                        </div>
                        <div class="containBottom ">
-                         <p>选择期间平均值</p>
-                         <div class="cardContainer">选择期间平均值</div>
+                         <p>{{dateset[1]}}期间平均值</p>
+                         <div class="cardContainer">{{averagevalue2}}</div>
                        </div>
                      </div>
                      <div class="platformContainer blackComponents" >
                        <div class="containBottom ">
-                         <p>选择期间平均值</p>
-                         <div class="cardContainer">选择期间平均值</div>
+                         <p>{{dateset[2]}}期间平均值</p>
+                         <div class="cardContainer">{{averagevalue3}}</div>
                        </div>
                        <div class="containBottom ">
-                         <p>选择期间平均值</p>
-                         <div class="cardContainer">选择期间平均值</div>
+                         <p>{{dateset[3]}}期间平均值</p>
+                         <div class="cardContainer">{{averagevalue4}}</div>
                        </div>
                        <div class="containBottom ">
-                         <p>选择期间平均值</p>
-                         <div class="cardContainer">选择期间平均值</div>
+                         <p>{{dateset[4]}}期间平均值</p>
+                         <div class="cardContainer">{{averagevalue5}}</div>
                        </div>
                      </div>
                    </div>
@@ -89,14 +91,29 @@
         },
         valuedate:'',
         dates:[],
-        rawdata:[],
-        data1:[],
-        data2:[],
+        dataline1:[],
+        dataline2:[],
+        dataline3:[],
+        dataline4:[],
+        dataline5:[],
         maxvalue:10,
-        averagevalue:0,
+        averagevalue1:0,
+        averagevalue2:0,
+        averagevalue3:0,
+        averagevalue4:0,
+        averagevalue5:0,
         comparevalue:0,
         dataIndex:0,
-        comparetime:'2020-04-18',
+        comparetime:'00:00:04',
+        valuetime:'23:59:59',
+        valuedate:[],
+        starttime:'2020-06-20 00:00:00',
+        endtime:'2020-06-20 08:30:00',
+        childrentree:[],
+        TagCodes:'',
+        treenumber:[],
+        TagChecked:[],
+        dateset:[]
       }
     },
     mounted(){
@@ -107,15 +124,16 @@
     },
     computed:{ //计算属性
 
+
     },
     methods: {
-      drawLine(data1,data2){
+      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dateset){
         var myChart = echarts.init(document.getElementById('main'));
         var option = {
               backgroundColor: '#3D4048',
               color:['#2db7f5','#ff6600'], 
               legend: {
-                  data: ['MA5', 'MA10'],
+                  data:dateset ,
                   inactiveColor: '#777',
                   textStyle: {
                       color: '#fff'
@@ -176,9 +194,9 @@
          
           series: [
               {
-                  name: 'MA5',
+                  name: dateset[0],
                   type: 'line',
-                  data: data1,
+                  data: dataline1,
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
@@ -186,9 +204,39 @@
                   }
               },
               {
-                  name: 'MA10',
+                  name: dateset[1],
                   type: 'line',
-                  data: data2,
+                  data: dataline2,
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                      width: 1
+                  }
+              },
+              {
+                  name: dateset[2],
+                  type: 'line',
+                  data: dataline3,
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                      width: 1
+                  }
+              },
+              {
+                  name: dateset[3],
+                  type: 'line',
+                  data: dataline4,
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                      width: 1
+                  }
+              },
+              {
+                  name: dateset[4],
+                  type: 'line',
+                  data: dataline5,
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
@@ -206,17 +254,17 @@
                         color:"#FF4B5C",
                     },
                 data: [[
-                    { coord: [this.dates[0],42000000] },
-                    { coord: [this.dates[0],52000000] }
+                    { coord: [this.dates[0],0] },
+                    { coord: [this.dates[0],1000] }
                 ]]
             }
               }
           ]
       };
     var j = 0; 
-    var max = Math.max.apply(Math, this.data1); //数据的最大值
-    option.series[0].data = this.data1;
-    option.visualMap.pieces[0] = {gte: 42742569, lte: max, color: 'yellow'} //数据大于42742569显示黄色
+    var max = Math.max.apply(Math, this.dataline1); //数据的最大值
+    option.series[0].data = this.dataline1;
+    option.visualMap.pieces[0] = {gte: 500, lte: max, color: 'yellow'} //数据大于42742569显示黄色
 
 //数据中的某一项为某个值时 分段显示
 // var j = 0; 
@@ -234,44 +282,47 @@
        if(event.axesInfo.length!=0){
          var index=event.dataIndex
         if(index>that.dataIndex){
-          var arr=that.data1.slice(that.dataIndex,index)
+          var arr1=that.dataline1.slice(that.dataIndex,index)
+          var arr2=that.dataline2.slice(that.dataIndex,index)
+          var arr3=that.dataline3.slice(that.dataIndex,index)
+          var arr4=that.dataline4.slice(that.dataIndex,index)
+          var arr5=that.dataline5.slice(that.dataIndex,index)
           var index1=index-that.dataIndex
         }else{
-          var arr=that.data1.slice(index, that.dataIndex)
+          var arr1=that.dataline1.slice(index, that.dataIndex)
+          var arr2=that.dataline2.slice(index, that.dataIndex)
+          var arr3=that.dataline3.slice(index, that.dataIndex)
+          var arr4=that.dataline4.slice(index, that.dataIndex)
+          var arr5=that.dataline5.slice(index, that.dataIndex)
           var index1=that.dataIndex-index
         }
-        var num=0
-        for(var i=0;i<arr.length;i++){
-            num=num+arr[i]
+        var num1=0
+        var num2=0
+        var num3=0
+        var num4=0
+        var num5=0
+        for(var i=0;i<arr1.length;i++){
+            num1=num1+arr1[i]
          }
-         that.averagevalue=num/index1
-        //  console.log(that.averagevalue)
-        //  console.log(that.dates[index])//当前的日期
-        //  console.log(that.data1[index])//当前的第一个值
-        //  console.log(that.comparevalue)//对比天的值
-        //  console.log(that.data2[index])//当前的第二个值
+        for(var i=0;i<arr2.length;i++){
+            num2=num2+arr2[i]
+         }
+        for(var i=0;i<arr3.length;i++){
+            num3=num3+arr3[i]
+         }
+        for(var i=0;i<arr4.length;i++){
+            num4=num4+arr4[i]
+         }
+        for(var i=0;i<arr5.length;i++){
+            num5=num5+arr5[i]
+         }
+         that.averagevalue1=num1/index1
+         that.averagevalue2=num2/index1
+         that.averagevalue3=num3/index1
+         that.averagevalue4=num4/index1
+         that.averagevalue5=num5/index1
        }
      })
-
-    // var xAxisInfo=event.axesInfo //echarts官方样例
-    // if (xAxisInfo) {
-    //         var dimension = xAxisInfo.value + 1;
-    //         myChart.setOption({
-    //             series: {
-    //                 id: 'pie',
-    //                 label: {
-    //                     formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-    //                 },
-    //                 encode: {
-    //                     value: dimension,
-    //                     tooltip: dimension
-    //                 }
-    //             }
-    //         });
-    //     }
-
-    //  });
-
     myChart.off("click");//解绑事件处理函数（可根据情况而定是否需要，这里我这边会重绘几次表，所以需要解绑事件处理函数）。
     myChart.on('click', renderBrushed);
     function renderBrushed(params) {
@@ -280,7 +331,7 @@
       var index=params.dataIndex
       that.dataIndex=params.dataIndex
       that.comparetime=params.name
-      that.comparevalue=that.data1[index]
+      that.comparevalue=that.dataline1[index]
        myChart.setOption({
           series:{
 	          name: '平行于y轴的对比线',
@@ -293,8 +344,8 @@
                         color:"#FF4B5C",
                     },
                 data: [[
-                    { coord: [that.comparetime,42000000] },
-                    { coord: [that.comparetime,52000000] }
+                    { coord: [that.comparetime,0] },
+                    { coord: [that.comparetime,1000] }
                 ]]
             }
               }
@@ -308,66 +359,119 @@
           limit:1000,
           offset:0
         }
-        var params1={
-          TagCodes:'MB2TCP3.A_ACR_10.Ep_total'+','+'MB2TCP3.A_ACR_13.Ep_total',
-          begin:'2020-06-20 00:00:00',
-          end:'2020-06-20 08:00:00',
-          TagFlag:'first'
-        }
-        var params2={
+         this.axios.get('/api/CUID',{params}).then((res) => {
+           var arr=JSON.parse(res.data).rows
+           for(var i=0;i<arr.length;i++){
+            this.getTagcode(arr[i].ParentTagCode)
+           }
+           this.treedata=arr.map((item, index) => {
+              return { id:item.ParentTagCode,label: item.ParentTagName,children:[]}
+            })
+         })
+      },
+      getTagcode(ParentTag){
+         var params2={
           tableName:'TagMaintain',
-          ParentTagCode:'LQ4',
+          field:'ParentTagCode',
+          fieldvalue:ParentTag,
           limit:100,
           offset:0
         }
-         this.axios.get('/api/CUID',{params}).then((res) => {
-           var arr=JSON.parse(res.data).rows
-           console.log(arr)
-           this.treedata=arr.map((item, index) => {
-              return { id: index+1,label: item.ParentTagName,children:[{id:index+12,label:'Tag1'},{id:index+23,label:'Tag2'}]}
+        this.axios.get('/api/CUID',{params:params2}).then((value) => {
+              var arr=JSON.parse(value.data).rows
+              this.childrentree=arr.map((item, index) => {
+              return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
             })
-            this.axios.get('/api/CUID',{params:params2}).then((value) => {
-              console.log('---------------')
-              var arr=JSON.parse(value.data)
-                console.log(arr)
+            for(var i=0;i<this.treedata.length;i++){
+              for(var j=0;j<this.childrentree.length;j++){
+                if(this.treedata[i].id===this.childrentree[j].ParentTagCode){
+                  this.treedata[i].children=this.childrentree
+                }
+              }
+            }
             })
+      },
+      getChecked(){
+        var arr=this.$refs.tree.getCheckedNodes()
+       if(arr.length!==0){
+        this.TagChecked=this.$refs.tree.getCheckedNodes()
+        var j=0
+        this.TagCodes=''
+        for(var i=0;i<arr.length;i++){
+          if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
+            this.TagCodes=this.TagCodes+arr[i].id+','
+            j++
+          }
+        }
+        this.treenumber=j
+        this.TagCodes=this.TagCodes.slice(0,-1)
+        this.getTrenddata(this.TagCodes,this.starttime,this.endtime)
+       }
+      },
+      getTrenddata(t,b,e){
+         var params1={
+            TagCodes:t,
+            begin:b,
+            end:e,
+            TagFlag:'first'
+          }
             this.axios.get('/api/energytrendtu',{params:params1}).then((res) => {
+              var rows=[]
               var rows=res.data
-              this.rawdata=res.data
               this.dates = rows.map(function (item) {
                 return item[0];
               });
-              this.data1 = rows.map(function (item) {
+              this.dataline1 = rows.map(function (item) {
                 return +item[1];
               });
-              this.data2 = rows.map(function (item) {
+              this.dataline2 = rows.map(function (item) {
                 return +item[2];
               });
-              this.drawLine(this.data1,this.data2)
+              this.dataline3 = rows.map(function (item) {
+                return +item[3];
+              });
+              this.dataline4 = rows.map(function (item) {
+                return +item[4];
+              });
+              this.dataline5 = rows.map(function (item) {
+                return +item[5];
+              });
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
                 })
-         })
-      },
-      getChecked(){
-        console.log(this.$refs.tree.getCheckedNodes());
       },
       getSelectDate(){
-        console.log(this.valuedate)
-        for(let i of this.valuedate){
-          if(i===false){
+        this.dateset=[]
+        if(this.valuedate[0]===false){
             console.log('请选择你的日期')
             return;
-          }
-          console.log(moment(i).format('YYYY-MM-DD 23:59:00'))
+          }else if(this.treenumber>=2){
+            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
+            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
+            var arr=this.TagChecked
+            for(var i=0;i<arr.length;i++){
+            if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
+                this.dateset.push(arr[i].label)
+            }
         }
+        }else{
+          var arr=this.valuedate
+          this.dateset=[]
+            for(var i=0;i<arr.length;i++){
+              this.valuedate=moment(arr[i]).format('YYYY-MM-DD')
+              this.starttime=moment(arr[i]).format('YYYY-MM-DD  00:00:00')
+              this.endtime=this.valuedate+' '+this.valuetime
+              this.dateset.push(this.valuedate)
+            }
+        }
+      },
+      getSelectTime(){     
+        this.endtime=this.valuedate+' '+this.valuetime
       }
     
     }
   }
 </script>
 <style scoped>
-.ivu-date-picker-focused{
-  width: 469px!important;
-}
 .containBottom{
   float: left;
   width:33%;
@@ -387,5 +491,13 @@
 }
 .staticbox .cardContainer{
   padding-left:0px;
+}
+.Timepick{
+    width: 175px;
+    position: absolute;
+    top: 10px;
+}
+.asidetree{
+  overflow: auto;
 }
 </style>

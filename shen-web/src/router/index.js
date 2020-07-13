@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
-import config from '@/components/config'
 import Login from '@/components/login'
 import Home from '@/views/home'
 import SystemMonitor from '@/views/energy/SystemMonitor'
@@ -46,10 +45,6 @@ export default new Router({
       name: 'login',
       meta:{ title:'登录'},
       component: Login,
-    },,{
-      path: '/config',
-      name: 'config',
-      component: config,
     },
   ]
 })

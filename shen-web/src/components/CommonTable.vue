@@ -18,7 +18,13 @@
     </el-form>
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
-      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false"></el-table-column>
+      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false">
+        <template scope="scope" v-if="item.dataJudge">
+          <div v-for="spanItem in item.dataJudge" :key="spanItem.value">
+            <span v-if="scope.row[item.prop] === spanItem.value" :style="{ color:spanItem.color }">{{ scope.row[item.prop] }}</span>
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="paginationClass">
       <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -96,6 +102,9 @@
         if(this.tableData.tableSelectionRadio){
           this.$refs.multipleTable.clearSelection();
           this.$refs.multipleTable.toggleRowSelection(row)
+          if(this.tableData.rowClick){
+            this.$emit(this.tableData.rowClick)
+          }
         }else{
           this.$refs.multipleTable.toggleRowSelection(row)
         }
