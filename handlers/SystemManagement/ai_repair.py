@@ -150,6 +150,9 @@ def keep_tasks():
                                 WeekTime=item.WeekTime, Type=item.Type)
                 db_session.add(data)
                 db_session.commit()
+            if q.Type == '单次':
+                db_session.delete(q)
+                db_session.commit()
         data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
         total = db_session.query(KeepTask).count()
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
@@ -164,10 +167,16 @@ def keep_tasks():
                           KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
                           Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=end_time)
         keep_plan = db_session.query(KeepPlan).filter_by(No=no).first()
-        keep_plan.WorkTime = add_date(keep_plan.WeekTime, keep_plan.WorkTime)
-        db_session.add_all([data, keep_plan])
-        db_session.commit()
-        db_session.close()
+        if keep_plan:
+            keep_plan.WorkTime = add_date(keep_plan.WeekTime, keep_plan.WorkTime)
+            db_session.add_all([data, keep_plan])
+            db_session.commit()
+            db_session.close()
+            return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        else:
+            db_session.add(data)
+            db_session.commit()
+            db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
