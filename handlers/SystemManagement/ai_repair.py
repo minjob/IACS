@@ -123,10 +123,12 @@ def keep_plans():
     """保养计划"""
     json_data = request.json.get('params')
     work_time = add_date(json_data.get('WeekTime'), json_data.get('StartTime'))
+    work_type = json_data.get('Type')
+    week_time = '单次' if work_type == '单次' else json_data.get('WeekTime')
     data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                     Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
                     StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
-                    WorkTime=work_time, WeekTime=json_data.get('WeekTime'))
+                    WorkTime=work_time, WeekTime=week_time)
     db_session.add(data)
     db_session.commit()
     db_session.close()
