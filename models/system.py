@@ -944,6 +944,56 @@ class EquipmentEfficiencyTree(Base):
     # 描述:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
+class EquipmentStatusCount(Base):
+    __tablename__ = "EquipmentStatusCount"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    #采集时间
+    SampleTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 批次号
+    WorkDate = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 系统内部设备编码:
+    SYSEQPCode = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态
+    Status =  Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态类型
+    StatusType = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 是否停机
+    IsStop = Column(Unicode(10), primary_key=False, autoincrement=False, nullable=True)
+    #持续时间
+    Duration = Column(Float, primary_key=False, autoincrement=False, nullable=True)
+    #状态次数
+    StatusChangeCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+class EquipmentStatusDetail(Base):
+    __tablename__ = "EquipmentStatusDetail"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    #采集时间
+    SampleTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 批次号
+    WorkDate = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 系统内部设备编码:
+    SYSEQPCode = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态
+    StatusEvent =  Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态类型
+    Comment = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 是否停机
+
+class EquipmentStatusRule(Base):
+    __tablename__ = "EquipmentStatusRule"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 系统内部设备编码:
+    SYSEQPCode = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    #采集时间
+    TagID = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 条
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

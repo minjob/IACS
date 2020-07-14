@@ -14,6 +14,7 @@ from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
     SchedulingStandard, SchedulingStock, scheduledate, TagMaintain, scheduleDateType
+from models.system import EquipmentEfficiencyTree, EquipmentStatusCount
 from tools.MESLogger import MESLogger
 import json
 import socket
@@ -112,7 +113,7 @@ def energyanalysis():
                 end = CompareTime + " 23:59:59"
                 beginnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
                 endnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 23:59:59"
-                tag_str = "SUM(`MB2TCP3.A_ACR_10.Ep_total`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_13.Ep_total`) AS A_ACR_13"
+                tag_str = "SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS A_ACR_13"
                 sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '"\
                       + begin + "' AND '" + end + "' OR CollectionDate BETWEEN '" + beginnow + "' AND '" + endnow + "' group by CollectionHour order by CollectionHour"
                 re = db_session.execute(sql).fetchall()
@@ -178,7 +179,7 @@ def energyselectbytime():
         try:
             begin = data.get("begin")
             end = data.get("end")
-            tag_str = "SUM(`MB2TCP3.A_ACR_10.Ep_total`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_13.Ep_total`) AS A_ACR_13"
+            tag_str = "SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS A_ACR_13"
             sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
                   + begin + "' AND '" + end + "' group by CollectionHour order by CollectionHour"
             re = db_session.execute(sql).fetchall()
@@ -274,6 +275,55 @@ def makecoolselectbytime():
             tag_str = "SUM("+TagCode+") AS "+TagCode
             sql = "SELECT  " + tag_str + " FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "'"
             re = db_session.execute(sql).fetchall()
+            count = 0
+            for i in re:
+                count = round(float(0 if i[TagCode] == None else i[TagCode]), 2)
+            return json.dumps(count, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            logger.error(e)
+            insertSyslog("error", "根据时间段查询制冷分析值报错Error：" + str(e), current_user.Name)
+            return json.dumps("根据时间段查询制冷分析值报错", cls=AlchemyEncoder, ensure_ascii=False)
+
+def getEquipmentEfficiencyTreeChildrenMap(id):
+    sz = []
+    try:
+        orgs = db_session.query(EquipmentEfficiencyTree).filter().all()
+        for obj in orgs:
+            if obj.ParentEquipmentCode == id:
+                sz.append(
+                    {"name": obj.EquipmentName, "value": obj.EquipmentCode, "children": getEquipmentEfficiencyTreeChildrenMap(obj.ID)})
+        return sz
+    except Exception as e:
+        print(e)
+        return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+@energy.route('/selectEquipmentEfficiencyTree')#组织结构
+def selectEquipmentEfficiencyTree():
+    '''查询设备效率分析树形结构'''
+    if request.method == 'GET':
+        try:
+            return json.dumps(getEquipmentEfficiencyTreeChildrenMap(id=0), cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            insertSyslog("error", "查询设备效率分析树形结构报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+@energy.route('/selectrundetailbyequipmentcode', methods=['GET', 'POST'])
+def selectrundetailbyequipmentcode():
+    '''
+    根据设备code查询设备运行情况
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            EquipmentCode = data.get("EquipmentCode")
+            WorkDate = data.get("WorkDate")
+            sql = "SELECT  SUM(count) FROM EquipmentStatusCount WHERE WorkDate = '" + WorkDate + "' and SYSEQPCode '" + \
+                  EquipmentCode + "' and Status = 'RUN' OR" + "WorkDate = '" + WorkDate + "' and SYSEQPCode '" + EquipmentCode + \
+                  "' and Status = 'STOP' OR" + "WorkDate = '" + WorkDate + "' and SYSEQPCode '" + EquipmentCode + \
+                  "' and Status = 'FAULT'"
+            re = db_session.execute(sql).fetchall()
+            db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate, EquipmentStatusCount.SYSEQPCode == EquipmentCode).all()
             count = 0
             for i in re:
                 count = round(float(0 if i[TagCode] == None else i[TagCode]), 2)

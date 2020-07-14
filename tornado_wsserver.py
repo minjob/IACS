@@ -51,10 +51,8 @@ class SendThread(threading.Thread):
                 oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tags_list")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
-                    oc_dict_i = {}
-                    oc_dict_i[oc] = returnb(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc))  # 蒸汽瞬时流量
-                    oc_dict_i_tag[oc] = oc_dict_i
+                    oc_dict_i_tag[oc] = returnb(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc))
                 json_data = json.dumps(oc_dict_i_tag)
                 bytemsg = bytes(json_data,encoding="utf-8")
                 for key in clients.keys():
