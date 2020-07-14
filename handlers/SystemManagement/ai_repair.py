@@ -152,7 +152,7 @@ def keep_tasks():
                                 WeekTime=item.WeekTime, Type=item.Type)
                 db_session.add(data)
                 db_session.commit()
-            if q.Type == '单次':
+            if item.Type == '单次':
                 db_session.delete(q)
                 db_session.commit()
         data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
