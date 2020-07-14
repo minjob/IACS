@@ -274,6 +274,21 @@ class ScheduleCTRLWORD(object):
         print("字符串" + shigh + slow + ":整型:" + str(int(shigh + slow, 2)))
         return int(shigh + slow, 2)
 
+    def Write_LS_INIWORD(self, AEquip, AWD):
+        # client = Client('opc.tcp://127.0.0.1:49320')
+        try:
+            self.connect()
+            lsctrl = self.GetCtrlWord(int(AWD), 0, 0, 0, 0, 0, 0)
+            if AEquip == "LS1":
+                self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
+                self._nodels1.set_value(ua.DataValue(ua.Variant(lsctrl, ua.VariantType.UInt16)))
+            elif AEquip == "LS2":
+                self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
+                self._nodels2.set_value(ua.DataValue(ua.Variant(lsctrl, ua.VariantType.UInt16)))
+        except Exception as err:
+            print(err)
+            pass
+
 
 @opc.route('/run', methods=['POST'])
 def change_run():
@@ -281,11 +296,20 @@ def change_run():
         json_data = request.json.get('params')
         equipment_code = json_data.get('EquipmentCode')
         status = json_data.get('Status')
+        temperature = json_data.get('Temperature', '100')
         ctrl = ScheduleCTRLWORD('TY')
         if equipment_code in ['LS1', 'LD1', 'LQT1']:
-            ctrl.Equip_LS1Control(equipment_code, status)
+            if equipment_code == 'LS1' and status == 'STOP':
+                ctrl.Equip_LS1Control(equipment_code, status)
+                ctrl.Write_LS_INIWORD(equipment_code, temperature)
+            else:
+                ctrl.Equip_LS1Control(equipment_code, status)
         if equipment_code in ['LS2', 'LD2', 'LQT2']:
-            ctrl.Equip_LS2Control(equipment_code, status)
+            if equipment_code == 'LS2' and status == 'STOP':
+                ctrl.Equip_LS1Control(equipment_code, status)
+                ctrl.Write_LS_INIWORD(equipment_code, temperature)
+            else:
+                ctrl.Equip_LS1Control(equipment_code, status)
         return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
