@@ -310,6 +310,7 @@ def change_run():
                 ctrl.Write_LS_INIWORD(equipment_code, temperature)
             else:
                 ctrl.Equip_LS2Control(equipment_code, status)
+        insertSyslog("机组开关操作", f"对{equipment_code}设备进行了{status}操作", current_user.Name)
         return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
@@ -328,6 +329,7 @@ def change_status():
             ctrl.Write_LS1_Params(equipment_code, hz)
         elif equipment_code in ['LD2', 'LQ2']:
             ctrl.Write_LS2_Params(equipment_code, hz)
+        insertSyslog("频率修改操作", f"将{equipment_code}设备的频率修改为{hz}", current_user.Name)
         return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
