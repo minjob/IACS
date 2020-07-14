@@ -181,7 +181,7 @@ def energyselectbytime():
             end = data.get("end")
             tag_str = "SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS A_ACR_13"
             sql = "SELECT  " + tag_str + ",CollectionDate AS CollectionDate,CollectionHour AS CollectionHour FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
-                  + begin + "' AND '" + end + "' group by CollectionHour order by CollectionHour"
+                  + begin + "' AND '" + end + "'"
             re = db_session.execute(sql).fetchall()
             count = 0
             for i in re:
