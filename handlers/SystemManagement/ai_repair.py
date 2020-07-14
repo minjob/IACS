@@ -124,10 +124,12 @@ def keep_plans():
     """保养计划"""
     try:
         json_data = request.json.get('params')
+        equipments = json_data.get('EquipmentCode')
+        # equipment_group = '  '.join(equipments)
         work_time = add_date(json_data.get('WeekTime'), json_data.get('StartTime'))
         work_type = json_data.get('Type')
         week_time = '单次' if work_type == '单次' else json_data.get('WeekTime')
-        data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
+        data = KeepPlan(EquipmentCode=equipments, No=get_no(json_data.get('ApplyTime')),
                         Worker='current_user.Name', ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
                         StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
                         WorkTime=work_time, WeekTime=week_time)
@@ -198,13 +200,24 @@ def keep_tasks():
 @repair.route('/keep_record/<p>', methods=['GET'])
 def keep_record(p):
     try:
+        # 当前页码
+        page = int(request.values.get('offset'))
         # 每页多少条
-        limit = int(request.values.get('limit'))
-        # 当前页
-        offset = int(request.values.get('offset'))
+        per_page = int(request.values.get('limit'))
+
+        # query_data = db_session.query(KeepRecord).order_by(KeepRecord.ApplyTime.desc()).all()
+        # data_list = [item for item in query_data]
+        # result = []
+        # for data in data_list:
+        #     if p in data.EquipmentCode:
+        #         result.append(data)
+        # result_data = result[(page - 1)*per_page:page*per_page]
+        # return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': result_data, 'total': len(result)}},
+        #                   cls=AlchemyEncoder, ensure_ascii=True)
+
         total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
         data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
-            KeepRecord.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
+            KeepRecord.ApplyTime.desc()).limit(per_page).offset((page - 1) * per_page)
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
                           cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:

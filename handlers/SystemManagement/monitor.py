@@ -306,10 +306,10 @@ def change_run():
                 ctrl.Equip_LS1Control(equipment_code, status)
         if equipment_code in ['LS2', 'LD2', 'LQT2']:
             if equipment_code == 'LS2' and status == 'STOP':
-                ctrl.Equip_LS1Control(equipment_code, status)
+                ctrl.Equip_LS2Control(equipment_code, status)
                 ctrl.Write_LS_INIWORD(equipment_code, temperature)
             else:
-                ctrl.Equip_LS1Control(equipment_code, status)
+                ctrl.Equip_LS2Control(equipment_code, status)
         return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
@@ -317,7 +317,7 @@ def change_run():
         return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
 
 
-@opc.route('/change_status', methods=['POST'])
+@opc.route('/status', methods=['POST'])
 def change_status():
     try:
         json_data = request.json.get('params')

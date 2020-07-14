@@ -14,7 +14,7 @@ from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
     SchedulingStandard, SchedulingStock, scheduledate, TagMaintain, scheduleDateType
-from models.system import EquipmentEfficiencyTree, EquipmentStatusCount
+from models.system import EquipmentEfficiencyTree, EquipmentStatusCount, Equipment
 from tools.MESLogger import MESLogger
 import json
 import socket
@@ -318,17 +318,39 @@ def selectrundetailbyequipmentcode():
         try:
             EquipmentCode = data.get("EquipmentCode")
             WorkDate = data.get("WorkDate")
-            sql = "SELECT  SUM(count) FROM EquipmentStatusCount WHERE WorkDate = '" + WorkDate + "' and SYSEQPCode '" + \
-                  EquipmentCode + "' and Status = 'RUN' OR" + "WorkDate = '" + WorkDate + "' and SYSEQPCode '" + EquipmentCode + \
-                  "' and Status = 'STOP' OR" + "WorkDate = '" + WorkDate + "' and SYSEQPCode '" + EquipmentCode + \
-                  "' and Status = 'FAULT'"
-            re = db_session.execute(sql).fetchall()
-            db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate, EquipmentStatusCount.SYSEQPCode == EquipmentCode).all()
-            count = 0
-            for i in re:
-                count = round(float(0 if i[TagCode] == None else i[TagCode]), 2)
-            return json.dumps(count, cls=AlchemyEncoder, ensure_ascii=False)
+            run = db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate,
+                                                                     EquipmentStatusCount.SYSEQPCode == EquipmentCode,
+                                                                     EquipmentStatusCount.Status == "RUN").all()
+            stop = db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate,
+                                                                     EquipmentStatusCount.SYSEQPCode == EquipmentCode,
+                                                                     EquipmentStatusCount.Status == "STOP").all()
+            fault = db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate,
+                                                                     EquipmentStatusCount.SYSEQPCode == EquipmentCode,
+                                                                     EquipmentStatusCount.Status == "FAULT").all()
+            equip = db_session.query(Equipment).filter(Equipment.EquipmentCode == EquipmentCode).first()
+            if equip:
+                pow = equip.Power
+            else:
+                pow = ""
+            dict_run = {}
+            dict_run["runcount"] = len(run)
+            dict_run["stopcount"] = len(stop)
+            dict_run["faultcount"] = len(fault)
+            dict_run["power"] = pow
+            runtime = 0
+            for r in run:
+               runtime = runtime + float(r.Duration)
+            dict_run["runtime"] = runtime
+            stoptime = 0
+            for r in stop:
+                stoptime = stoptime + float(r.Duration)
+            dict_run["stoptime"] = stoptime
+            faulttime = 0
+            for r in fault:
+                faulttime = faulttime + float(r.Duration)
+            dict_run["faulttime"] = faulttime
+            return json.dumps(dict_run, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
-            insertSyslog("error", "根据时间段查询制冷分析值报错Error：" + str(e), current_user.Name)
-            return json.dumps("根据时间段查询制冷分析值报错", cls=AlchemyEncoder, ensure_ascii=False)
+            insertSyslog("error", "根据设备code查询设备运行情况报错Error：" + str(e), current_user.Name)
+            return json.dumps("根据设备code查询设备运行情况报错", cls=AlchemyEncoder, ensure_ascii=False)
