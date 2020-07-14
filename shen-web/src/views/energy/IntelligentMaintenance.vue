@@ -217,7 +217,7 @@
           total:0,
           multipleSelection:[],
           tableSelection:true, //是否在第一列添加复选框
-          tableSelectionRadio:true, //是否需要单选
+          tableSelectionRadio:false, //是否需要单选
           searchProp:"",
           searchVal:"",
           handleType:[

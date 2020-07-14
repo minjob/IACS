@@ -104,6 +104,7 @@ export default {
         {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
         {name:"班组管理",icon:"el-icon-receiving",url:"/TeamGroup"},
         {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
+        {name:"权限维护",icon:"el-icon-lock",url:"/Permission"},
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],
       isFullScreen:false, //是否全屏

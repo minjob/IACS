@@ -14,6 +14,7 @@ import Organization from '@/views/system/Organization'
 import Role from '@/views/system/Role'
 import TeamGroup from '@/views/system/TeamGroup'
 import Personnel from '@/views/system/Personnel'
+import Permission from '@/views/system/Permission'
 import Log from '@/views/system/Log'
 
 Vue.use(Router)
@@ -38,6 +39,7 @@ export default new Router({
         {path:'/Role',name:'Role',meta:{ title:'角色管理'},component:Role},
         {path:'/TeamGroup',name:'TeamGroup',meta:{ title:'班组管理'},component:TeamGroup},
         {path:'/Personnel',name:'Personnel',meta:{ title:'人员管理'},component:Personnel},
+        {path:'/Permission',name:'Permission',meta:{ title:'权限维护'},component:Permission},
         {path:'/Log',name:'Log',meta:{ title:'系统日志'},component:Log},
       ]
     },{
