@@ -50,21 +50,21 @@
             <el-row :gutter="15">
               <el-col :span="6">
                 <div class="cardContainer">
-                  <p class="color-lightgreen marginBottom">开机</p>
+                  <p class="color-lightgreen marginBottom">运行</p>
                   <p class="marginBottom color-grayblack text-size-12"><span>次数</span><span class="floatRight">时间占比</span></p>
                   <p class="color-lightgreen"><span>3</span><span class="floatRight">72.4%</span></p>
                 </div>
               </el-col>
               <el-col :span="6">
                 <div class="cardContainer">
-                  <p class="color-lightgreen marginBottom">关机</p>
+                  <p class="color-lightgreen marginBottom">停机</p>
                   <p class="marginBottom color-grayblack text-size-12"><span>次数</span><span class="floatRight">时间占比</span></p>
                   <p class="color-lightgreen"><span>3</span><span class="floatRight">12.5%</span></p>
                 </div>
               </el-col>
               <el-col :span="6">
                 <div class="cardContainer">
-                  <p class="color-lightgreen marginBottom">空载</p>
+                  <p class="color-lightgreen marginBottom">故障</p>
                   <p class="marginBottom color-grayblack text-size-12"><span>次数</span><span class="floatRight">时间占比</span></p>
                   <p class="color-lightgreen"><span>3</span><span class="floatRight">2.4%</span></p>
                 </div>

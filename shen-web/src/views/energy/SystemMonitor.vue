@@ -5,84 +5,90 @@
         <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '大系统'">
           <div class="MainContain BorderRadius4 SysMonbg" @mousedown="move" data-move>
             <div class="hf-6 color-boxbgc" style="top:55px;left: 53px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HF1AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HF1AISD'] }}%</div>
             </div>
             <div class="hf-6 color-boxbgc" style="left:162px;top:96px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="hf-6 color-boxbgc" style="left: 429px;top:149px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left:339px;top:212px;">
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119KT__KT1AIFR'] }}HZ</div>
             </div>
             <div class="hf-6 color-boxbgc" style="left:339px;top:287px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="hf-6 color-boxbgc" style="left:343px;top:586px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 573px;top: 94px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN11AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN11AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 802px;top: 94px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN10AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN10AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 799px;top: 249px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN9AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN9AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 685px;top: 191px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['ZT02_TEMP_AVG'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['ZT02_SD_AVG'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 573px;top: 249px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN12AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN12AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 573px;top: 572px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN21AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN21AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 802px;top: 572px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN19AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN19AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 685px;top: 630px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['ZT01_TEMP_AVG'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['ZT01_SD_AVG'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 573px;top: 771px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN20AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN20AISD'] }}%</div>
             </div>
             <div class="hf-6 color-mainbgc" style="left: 799px;top: 771px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HN18AIWD'] }}°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HN18AISD'] }}%</div>
             </div>
             <div class="hf-6 color-boxbgc" style="left: 946px;top: 149px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="hf-6 color-boxbgc" style="left: 1038px;top: 586px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="hf-6 color-boxbgc" style="left: 1214px;top: 96px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119HTS_HF8AIWD'] }} 27.6°C</div>
+                <div class='smalllbox color-lightgreen'>{{ websockVarData['SCADA.AI.E119HTS_HF8AISD'] }} 66%</div>
+            </div>
+            <div class="hf-6 color-boxbgc" style="left: 1038px;top: 212px;">
+                <div class='smalllbox color-white'>{{ websockVarData['SCADA.AI.E119KT__KT2AIFR'] }}HZ</div>
             </div>
             <div class="hf-6 color-boxbgc" style="left: 1038px;top: 287px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="hf-6 color-boxbgc" style="top:56px;left:1323px;">
-                <div class='smalllbox color-white'>28.6</div>
-                <div class='smalllbox color-lightgreen'>66.2%</div>
+                <div class='smalllbox color-white'></div>
+                <div class='smalllbox color-lightgreen'></div>
             </div>
             <div class="BorderRadius4 color-lightbluebgc sfs" style="top:95px;left:260px;">湿风室</div>
             <div class="BorderRadius4 color-lightbluebgc sfs" style="top:95px;left:1142px;">湿风室</div>
@@ -214,11 +220,35 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LD2','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 805px;left: 470px;"></div>
             </el-popover>
+            <div class="wd" style="top: 368px;left: 148px;">{{ websockVarData['SCADA.AI.E119LS__LS1AI08'] }}°C</div>
+            <div class="wd" style="top: 362px;left: 267px;">{{ websockVarData['SCADA.AI.E119LS__LS1AI09'] }}°C</div>
+            <div class="wd" style="top: 450px;left: 293px;">{{ websockVarData['SCADA.AI.E119LS__LS2AI09'] }}°C</div>
+            <div class="wd" style="top: 568px;left: 148px;">{{ websockVarData['SCADA.AI.E119LS__LS2AI08'] }}°C</div>
+            <div class="wd" style="top: 580px;left: 349px;">{{ websockVarData['SCADA.AI.E119LS__LS1AI01'] }}°C</div>
+            <div class="wd" style="top: 748px;left: 188px;">{{ websockVarData['SCADA.AI.E119LS__LS2AI01'] }}°C</div>
+            <div class="wd" style="top: 788px;left: 352px;">{{ websockVarData['SCADA.AI.E119LS__LS1AI07'] }}°C</div>
+            <div class="wd" style="top: 855px;left: 292px;">{{ websockVarData['SCADA.AI.E119LS__LS2AI07'] }}°C</div>
+            <div class="wd" style="top: 342px;left: 512px;">{{ websockVarData['SCADA.AI.E119LQ__LQ1AIFR'] }}°C</div>
+            <div class="wd" style="top: 430px;left: 512px;">{{ websockVarData['SCADA.AI.E119LQ__LQ2AIFR'] }}°C</div>
+            <div class="wd" style="top: 755px;left: 538px;">{{ websockVarData['SCADA.AI.E119LD__LD1AIFR'] }}°C</div>
+            <div class="wd" style="top: 845px;left: 538px;">{{ websockVarData['SCADA.AI.E119LD__LD2AIFR'] }}°C</div>
+
+            <div class="wd" style="top: 125px;left: 960px;">{{ websockVarData['SCADA.AI.E119SDF_SDF1AIOC'] }}%</div>
+            <div class="wd" style="top: 242px;left: 960px;">{{ websockVarData['SCADA.AI.E119KT__KT1AIFR'] }}HZ</div>
+            <div class="wd" style="top: 125px;left: 1050px;">{{ websockVarData['SCADA.AI.E119SDF_SDF2AIOC'] }}%</div>
+            <div class="wd" style="top: 242px;left: 1050px;">{{ websockVarData['SCADA.AI.E119KT__KT2AIFR'] }}HZ</div>
           </div>
         </el-col>
         <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '设备房温度'">
           <div class="MainContain BorderRadius4 eqSysMonbg" @mousedown="move" data-move>
-
+            <div class="eqhouse" style="top: 250px;left: 59px;">{{ websockVarData['SCADA.AI.E119HTS_HN1AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 250px;left: 420px;">{{ websockVarData['SCADA.AI.E119HTS_HN14AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 250px;left: 775px;">{{ websockVarData['SCADA.AI.E119HTS_HN3AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 250px;left: 1138px;">{{ websockVarData['SCADA.AI.E119HTS_HN5AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 624px;left: 59px;">{{ websockVarData['SCADA.AI.E119HTS_HN13AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 624px;left: 420px;">{{ websockVarData['SCADA.AI.E119HTS_HN4AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 624px;left: 775px;">{{ websockVarData['SCADA.AI.E119HTS_HN6AIWD'] }}°C</div>
+            <div class="eqhouse" style="top: 624px;left: 1138px;">{{ websockVarData['SCADA.AI.E119HTS_HN7AIWD'] }}°C</div>
           </div>
         </el-col>
       </el-col>
@@ -243,6 +273,7 @@
           ],
         },
         websock:null,
+        websockVarData:{},
         formParameters:{
           HZLQ1:"",
           HZLQ2:"",
@@ -308,8 +339,7 @@
       },
       websocketonmessage(e){ //数据接收
         var resdata = JSON.parse(e.data);
-        console.log(resdata)
-
+        this.websockVarData = resdata
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);

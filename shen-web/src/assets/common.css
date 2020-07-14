@@ -94,6 +94,10 @@
   border: 1px solid #585B62;
   color: #fff;
 }
+/* 单选框 */
+.blackComponents .el-radio{
+  color: #ffffff;
+}
 /* 表单样式 */
 .blackComponents .el-form-item__label{
   color: #ffffff;
@@ -341,6 +345,32 @@
   color: #fff;
   font-size: 18px;
   letter-spacing: 2px;
+  text-align:center;
+  cursor: pointer;
+}
+.wd{
+  position: absolute;
+  width:80px;
+  height:25px;
+  line-height: 25px;
+  color: #15CC48;
+  font-size: 12px;
+  letter-spacing: 2px;
+  background: #000;
+  border-radius: 4px;
+  text-align:center;
+  cursor: pointer;
+}
+.eqhouse{
+  position: absolute;
+  width:250px;
+  height:63px;
+  line-height: 63px;
+  color: #15CC48;
+  font-size: 12px;
+  letter-spacing: 2px;
+  background: #000;
+  border-radius: 4px;
   text-align:center;
   cursor: pointer;
 }
