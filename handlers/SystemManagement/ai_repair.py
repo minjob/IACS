@@ -48,7 +48,7 @@ def get_time_stamp(work_time):
     """
     time_array = time.strptime(work_time, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
-    return 0 < time_stamp - int(time.time()) < 604800
+    return 0 < time_stamp - int(time.time()) < 604800*2
 
 
 def get_no(no):
@@ -124,7 +124,7 @@ def keep_plans():
     json_data = request.json.get('params')
     work_time = add_date(json_data.get('WeekTime'), json_data.get('StartTime'))
     data = KeepPlan(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
-                    Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
+                    Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
                     StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
                     WorkTime=work_time, WeekTime=json_data.get('WeekTime'))
     db_session.add(data)
@@ -146,8 +146,8 @@ def keep_tasks():
             q = db_session.query(KeepTask).filter_by(No=item.No).first()
             if not q and get_time_stamp(item.WorkTime):
                 data = KeepTask(EquipmentCode=item.EquipmentCode, No=item.No, Worker=item.Worker, Status=item.Status,
-                                ApplyTime=item.ApplyTime, StartTime=item.StartTime,
-                                WeekTime=item.WeekTime)
+                                ApplyTime=item.ApplyTime, StartTime=item.StartTime, WorkTime=item.WorkTime,
+                                WeekTime=item.WeekTime, Type=item.Type)
                 db_session.add(data)
                 db_session.commit()
         data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
@@ -160,7 +160,7 @@ def keep_tasks():
         end_time = json_data.get('EndTime')
         content = json_data.get('Content')
         item = db_session.query(KeepTask).filter_by(No=no).first()
-        data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成',
+        data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成', Type=item.Type,
                           KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
                           Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=end_time)
         keep_plan = db_session.query(KeepPlan).filter_by(No=no).first()

@@ -789,6 +789,8 @@ class KeepPlan(Base):
     WeekTime = Column(Unicode(128), nullable=True)
     # 预工作时间
     WorkTime = Column(Unicode(128), nullable=True)
+    # 工作类型
+    Type = Column(Unicode(32), nullable=True)
 
 
 class KeepTask(Base):
@@ -816,6 +818,10 @@ class KeepTask(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
+    # 预工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
+    # 工作类型
+    Type = Column(Unicode(32), nullable=True)
 
 
 class KeepRecord(Base):
@@ -847,6 +853,8 @@ class KeepRecord(Base):
     WeekTime = Column(Unicode(128), nullable=True)
     # 完成时间
     EndTime = Column(Unicode(32), nullable=True)
+    # 工作类型
+    Type = Column(Unicode(32), nullable=True)
 
 
 class Repair(Base):
