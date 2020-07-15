@@ -103,7 +103,7 @@
 
           </div>
         </el-col>
-        <el-row :gutter="15" style="overflow: hidden;" v-if="TabControl.TabControlCurrent === '冷却系统'">
+        <el-row :gutter="15" style="overflow: hidden;" v-if="TabControl.TabControlCurrent === '冷水系统'">
           <el-col :span="6">
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水机组1</p>
@@ -112,12 +112,12 @@
                   <span>故障状态：<span v-if="LS1Bit[LS1Bit.length-6] === '1'">故障</span><span v-if="LS1Bit[LS1Bit.length-6] === '0'">正常</span></span>
                 </el-col>
                 <el-col :span="12">
-                  <span>本地/远程：<span v-if="LS1Bit[LS1Bit.length-7] === '1'">本地</span><span v-if="LS1Bit[LS1Bit.length-7] === '0'">远程</span></span>
+                  <span>本地/远程：<span v-if="LS1Bit[LS1Bit.length-7] === '0'">本地</span><span v-if="LS1Bit[LS1Bit.length-7] === '1'">远程</span></span>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <span>手/自动：<span v-if="LS1Bit[LS1Bit.length-9] === '1'">手动</span><span v-if="LS1Bit[LS1Bit.length-9] === '0' || !LS1Bit[LS1Bit.length-9]">自动</span></span>
+                  <span>手/自动：<span v-if="LS1Bit[LS1Bit.length-9] === '0'">手动</span><span v-if="LS1Bit[LS1Bit.length-9] === '1' || !LS1Bit[LS1Bit.length-9]">自动</span></span>
                 </el-col>
               </el-row>
             </div>
@@ -130,12 +130,12 @@
                   <span>故障状态：<span v-if="LS2Bit[LS2Bit.length-6] === '1'">故障</span><span v-if="LS2Bit[LS2Bit.length-6] === '0'">正常</span></span>
                 </el-col>
                 <el-col :span="12">
-                  <span>本地/远程：<span v-if="LS2Bit[LS2Bit.length-7] === '1'">本地</span><span v-if="LS2Bit[LS2Bit.length-7] === '0'">远程</span></span>
+                  <span>本地/远程：<span v-if="LS2Bit[LS2Bit.length-7] === '0'">本地</span><span v-if="LS2Bit[LS2Bit.length-7] === '1'">远程</span></span>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <span>手/自动：<span v-if="LS2Bit[LS2Bit.length-9] === '1'">手动</span><span v-if="LS2Bit[LS2Bit.length-9] === '0' || !LS2Bit[LS2Bit.length-9]">自动</span></span>
+                  <span>手/自动：<span v-if="LS2Bit[LS2Bit.length-9] === '0'">手动</span><span v-if="LS2Bit[LS2Bit.length-9] === '1' || !LS2Bit[LS2Bit.length-9]">自动</span></span>
                 </el-col>
               </el-row>
             </div>
@@ -163,7 +163,7 @@
             </div>
           </el-col>
         </el-row>
-        <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '冷却系统'">
+        <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '冷水系统'">
           <div class="MainContain BorderRadius4 coolingSysMonbg" style="width: 1500px;" @mousedown="move" data-move >
             <el-popover placement="bottom" title="冷却塔1" width="200" trigger="click">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LQT1','RUN')">开启</el-button>
@@ -287,7 +287,7 @@
           TabControlOptions:[
             {name:"大系统"},
             {name:"小系统"},
-            {name:"冷却系统"},
+            {name:"冷水系统"},
             {name:"设备房温度"},
           ],
         },

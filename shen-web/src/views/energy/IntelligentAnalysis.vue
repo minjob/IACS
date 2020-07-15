@@ -36,6 +36,7 @@
       <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '设备效率分析'">
         <el-col :span="5">
           <div class="platformContainer blackComponents" style="min-height: 560px;">
+            <p class="marginBottom">当前选中的设备号：{{ TreeEquipmentCode }}</p>
             <el-tree :data="TreeEquipmentData" :default-expand-all="true" highlight-current @node-click="EquipmentTreeNodeClick"></el-tree>
           </div>
         </el-col>
@@ -105,7 +106,7 @@
               </el-col>
               <el-col :span="24" class="marginTop">
                 <div class="platformContainer">
-                  <ve-histogram :data="chartRunEfficiencyData" :extend="RunEfficiencyExtend" height="300px"></ve-histogram>
+                  <ve-histogram :data="chartRunEfficiencyData" :extend="RunEfficiencyExtend" height="400px"></ve-histogram>
                 </div>
               </el-col>
             </el-row>
@@ -376,6 +377,7 @@
       this.getEnergyData()
 
       this.getEquipmentEfficiencyTree()
+      this.getEquipmentEfficiencyData()
 
       this.getmakecoolanalysis()
       this.getmakecoolanalysisData()
@@ -475,6 +477,7 @@
         var that = this
         this.axios.get("/api/selectEquipmentEfficiencyTree").then(res =>{
           this.TreeEquipmentData = res.data
+          this.TreeEquipmentCode = this.TreeEquipmentData[0].value
         },res =>{
           console.log("请求设备树形数据错误")
         })
@@ -494,11 +497,11 @@
         }).then(res =>{
           that.EquipmentFaultObj = res.data
           that.chartRunEfficiencyData.rows = []
-          that.chartRunEfficiencyData.rows.push({
-            "类型":"运行","次数":that.EquipmentFaultObj.runcount,"时长":that.EquipmentFaultObj.runtime,"时间占比":that.EquipmentFaultObj.run_Proportion,
-            "类型":"停机","次数":that.EquipmentFaultObj.stopcount,"时长":that.EquipmentFaultObj.stoptime,"时间占比":that.EquipmentFaultObj.stop_Proportion,
-            "类型":"故障","次数":that.EquipmentFaultObj.faultcount,"时长":that.EquipmentFaultObj.faulttime,"时间占比":that.EquipmentFaultObj.fault_Proportion
-          })
+          that.chartRunEfficiencyData.rows.push(
+            {"类型":"运行","次数":that.EquipmentFaultObj.runcount,"时长":that.EquipmentFaultObj.runtime,"时间占比":that.EquipmentFaultObj.run_Proportion},
+            {"类型":"停机","次数":that.EquipmentFaultObj.stopcount,"时长":that.EquipmentFaultObj.stoptime,"时间占比":that.EquipmentFaultObj.stop_Proportion},
+            {"类型":"故障","次数":that.EquipmentFaultObj.faultcount,"时长":that.EquipmentFaultObj.faulttime,"时间占比":that.EquipmentFaultObj.fault_Proportion}
+          )
         },res =>{
           console.log("请求错误")
         })
