@@ -188,9 +188,9 @@ class TagMaintain(Base):
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
     # Tag编码
-    TagCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    TagCode = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
     # Tag名称
-    TagName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    TagName = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
     # 所属设备
     Equipment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
     # Tag编码
