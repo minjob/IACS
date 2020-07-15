@@ -287,9 +287,9 @@ def makecoolselectbytime():
 def getEquipmentEfficiencyTreeChildrenMap(id):
     sz = []
     try:
-        orgs = db_session.query(EquipmentEfficiencyTree).filter().all()
+        orgs = db_session.query(EquipmentEfficiencyTree).filter(EquipmentEfficiencyTree.ParentEquipmentCode == id).all()
         for obj in orgs:
-            if obj.ParentEquipmentCode == id:
+            if int(obj.ParentEquipmentCode) == id:
                 sz.append(
                     {"name": obj.EquipmentName, "value": obj.EquipmentCode, "children": getEquipmentEfficiencyTreeChildrenMap(obj.ID)})
         return sz
