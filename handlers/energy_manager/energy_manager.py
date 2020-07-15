@@ -355,7 +355,7 @@ def selectrundetailbyequipmentcode():
                 dict_run["stop_Proportion"] = str(round(100 * (stoptime / total_time), 2))+"%"
                 dict_run["fault_Proportion"] = str(round(100 * (faulttime / total_time), 2))+"%"
             else:
-                dict_run["run_Proportion"] = +"0%"
+                dict_run["run_Proportion"] = "0%"
                 dict_run["stop_Proportion"] = "0%"
                 dict_run["fault_Proportion"] = "0%"
             return json.dumps(dict_run, cls=AlchemyEncoder, ensure_ascii=False)
