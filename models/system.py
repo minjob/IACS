@@ -787,6 +787,10 @@ class KeepPlan(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
+    # 预工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
+    # 工作类型
+    Type = Column(Unicode(32), nullable=True)
 
 
 class KeepTask(Base):
@@ -814,10 +818,10 @@ class KeepTask(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
-    # # 接单人
-    # ReceiveWorker = Column(Unicode(32), nullable=True)
-    # # 接单时间
-    # ReceiveTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    # 预工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
+    # 工作类型
+    Type = Column(Unicode(32), nullable=True)
 
 
 class KeepRecord(Base):
@@ -849,6 +853,8 @@ class KeepRecord(Base):
     WeekTime = Column(Unicode(128), nullable=True)
     # 完成时间
     EndTime = Column(Unicode(32), nullable=True)
+    # 工作类型
+    Type = Column(Unicode(32), nullable=True)
 
 
 class Repair(Base):
@@ -923,6 +929,78 @@ class CollectionPoint(Base):
 
     # 位置描述:
     PositionDescription = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+#设备效率树型表
+class EquipmentEfficiencyTree(Base):
+    __tablename__ = "EquipmentEfficiencyTree"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 设备名称:
+    EquipmentName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备编码:
+    EquipmentCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 父节点:
+    ParentEquipmentCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreamName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+class EquipmentStatusCount(Base):
+    __tablename__ = "EquipmentStatusCount"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    #采集时间
+    SampleTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 批次号
+    WorkDate = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 系统内部设备编码:
+    SYSEQPCode = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态
+    Status =  Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态类型
+    StatusType = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 是否停机
+    IsStop = Column(Unicode(10), primary_key=False, autoincrement=False, nullable=True)
+    #持续时间
+    Duration = Column(Float, primary_key=False, autoincrement=False, nullable=True)
+    #状态次数
+    StatusChangeCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+class EquipmentStatusDetail(Base):
+    __tablename__ = "EquipmentStatusDetail"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    #采集时间
+    SampleTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 批次号
+    WorkDate = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 系统内部设备编码:
+    SYSEQPCode = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态
+    StatusEvent =  Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 状态类型
+    Comment = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 是否停机
+
+class EquipmentStatusRule(Base):
+    __tablename__ = "EquipmentStatusRule"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 系统内部设备编码:
+    SYSEQPCode = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    #采集时间
+    TagID = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 条
 
 
 # 生成表单的执行语句

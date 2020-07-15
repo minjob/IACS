@@ -13,6 +13,7 @@ import 'font-awesome/css/font-awesome.min.css'
 import VCharts from 'v-charts'
 import store from './store'
 import $ from 'jquery'
+import './icons'
 
 //iview 的按需引入
 import 'view-design/dist/styles/iview.css'

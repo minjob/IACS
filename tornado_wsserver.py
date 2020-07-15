@@ -19,7 +19,7 @@ import time
 import gc
 import datetime
 
-pool = redis.ConnectionPool(host=constant.REDIS_HOST) #, password=constant.REDIS_PASSWORD
+pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD) #, password=constant.REDIS_PASSWORD
 redis_conn = redis.Redis(connection_pool=pool)
 
 clients = dict()  # 客户端Session字典
@@ -51,10 +51,8 @@ class SendThread(threading.Thread):
                 oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tags_list")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
-                    oc_dict_i = {}
-                    oc_dict_i[oc] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc))  # 蒸汽瞬时流量
-                    oc_dict_i_tag[oc] = oc_dict_i
+                    oc_dict_i_tag[oc] = returnb(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc))
                 json_data = json.dumps(oc_dict_i_tag)
                 bytemsg = bytes(json_data,encoding="utf-8")
                 for key in clients.keys():
@@ -122,10 +120,13 @@ class ChatHandler(WebSocketHandler):
         return True  # 允许WebSocket的跨域请求
 
 def strtofloat(f):
-    if f == None or f == "" or f == b'':
-        return 0.0
-    else:
-        return round(float(f), 2)
+    try:
+        if f == None or f == "" or f == b'':
+            return 0.0
+        else:
+            return round(float(f), 2)
+    except Exception as e:
+        print(e)
 def returnb(rod):
     if rod == None or rod == "" or rod == b'':
         return ""

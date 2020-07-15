@@ -72,7 +72,7 @@ def insert(data):
                         else:
                             setattr(ss, key, data['WorkNumber'])
                     else:
-                        setattr(ss, key, data[key])
+                        setattr(ss, key, None if data[key] == "" else data[key])
             db_session.add(ss)
             aud = AuditTrace()
             aud.TableName = tableName

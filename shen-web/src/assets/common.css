@@ -94,6 +94,10 @@
   border: 1px solid #585B62;
   color: #fff;
 }
+/* 单选框 */
+.blackComponents .el-radio{
+  color: #ffffff;
+}
 /* 表单样式 */
 .blackComponents .el-form-item__label{
   color: #ffffff;
@@ -267,6 +271,18 @@
   background:#34383E url('../assets/img/Containerbgc.png') no-repeat scroll center center;
   cursor: move;
 }
+.smallSysMonbg{
+  background:#34383E url('../assets/img/Containerbgc2.png') no-repeat scroll center center;
+  cursor: move;
+}
+.coolingSysMonbg{
+  background:#34383E url('../assets/img/Containerbgc3.png') no-repeat scroll center center;
+  cursor: move;
+}
+.eqSysMonbg{
+  background:#34383E url('../assets/img/Containerbgc4.png') no-repeat scroll center center;
+  cursor: move;
+}
 .hf-6{
   position: absolute;
   width: 76px;
@@ -298,6 +314,65 @@
   font-size: 18px;
   letter-spacing: 2px;
   text-align:center;
+}
+.lqt{
+  position: absolute;
+  width:160px;
+  height:120px;
+  padding: 6px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-align:center;
+  cursor: pointer;
+}
+.jz{
+  position: absolute;
+  width:105px;
+  height:105px;
+  padding: 6px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-align:center;
+  cursor: pointer;
+}
+.lqb{
+  position: absolute;
+  width:65px;
+  height:65px;
+  padding: 6px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-align:center;
+  cursor: pointer;
+}
+.wd{
+  position: absolute;
+  width:80px;
+  height:25px;
+  line-height: 25px;
+  color: #15CC48;
+  font-size: 12px;
+  letter-spacing: 2px;
+  background: #000;
+  border-radius: 4px;
+  text-align:center;
+  cursor: pointer;
+}
+.eqhouse{
+  position: absolute;
+  width:250px;
+  height:63px;
+  line-height: 63px;
+  color: #15CC48;
+  font-size: 12px;
+  letter-spacing: 2px;
+  background: #000;
+  border-radius: 4px;
+  text-align:center;
+  cursor: pointer;
 }
 .Datepick .ivu-picker-panel-body{
   background-color: #3D4048;

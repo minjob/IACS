@@ -95,14 +95,37 @@
             <el-divider>制定保养计划</el-divider>
             <table class="elementTable marginBottom">
               <tr>
-                <td>设备编码：{{ TableData.multipleSelection[0].EquipmentCode }}</td>
-                <td>任务开始时间：<el-date-picker v-model="keepTaskStartTime" type="datetime" size="mini" :clearable="false" :editable="false"></el-date-picker></td>
+                <td colspan="2">设备编码：{{ TableData.multipleSelection[0].EquipmentCode }}</td>
+              </tr>
+              <tr>
+                <td>
+                  任务开始时间：<el-date-picker v-model="keepTaskStartTime" type="datetime" size="mini" :clearable="false" :editable="false"></el-date-picker>
+                </td>
+                <td>
+                  制定类型：
+                  <el-radio-group v-model="KeepTypeRadio">
+                    <el-radio label="单次">单次制定</el-radio>
+                    <el-radio label="周期">周期制定</el-radio>
+                  </el-radio-group>
+                </td>
               </tr>
               <tr>
                 <td>
                   <el-form :inline="true">
                     <el-form-item label="保养周期：" style="margin-bottom: 0;">
-                      <el-input v-model="weekNumber"></el-input>
+                      <el-select v-model="weekNumber" placeholder="请选择">
+                        <el-option label="1" value="1"></el-option>
+                        <el-option label="2" value="2"></el-option>
+                        <el-option label="3" value="3"></el-option>
+                        <el-option label="4" value="4"></el-option>
+                        <el-option label="5" value="5"></el-option>
+                        <el-option label="6" value="6"></el-option>
+                        <el-option label="7" value="7"></el-option>
+                        <el-option label="8" value="8"></el-option>
+                        <el-option label="9" value="9"></el-option>
+                        <el-option label="10" value="10"></el-option>
+                        <el-option label="11" value="11"></el-option>
+                      </el-select>
                     </el-form-item>
                     <el-form-item style="margin-bottom: 0;">
                       <el-select v-model="weekTime" placeholder="请选择">
@@ -194,13 +217,13 @@
           total:0,
           multipleSelection:[],
           tableSelection:true, //是否在第一列添加复选框
-          tableSelectionRadio:true, //是否需要单选
+          tableSelectionRadio:false, //是否需要单选
           searchProp:"",
           searchVal:"",
           handleType:[
             {type:"warning",label:"快速报修",clickEvent:"repairs"},
-            {type:"primary",label:"下发保养任务"},
             {type:"primary",label:"制定保养计划",clickEvent:"drawUpKeepPlan"},
+            {type:"primary",label:"查看保养计划",clickEvent:""},
           ],
           rowClick:"handleEQRowClick"
         },
@@ -263,6 +286,7 @@
             {prop:"Worker",label:"制定计划人"},
             {prop:"ApplyTime",label:"制定计划时间"},
             {prop:"StartTime",label:"任务开始时间"},
+            {prop:"WorkTime",label:"工作截止时间"},
             {prop:"Describe",label:"计划描述"},
             {prop:"Content",label:"保养内容"},
             {prop:"WeekTime",label:"工作周期"},
@@ -274,6 +298,7 @@
           multipleSelection:[],
         },
         keepTaskStartTime:moment().format("YYYY-MM-DD HH:ss:mm"),
+        KeepTypeRadio:"周期",
         weekNumber:"",
         weekTime:"周",
         weekTimeType:[
@@ -289,6 +314,7 @@
             {prop:"Worker",label:"制定计划人"},
             {prop:"ApplyTime",label:"制定计划时间"},
             {prop:"StartTime",label:"任务开始时间"},
+            {prop:"EndTime",label:"完成工作时间"},
             {prop:"Describe",label:"计划描述"},
             {prop:"Content",label:"保养内容"},
             {prop:"WeekTime",label:"工作周期"},
@@ -451,6 +477,7 @@
           EquipmentCode: this.TableData.multipleSelection[0].EquipmentCode,
           StartTime:moment(this.keepTaskStartTime).format("YYYY-MM-DD HH:ss:mm"),
           ApplyTime:moment().format("YYYY-MM-DD HH:ss:mm"),
+          Type:this.KeepTypeRadio,
           WeekTime:this.weekNumber + this.weekTime,
           Describe:this.KeekPlanContent
         }

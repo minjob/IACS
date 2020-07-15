@@ -244,7 +244,9 @@
         if(this.tableData.dialogTitle === "添加"){
           var params = {tableName:this.tableData.tableName}
           this.tableData.column.forEach(item =>{
-            params[item.prop] = item.value
+            if(item.canSubmit != false){
+              params[item.prop] = item.value
+            }
           })
           this.axios.post("/api/CUID",this.qs.stringify(params)).then(res =>{
             if(res.data == "OK"){
