@@ -130,6 +130,9 @@
 .blackComponents .el-tree-node:focus>.el-tree-node__content,.blackComponents .el-tree-node__content:hover{
   background-color: #727786;
 }
+.blackComponents .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+  background-color: #727786;
+}
 /* 分割线 */
 .blackComponents .el-divider{
   background-color: #727786;
