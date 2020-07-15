@@ -340,15 +340,24 @@ def selectrundetailbyequipmentcode():
             runtime = 0
             for r in run:
                runtime = runtime + float(r.Duration)
-            dict_run["runtime"] = runtime
+            dict_run["runtime"] = round(runtime, 2)
             stoptime = 0
             for r in stop:
                 stoptime = stoptime + float(r.Duration)
-            dict_run["stoptime"] = stoptime
+            dict_run["stoptime"] = round(stoptime, 2)
             faulttime = 0
             for r in fault:
                 faulttime = faulttime + float(r.Duration)
-            dict_run["faulttime"] = faulttime
+            dict_run["faulttime"] = round(faulttime, 2)
+            total_time = runtime + stoptime + faulttime
+            if total_time != 0:
+                dict_run["run_Proportion"] = str(round(100*(runtime/total_time),2))+"%"
+                dict_run["stop_Proportion"] = str(round(100 * (stoptime / total_time), 2))+"%"
+                dict_run["fault_Proportion"] = str(round(100 * (faulttime / total_time), 2))+"%"
+            else:
+                dict_run["run_Proportion"] = +"0%"
+                dict_run["stop_Proportion"] = "0%"
+                dict_run["fault_Proportion"] = "0%"
             return json.dumps(dict_run, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
