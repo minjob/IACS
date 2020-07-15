@@ -36,49 +36,76 @@
       <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '设备效率分析'">
         <el-col :span="5">
           <div class="platformContainer blackComponents" style="min-height: 560px;">
-            <el-tree
-              :data="TreeFacilityData"
-              show-checkbox
-              :default-expand-all="true"
-            >
-            </el-tree>
+            <el-tree :data="TreeEquipmentData" :default-expand-all="true" highlight-current @node-click="EquipmentTreeNodeClick"></el-tree>
           </div>
         </el-col>
         <el-col :span="19">
           <div class="platformContainer">
-            <p class="marginBottom">设备运行图</p>
+            <el-form :inline="true" class="blackComponents">
+              <el-form-item label="选择时间：">
+                <el-date-picker type="date" v-model="formParameters.EquipmentRunDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getEquipmentEfficiencyData"></el-date-picker>
+              </el-form-item>
+            </el-form>
             <el-row :gutter="15">
               <el-col :span="6">
                 <div class="cardContainer">
                   <p class="color-lightgreen marginBottom">运行</p>
-                  <p class="marginBottom color-grayblack text-size-12"><span>次数</span><span class="floatRight">时间占比</span></p>
-                  <p class="color-lightgreen"><span>3</span><span class="floatRight">72.4%</span></p>
+                  <el-row class="marginBottom">
+                    <el-col :span="8"><p class="color-grayblack text-size-12">次数</p></el-col>
+                    <el-col :span="8"><p class="color-grayblack text-size-12">时长</p></el-col>
+                    <el-col :span="8"><p class="color-grayblack text-size-12">时间占比</p></el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.runcount }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.runtime }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.run_Proportion }}</p></el-col>
+                  </el-row>
                 </div>
               </el-col>
               <el-col :span="6">
                 <div class="cardContainer">
                   <p class="color-lightgreen marginBottom">停机</p>
-                  <p class="marginBottom color-grayblack text-size-12"><span>次数</span><span class="floatRight">时间占比</span></p>
-                  <p class="color-lightgreen"><span>3</span><span class="floatRight">12.5%</span></p>
+                  <el-row class="marginBottom">
+                    <el-col :span="8"><p class="color-grayblack text-size-12">次数</p></el-col>
+                    <el-col :span="8"><p class="color-grayblack text-size-12">时长</p></el-col>
+                    <el-col :span="8"><p class="color-grayblack text-size-12">时间占比</p></el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stopcount }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stoptime }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stop_Proportion }}</p></el-col>
+                  </el-row>
                 </div>
               </el-col>
               <el-col :span="6">
                 <div class="cardContainer">
                   <p class="color-lightgreen marginBottom">故障</p>
-                  <p class="marginBottom color-grayblack text-size-12"><span>次数</span><span class="floatRight">时间占比</span></p>
-                  <p class="color-lightgreen"><span>3</span><span class="floatRight">2.4%</span></p>
+                  <el-row class="marginBottom">
+                    <el-col :span="8"><p class="color-grayblack text-size-12">次数</p></el-col>
+                    <el-col :span="8"><p class="color-grayblack text-size-12">时长</p></el-col>
+                    <el-col :span="8"><p class="color-grayblack text-size-12">时间占比</p></el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.faultcount }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.faulttime }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.fault_Proportion }}</p></el-col>
+                  </el-row>
                 </div>
               </el-col>
               <el-col :span="6">
                 <div class="cardContainer">
                   <p class="color-lightgreen marginBottom">功率</p>
-                  <p class="marginBottom color-grayblack text-size-12"><span>额定功率</span><span class="floatRight">平均功率</span></p>
-                  <p class="color-lightgreen"><span>45.546</span><span class="floatRight">54.45</span></p>
+                  <el-row class="marginBottom">
+                    <el-col :span="24"><p class="color-grayblack text-size-12">额定功率</p></el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="24"><p class="color-lightgreen">{{ EquipmentFaultObj.power }}</p></el-col>
+                  </el-row>
                 </div>
               </el-col>
               <el-col :span="24" class="marginTop">
                 <div class="platformContainer">
-                  <ve-line :data="chartRunEfficiencyData" :extend="RunEfficiencyExtend" height="300px"></ve-line>
+                  <ve-histogram :data="chartRunEfficiencyData" :extend="RunEfficiencyExtend" height="300px"></ve-histogram>
                 </div>
               </el-col>
             </el-row>
@@ -151,6 +178,7 @@
         formParameters:{
           energyDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
           refrigerationDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
+          EquipmentRunDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
         },
         pickerOptions:{
           disabledDate(time) {
@@ -226,14 +254,13 @@
           rows:[]
         },
         //树形图数据
-        TreeFacilityData:[
-          {label:"冷水机组1",children:[{label:"冷水机组1-1"},{label:"冷水机组1-2"}]},
-          {label:"冷水机组2",children:[{label:"冷水机组2-1"},{label:"冷水机组2-1"}]},
-        ],
-        //运行效率分析图表
+        TreeEquipmentData:[],
+        TreeEquipmentCode:"",
+        EquipmentFaultObj:{},
+        //设备效率分析图表
         RunEfficiencyExtend: {
           title:{
-            text:"时段功率趋势",
+            text:"设备效率统计",
             textStyle:{
               color:"#9B9B9B"
             }
@@ -261,12 +288,8 @@
           }
         },
         chartRunEfficiencyData: {
-          columns: ["时间", "功率"],
-          rows:[
-            {"时间":"00:00","功率":254},
-            {"时间":"01:00","功率":345},
-            {"时间":"02:00","功率":574},
-          ]
+          columns: ["类型", "次数", "时长", "时间占比"],
+          rows:[]
         },
         //制冷分析图表
         refrigerationExtend: {
@@ -351,6 +374,9 @@
     created(){
       this.getEnergyAnalysisCharts()
       this.getEnergyData()
+
+      this.getEquipmentEfficiencyTree()
+
       this.getmakecoolanalysis()
       this.getmakecoolanalysisData()
     },
@@ -444,6 +470,38 @@
           that.compareEnergy = CompareData.data
           that.compareAllDateEnergy = CompareAllData.data
         }))
+      },
+      getEquipmentEfficiencyTree(){ //获取设备效率 树形控件数据
+        var that = this
+        this.axios.get("/api/selectEquipmentEfficiencyTree").then(res =>{
+          this.TreeEquipmentData = res.data
+        },res =>{
+          console.log("请求设备树形数据错误")
+        })
+      },
+      EquipmentTreeNodeClick(data,node,e){
+        this.TreeEquipmentCode = data.value
+        this.getEquipmentEfficiencyData()
+      },
+      getEquipmentEfficiencyData(){
+        var that = this
+        var params = {
+          EquipmentCode:this.TreeEquipmentCode,
+          WorkDate:moment(this.EquipmentRunDate).format("YYYY-MM-DD"),
+        }
+        this.axios.get("/api/selectrundetailbyequipmentcode",{
+          params: params
+        }).then(res =>{
+          that.EquipmentFaultObj = res.data
+          that.chartRunEfficiencyData.rows = []
+          that.chartRunEfficiencyData.rows.push({
+            "类型":"运行","次数":that.EquipmentFaultObj.runcount,"时长":that.EquipmentFaultObj.runtime,"时间占比":that.EquipmentFaultObj.run_Proportion,
+            "类型":"停机","次数":that.EquipmentFaultObj.stopcount,"时长":that.EquipmentFaultObj.stoptime,"时间占比":that.EquipmentFaultObj.stop_Proportion,
+            "类型":"故障","次数":that.EquipmentFaultObj.faultcount,"时长":that.EquipmentFaultObj.faulttime,"时间占比":that.EquipmentFaultObj.fault_Proportion
+          })
+        },res =>{
+          console.log("请求错误")
+        })
       },
       getmakecoolanalysis(){ //获取制冷量分析两个图表
         var that = this
