@@ -150,7 +150,7 @@ def update(data):
                             else:
                                 setattr(oclass, key, data['WorkNumber'])
                         else:
-                            setattr(oclass, key, data[key])
+                            setattr(oclass, key, None if data[key] == "" or data[key] == "None" else data[key])
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
