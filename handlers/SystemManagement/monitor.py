@@ -1,4 +1,5 @@
 import json
+import time
 
 import redis
 from flask import Blueprint, request
@@ -289,9 +290,77 @@ class ScheduleCTRLWORD(object):
             print(err)
             pass
 
+    def GetFaultCtrlWord(self, AOutTemp, AFault):
+        if int(AOutTemp) > 30:
+            int_num = int(AOutTemp)
+        else:
+            int_num = int(AOutTemp)
+        bin_num = bin(int_num)
+        slow = str(bin_num)[2:]
+        if len(slow) == 1:
+            slow = '0000000' + slow
+        elif len(slow) == 2:
+            slow = '000000' + slow
+        elif len(slow) == 3:
+            slow = '00000' + slow
+        elif len(slow) == 4:
+            slow = '0000' + slow
+        elif len(slow) == 5:
+            slow = '000' + slow
+        elif len(slow) == 6:
+            slow = '00' + slow
+        elif len(slow) == 7:
+            slow = '0' + slow
+
+        shigh = '0000000'
+
+        if AFault == 1:
+            shigh = '1' + shigh
+        else:
+            shigh = '0' + shigh
+
+        print("字符串" + shigh + slow + ":整型:" + str(int(shigh + slow, 2)))
+        return int(shigh + slow, 2)
+
+    def Write_LS_FaultReset(self, AEquipment):
+        # client = Client('opc.tcp://127.0.0.1:49320')
+        try:
+            self.connect()
+            if (AEquipment == "LS1"):
+                lsctrl = self.GetFaultCtrlWord(100, 1)
+                self._nodels1.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
+                time.sleep(5)
+                lsctrl = self.GetFaultCtrlWord(100, 0)
+                self._nodels1.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
+            elif (AEquipment == "LS2"):
+                lsctrl = self.GetFaultCtrlWord(100, 1)
+                self._nodels2.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
+                time.sleep(5)
+                lsctrl = self.GetFaultCtrlWord(100, 0)
+                self._nodels2.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
+        except Exception as err:
+            print(err)
+            pass
+
+
+@opc.route('/fault', methods=['POST'])
+def fault():
+    """故障恢复"""
+    try:
+        json_data = request.json.get('params')
+        equipment_code = json_data.get('EquipmentCode')
+        ctrl = ScheduleCTRLWORD('TY')
+        ctrl.Write_LS_FaultReset(equipment_code)
+        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+    except Exception as e:
+        logger.error(e)
+        insertSyslog("error", "故障恢复错误：" + str(e), current_user.Name)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+
 
 @opc.route('/run', methods=['POST'])
 def change_run():
+    """修改机组开关"""
     try:
         json_data = request.json.get('params')
         equipment_code = json_data.get('EquipmentCode')
@@ -320,6 +389,7 @@ def change_run():
 
 @opc.route('/status', methods=['POST'])
 def change_status():
+    """修改机组频率"""
     try:
         json_data = request.json.get('params')
         equipment_code = json_data.get('EquipmentCode')
