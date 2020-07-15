@@ -22,38 +22,34 @@
               </el-col>
               <el-col :span="18">
                 <div class="platformContainer blackComponents" style="position:relative;">
-                   <div id="main" style="width:100%; height:800px; backgroundColor:#3D4048;">数据图表</div>
+                   <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;">数据图表</div>
                    <div class="Timepick" style="height:33px;width:175px">
                       <TimePicker  placeholder="选择时间" style="width: 168px" v-model='valuetime' :confirm='true' @on-ok="getSelectTime" ></TimePicker>
                   </div>
-                   <div class="staticbox" style="width:100%; height:245px;">
-                     <div class="platformContainer blackComponents" >
-                       <div class="containBottom ">
-                         <p>{{dateset[0]}}期间平均值</p>
-                         <div class="cardContainer">{{averagevalue1}}</div>
-                       </div>
-                       <div class="containBottom ">
-                         <p>选择期间对比时间</p>
-                         <div class="cardContainer">{{comparetime}}</div>
-                       </div>
-                       <div class="containBottom ">
-                         <p>{{dateset[1]}}期间平均值</p>
-                         <div class="cardContainer">{{averagevalue2}}</div>
-                       </div>
-                     </div>
-                     <div class="platformContainer blackComponents" >
-                       <div class="containBottom ">
-                         <p>{{dateset[2]}}期间平均值</p>
-                         <div class="cardContainer">{{averagevalue3}}</div>
-                       </div>
-                       <div class="containBottom ">
-                         <p>{{dateset[3]}}期间平均值</p>
-                         <div class="cardContainer">{{averagevalue4}}</div>
-                       </div>
-                       <div class="containBottom ">
-                         <p>{{dateset[4]}}期间平均值</p>
-                         <div class="cardContainer">{{averagevalue5}}</div>
-                       </div>
+                   <div class="staticbox" style="width:100%; height:295px;">
+                     <div class="platformContainer blackComponents">
+                        <el-table
+                            :data="tableData"
+                            style="width: 100%">
+                            <el-table-column
+                              prop="name"
+                              label="统计线名称"
+                              width="180">
+                            </el-table-column>
+                            <el-table-column
+                              prop="averag"
+                              label="平均值"
+                              width="180">
+                            </el-table-column>
+                            <el-table-column
+                              prop="max"
+                              label="最大值">
+                            </el-table-column>
+                             <el-table-column
+                              prop="min"
+                              label="最小值">
+                            </el-table-column>
+                          </el-table>                     
                      </div>
                    </div>
                 </div>
@@ -83,6 +79,32 @@
             {name:"数据录入"}
           ]
         },
+         tableData: [{
+            averag: 0,
+            name: 'Tag1',
+            max: 0,
+            min:0
+          },{
+            averag: 0,
+            name: 'Tag2',
+            max: 0,
+            min:0
+          },{
+            averag: 0,
+            name: 'Tag3',
+            max: 0,
+            min:0
+          },{
+            averag: 0,
+            name: 'Tag4',
+            max: 0,
+            min:0
+          },{
+            averag: 0,
+            name: 'Tag5',
+            max: 0,
+            min:0
+          },],
         treedata:[],
         defaultProps: {
           children: 'children',
@@ -328,6 +350,7 @@
          that.averagevalue3=num3/index1
          that.averagevalue4=num4/index1
          that.averagevalue5=num5/index1
+         that.InitTable()
        }
      })
     myChart.off("click");//解绑事件处理函数。
@@ -387,7 +410,6 @@
         }
         this.axios.get('/api/CUID',{params:params2}).then((value) => {
               var arr=JSON.parse(value.data).rows
-              // console.log(arr)
               this.childrentree=arr.map((item, index) => {
               return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
             })
@@ -443,6 +465,7 @@
               this.TagCodes=this.TagCodes.slice(0,-1)
               this.InitTrenddata(this.TagCodes,this.starttime,this.endtime)
             }else if(ziset.length===1){//单个tag 的情况
+              this.getSelectTime()
               this.TagCode=ziset[0].id
               this.SingleTag(this.TagCode,this.allday)
             }else{
@@ -477,6 +500,7 @@
                 return +item[5];
               });
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+             
                 })
       },
          SingleTag(tagcode,allday){ // 获取一个tag多天的数据
@@ -497,7 +521,7 @@
                var thirdarr=arr.slice(indexs[1]+1,indexs[2]+1)
                var fourtharr=arr.slice(indexs[2]+1,indexs[3]+1)
                var fiftharr=arr.slice(indexs[3]+1,indexs[4]+1)
-               this.dates = firstarr.map(function (item) {
+               this.dates=firstarr.map(function (item) {
                   return item[0].slice(11, 19);
                 });
                this.dataline1=firstarr.map(function (item) {
@@ -516,9 +540,25 @@
                 return +item[1];
               });
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              
              }
             }
           })
+      },
+      InitTable(){
+        for(var i=0;i<this.dateset.length;i++){
+          this.tableData[i].name=this.dateset[i]
+        }
+        if(this.averagevalue4===NaN){
+            this.tableData[3].averag=0
+        }else{
+            this.tableData[3].averag=this.averagevalue4
+        }
+         this.tableData[0].averag=this.averagevalue1
+         this.tableData[1].averag=this.averagevalue2
+         this.tableData[2].averag=this.averagevalue3
+         this.tableData[4].averag=this.averagevalue5
+        
       }
     }
   }
