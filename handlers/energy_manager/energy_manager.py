@@ -50,7 +50,7 @@ def energytrendtu():
                 begin = data.get("begin")
                 end = data.get("end")
                 TagCodes = data.get("TagCodes")
-                TagCodes = TagCodes.spilt(",")
+                TagCodes = TagCodes.split(",")
                 tag_str = ""
                 for TagCode in TagCodes:
                     if tag_str == "":
