@@ -58,7 +58,7 @@ def energytrendtu():
                     else:
                         tag_str = tag_str + "," + "`"+TagCode+"` AS "+"`"+TagCode+"`"
                 sql = "SELECT  " + tag_str + ",SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '"\
-                      + begin + "' AND '" + end + "' group by CollectionHour order by SampleTime"
+                      + begin + "' AND '" + end + "' group by CollectionMinuter order by SampleTime"
                 re = db_session.execute(sql).fetchall()
                 dict_list = []
                 for i in range(len(re)):
@@ -82,7 +82,7 @@ def energytrendtu():
                     else:
                         parameter_str = parameter_str + "' OR SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
                     j = j + 1
-                parameter_str = parameter_str + "' group by CollectionHour order by SampleTime"
+                parameter_str = parameter_str + "' group by CollectionMinuter order by SampleTime"
                 sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE " + parameter_str
                 re = db_session.execute(sql)
                 dict_list = []
