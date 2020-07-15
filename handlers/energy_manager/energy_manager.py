@@ -291,7 +291,7 @@ def getEquipmentEfficiencyTreeChildrenMap(id):
         for obj in orgs:
             if int(obj.ParentEquipmentCode) == id:
                 sz.append(
-                    {"name": obj.EquipmentName, "value": obj.EquipmentCode, "children": getEquipmentEfficiencyTreeChildrenMap(obj.ID)})
+                    {"label": obj.EquipmentName, "value": obj.EquipmentCode, "children": getEquipmentEfficiencyTreeChildrenMap(obj.ID)})
         return sz
     except Exception as e:
         print(e)
