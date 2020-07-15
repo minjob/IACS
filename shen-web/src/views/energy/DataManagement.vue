@@ -111,14 +111,17 @@
         endtime:'2020-06-20 08:30:00',
         childrentree:[],
         TagCodes:'',
+        TagCode:'',
         treenumber:[],
         TagChecked:[],
-        dateset:[]
+        dateset:[],
+        allday:'',//获取单个tag点日期字符串,
+        yyddate:'2020-06-20'
       }
     },
     mounted(){
         this.getAsidemenu()
-        this.Singlr()
+        this.dr()
     },
     watch:{
 
@@ -396,10 +399,19 @@
       },
       getChecked(){
         var arr=this.$refs.tree.getCheckedNodes()
+        console.log(arr)
         if(arr.length==1){
-         console.log(123)
+          this.TagCode=arr[0].id
+          this.SingleTag(this.TagCode,this.allday)
+
        }else{
-        this.TagChecked=this.$refs.tree.getCheckedNodes()
+         //执行多个tagcodes 一天
+        this.dateset=[]
+        for(var i=0;i<arr.length;i++){
+          if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
+                this.dateset.push(arr[i].label)
+            }
+        }
         var j=0
         this.TagCodes=''
         for(var i=0;i<arr.length;i++){
@@ -413,7 +425,7 @@
         this.InitTrenddata(this.TagCodes,this.starttime,this.endtime)
        }
       },
-      InitTrenddata(t,b,e){
+      InitTrenddata(t,b,e){ //一天多个tag
          var params1={
             TagCodes:t,
             begin:b,
@@ -423,8 +435,9 @@
             this.axios.get('/api/energytrendtu',{params:params1}).then((res) => {
               var rows=[]
               var rows=res.data
+              console.log(res)
               this.dates = rows.map(function (item) {
-                return item[0];
+                return +item[1];
               });
               this.dataline1 = rows.map(function (item) {
                 return +item[1];
@@ -444,46 +457,60 @@
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
                 })
       },
-      getSelectDate(){
-        this.dateset=[]
-        if(this.valuedate[0]===false){
-            console.log('请选择你的日期')
-            return;
-          }else if(this.treenumber>=2){
-            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
-            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
-            var arr=this.TagChecked
-            for(var i=0;i<arr.length;i++){
-            if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
-                this.dateset.push(arr[i].label)
-            }
-        }
-        }else{
-          var arr=this.valuedate
-          this.dateset=[]
-            for(var i=0;i<arr.length;i++){
-              this.valuedate=moment(arr[i]).format('YYYY-MM-DD')
-              this.starttime=moment(arr[i]).format('YYYY-MM-DD  00:00:00')
-              this.endtime=this.valuedate+' '+this.valuetime
-              this.dateset.push(this.valuedate)
-            }
-        }
-      },
-      getSelectTime(){     
-        this.endtime=this.valuedate+' '+this.valuetime
-      },
-      Singlr(){
+         SingleTag(tagcode,allday){ // 获取一个tag多天的数据
           var params={
-            TagCode:'TY_CO2_AVG',
-            PointDates:"2020-06-18,2020-06-19,2020-06-20,2020-06-21,2020-06-22",
+            TagCode:tagcode,
+            PointDates:allday,
             ParagraBegin:'08:00:00',
             ParagraEnd:'12:00:00',
           }
           this.axios.get('/api/energytrendtu',{params:params}).then((res)=>{
-            console.log('----------------------')
             console.log(res)
-            console.log('----------------------')
+
           })
+      },
+      dr(){
+        var params={
+          TagCode:"SCADA.AI.E119HTS_HF1AIWD",
+          PointDates:'2020-06-18,2020-06-19,2020-06-20,2020-06-21,2020-06-22,',
+          ParagraBegin:'08:00:00',
+          ParagraEnd:'12:00:00',
+        }
+        var params2={
+           TagCodes:'PersonHotLoad,People_No',
+            begin:'2020-06-20 00:00:00',
+            end:'2020-06-20 12:00:00',
+            TagFlag:'first'
+        }
+        this.axios.get('/api/energytrendtu',{params:params}).then((res) => {
+          console.log(res)
+          
+        })
+      },
+      getSelectDate(){
+        if(this.valuedate[0]===false){
+            console.log('请选择你的日期')
+            return;
+          }else if(this.valuedate.length>=2){ //5天 1个tag
+            var arr=this.valuedate
+            this.dateset=[]
+            this.allday=''
+            for(var i=0;i<arr.length;i++){
+              this.yyddate=moment(arr[i]).format('YYYY-MM-DD')
+              this.starttime=moment(arr[i]).format('YYYY-MM-DD  00:00:00')
+              this.endtime=this.yyddate+' '+this.valuetime
+              this.dateset.push(this.yyddate)
+              this.allday=this.allday+this.yyddate+','
+            }
+           this.allday=this.allday.slice(0, -1)
+        }else{ //1天 多个tag
+            this.yyddate=moment(this.valuedate[0]).format('YYYY-MM-DD')
+            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
+            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
+        }
+      },
+      getSelectTime(){     
+        this.endtime=this.valuedate+' '+this.valuetime
       }
     }
   }
