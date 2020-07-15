@@ -106,27 +106,37 @@
         <el-row :gutter="15" style="overflow: hidden;" v-if="TabControl.TabControlCurrent === '冷却系统'">
           <el-col :span="6">
             <div class="platformContainer">
-              <p class="text-size-18 marginBottom">冷水机组1<span class="floatRight text-size-24"><svg-icon icon-class="jingshideng" className="color-lightgreen"></svg-icon></span></p>
+              <p class="text-size-18 marginBottom">冷水机组1</p>
               <el-row class="marginBottom">
-                <el-col :span="12"><span>故障状态：正常</span></el-col>
-                <el-col :span="12"><span>本地/远程：本地</span></el-col>
+                <el-col :span="12">
+                  <span>故障状态：<span v-if="LS1Bit[LS1Bit.length-6] === '1'">故障</span><span v-if="LS1Bit[LS1Bit.length-6] === '0'">正常</span></span>
+                </el-col>
+                <el-col :span="12">
+                  <span>本地/远程：<span v-if="LS1Bit[LS1Bit.length-7] === '1'">本地</span><span v-if="LS1Bit[LS1Bit.length-7] === '0'">远程</span></span>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="12"><span>手/自动：手动</span></el-col>
-                <el-col :span="12"><span>心跳检测位：</span></el-col>
+                <el-col :span="12">
+                  <span>手/自动：<span v-if="LS1Bit[LS1Bit.length-9] === '1'">手动</span><span v-if="LS1Bit[LS1Bit.length-9] === '0' || !LS1Bit[LS1Bit.length-9]">自动</span></span>
+                </el-col>
               </el-row>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="platformContainer">
-              <p class="text-size-18 marginBottom">冷水机组2<span class="floatRight text-size-24"><svg-icon icon-class="jingshideng" className="color-color-grayblack"></svg-icon></span></p>
+              <p class="text-size-18 marginBottom">冷水机组2</p>
               <el-row class="marginBottom">
-                <el-col :span="12"><span>故障状态：正常</span></el-col>
-                <el-col :span="12"><span>本地/远程：本地</span></el-col>
+                <el-col :span="12">
+                  <span>故障状态：<span v-if="LS2Bit[LS2Bit.length-6] === '1'">故障</span><span v-if="LS2Bit[LS2Bit.length-6] === '0'">正常</span></span>
+                </el-col>
+                <el-col :span="12">
+                  <span>本地/远程：<span v-if="LS2Bit[LS2Bit.length-7] === '1'">本地</span><span v-if="LS2Bit[LS2Bit.length-7] === '0'">远程</span></span>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="12"><span>手/自动：手动</span></el-col>
-                <el-col :span="12"><span>心跳检测位：</span></el-col>
+                <el-col :span="12">
+                  <span>手/自动：<span v-if="LS2Bit[LS2Bit.length-9] === '1'">手动</span><span v-if="LS2Bit[LS2Bit.length-9] === '0' || !LS2Bit[LS2Bit.length-9]">自动</span></span>
+                </el-col>
               </el-row>
             </div>
           </el-col>
@@ -134,10 +144,10 @@
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水塔水阀1</p>
               <el-row class="marginBottom">
-                <el-col :span="24"> <span>水阀关到位：</span></el-col>
+                <el-col :span="24"><span>水阀关到位：<span v-if="LST1Bit[LST1Bit.length-1] === '1'">到位</span><span v-if="LST1Bit[LST1Bit.length-1] === '0'">未到位</span></span></el-col>
               </el-row>
               <el-row>
-                <el-col :span="24"><span>水阀关到位</span></el-col>
+                <el-col :span="24"><span>水阀开到位：<span v-if="LST1Bit[LST1Bit.length-2] === '1'">到位</span><span v-if="LST1Bit[LST1Bit.length-2] === '0'">未到位</span></span></el-col>
               </el-row>
             </div>
           </el-col>
@@ -145,16 +155,15 @@
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水塔水阀2</p>
               <el-row class="marginBottom">
-                <el-col :span="24"><span>水阀关到位：</span></el-col>
+                <el-col :span="24"><span>水阀关到位：<span v-if="LST2Bit[LST2Bit.length-1] === '1'">到位</span><span v-if="LST2Bit[LST2Bit.length-1] === '0'">未到位</span></span></el-col>
               </el-row>
               <el-row>
-                <el-col :span="24"><span>水阀关到位</span></el-col>
+                <el-col :span="24"><span>水阀开到位：<span v-if="LST2Bit[LST2Bit.length-2] === '1'">到位</span><span v-if="LST2Bit[LST2Bit.length-2] === '0'">未到位</span></span></el-col>
               </el-row>
             </div>
           </el-col>
         </el-row>
         <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '冷却系统'">
-
           <div class="MainContain BorderRadius4 coolingSysMonbg" style="width: 1500px;" @mousedown="move" data-move >
             <el-popover placement="bottom" title="冷却塔1" width="200" trigger="click">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LQT1','RUN')">开启</el-button>
@@ -166,12 +175,22 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQT2','STOP')">关闭</el-button>
               <div slot="reference" class="lqt" style="top: 75px;left: 355px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷水机组1" width="200" trigger="click">
+            <el-button style="position: absolute;top: 535px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" @click="faultReset('LS1')">故障复位</el-button>
+            <el-popover placement="right" title="冷水机组1" width="300" trigger="click">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LS1','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LS1','STOP')">关闭</el-button>
               <div slot="reference" class="jz" style="top: 425px;left: 55px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷水机组2" width="200" trigger="click">
+            <div class="wd" style="top: 398px;left: 70px;">
+              <span v-if="LS1Bit[LS1Bit.length-1] === '1'">运行中</span>
+              <span v-if="LS1Bit[LS1Bit.length-1] === '0'"><span class="color-offwhite">停机</span></span>
+            </div>
+            <div class="wd" style="top: 600px;left: 70px;">
+              <span v-if="LS2Bit[LS2Bit.length-1] === '1'">运行中</span>
+              <span v-if="LS2Bit[LS2Bit.length-1] === '0'"><span class="color-offwhite">停机</span></span>
+            </div>
+            <el-button style="position: absolute;top: 735px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" @click="faultReset('LS2')">故障复位</el-button>
+            <el-popover placement="right" title="冷水机组2" width="300" trigger="click">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LS2','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LS2','STOP')">关闭</el-button>
               <div slot="reference" class="jz" style="top: 625px;left: 55px;"></div>
@@ -274,6 +293,10 @@
         },
         websock:null,
         websockVarData:{},
+        LS1Bit:"",
+        LS2Bit:"",
+        LST1Bit:"",
+        LST2Bit:"",
         formParameters:{
           HZLQ1:"",
           HZLQ2:"",
@@ -338,8 +361,11 @@
         console.log("websocket连接失败")
       },
       websocketonmessage(e){ //数据接收
-        var resdata = JSON.parse(e.data);
-        this.websockVarData = resdata
+        this.websockVarData = JSON.parse(e.data)
+        this.LS1Bit = parseInt(this.websockVarData["PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_108"],10).toString(2).split("")
+        this.LS2Bit = parseInt(this.websockVarData["PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_111"],10).toString(2).split("")
+        this.LST1Bit = parseInt(this.websockVarData["PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_127"],10).toString(2).split("")
+        this.LST2Bit = parseInt(this.websockVarData["PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_128"],10).toString(2).split("")
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);
@@ -380,22 +406,61 @@
         });
       },
       editHZ(value,HZ){
-        this.axios.post("/api/status",{
-          params: {
-            EquipmentCode:value,
-            HZ:HZ,
-          }
-        }).then(res =>{
-          if(res.data.code === "20001"){
-            this.$message({
-              showClose: true,
-              type: 'success',
-              message: res.data.message
-            });
-          }
-        },res =>{
-          console.log("请求错误")
-        })
+        this.$confirm('您是否要对'+value+'的频率进行修改', '提示', {
+          distinguishCancelAndClose:true,
+          center:true,
+          type: 'warning'
+        }).then(()  => {
+          this.axios.post("/api/status",{
+            params: {
+              EquipmentCode:value,
+              HZ:HZ,
+            }
+          }).then(res =>{
+            if(res.data.code === "20001"){
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: res.data.message
+              });
+            }
+          },res =>{
+            console.log("请求错误")
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+        });
+      },
+      faultReset(value){
+        this.$confirm('您是否要对'+value+'进行故障重置', '提示', {
+          distinguishCancelAndClose:true,
+          center:true,
+          type: 'warning'
+        }).then(()  => {
+          this.axios.post("/api/fault",{
+            params: {
+              EquipmentCode:value,
+            }
+          }).then(res =>{
+            if(res.data.code === "20001"){
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: res.data.message
+              });
+            }
+          },res =>{
+            console.log("请求错误")
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+        });
       }
     }
   }
