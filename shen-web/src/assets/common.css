@@ -396,3 +396,6 @@
   background-color: #3D4048;
   width: 198px;
 }
+.ivu-picker-confirm .ivu-btn-primary{
+  display: none;
+}

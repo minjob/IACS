@@ -5,8 +5,7 @@
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
                 <div class="Datepick platformContainer blackComponents" style="height:310px;">
-                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="default" @on-ok="getSelectDate" :open='true' :confirm='true'></DatePicker>
-                    
+                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="default" :open='true'></DatePicker>
                 </div>
                 <div class="platformContainer blackComponents asidetree" style="height:750px;">
                     <el-tree 
@@ -89,7 +88,6 @@
           children: 'children',
           label: 'label'
         },
-        valuedate:'',
         dates:[],
         dataline1:[],
         dataline2:[],
@@ -116,12 +114,12 @@
         TagChecked:[],
         dateset:[],
         allday:'',//获取单个tag点日期字符串,
-        yyddate:'2020-06-20'
+        currentdate:'2020-06-20',
+        max:0
       }
     },
     mounted(){
         this.getAsidemenu()
-        this.dr()
     },
     watch:{
 
@@ -204,7 +202,8 @@
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
-                      width: 1
+                      width: 1,
+                      color:'#8CBD47'
                   }
               },
               {
@@ -214,7 +213,8 @@
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
-                      width: 1
+                      width: 1,
+                      color:'#00FF66'
                   }
               },
               {
@@ -224,17 +224,19 @@
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
-                      width: 1
+                      width: 1,
+                      color:'#5B9A92'
                   }
               },
               {
-                  name: dateset[3],
+                name: dateset[3],
                   type: 'line',
                   data: dataline4,
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
-                      width: 1
+                    width: 1,
+                    color:'#E28A36'
                   }
               },
               {
@@ -244,7 +246,8 @@
                   smooth: true,
                   showSymbol: false,
                   lineStyle: {
-                      width: 1
+                      width: 1,
+                      color:'#990033'
                   }
               },
               {
@@ -259,16 +262,16 @@
                     },
                 data: [[
                     { coord: [this.dates[0],0] },
-                    { coord: [this.dates[0],1000] }
+                    { coord: [this.dates[0],10] }
                 ]]
             }
               }
           ]
       };
-    var j = 0; 
-    var max = Math.max.apply(Math, this.dataline1); //数据的最大值
-    option.series[0].data = this.dataline1;
-    option.visualMap.pieces[0] = {gte: 500, lte: max, color: 'yellow'} //数据大于42742569显示黄色
+    // var j = 0; 
+    // var max = Math.max.apply(Math, this.dataline1); //数据的最大值
+    // option.series[0].data = this.dataline1;
+    // option.visualMap.pieces[0] = {gte: 500, lte: max, color: 'yellow'} //数据大于42742569显示黄色
 
 //数据中的某一项为某个值时 分段显示
 // var j = 0; 
@@ -327,7 +330,7 @@
          that.averagevalue5=num5/index1
        }
      })
-    myChart.off("click");//解绑事件处理函数（可根据情况而定是否需要，这里我这边会重绘几次表，所以需要解绑事件处理函数）。
+    myChart.off("click");//解绑事件处理函数。
     myChart.on('click', renderBrushed);
     function renderBrushed(params) {
       var time=params.name
@@ -349,7 +352,7 @@
                     },
                 data: [[
                     { coord: [that.comparetime,0] },
-                    { coord: [that.comparetime,1000] }
+                    { coord: [that.comparetime,that.dataline3[index]] }
                 ]]
             }
               }
@@ -397,33 +400,54 @@
             }
             })
       },
-      getChecked(){
-        var arr=this.$refs.tree.getCheckedNodes()
-        console.log(arr)
-        if(arr.length==1){
-          this.TagCode=arr[0].id
-          this.SingleTag(this.TagCode,this.allday)
-
-       }else{
-         //执行多个tagcodes 一天
-        this.dateset=[]
-        for(var i=0;i<arr.length;i++){
-          if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
-                this.dateset.push(arr[i].label)
+      getSelectDate(){
+        if(this.valuedate[0]===false){
+            console.log('请选择你的日期')
+            return;
+          }else if(this.valuedate.length>=2){ //5天 1个tag
+            var arr=this.valuedate
+            this.dateset=[] //传给echarts时间
+            this.allday='' //请求拼接字符
+            for(var i=0;i<arr.length;i++){
+              this.currentdate=moment(arr[i]).format('YYYY-MM-DD')
+              this.starttime=moment(arr[i]).format('YYYY-MM-DD  00:00:00')
+              this.endtime=this.currentdate+' '+this.valuetime
+              this.dateset.push(this.currentdate)
+              this.allday=this.allday+this.currentdate+','
             }
+           this.allday=this.allday.slice(0, -1)
+        }else{ //1天 多个tag
+            this.currentdate=moment(this.valuedate[0]).format('YYYY-MM-DD')
+            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
+            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
         }
-        var j=0
-        this.TagCodes=''
-        for(var i=0;i<arr.length;i++){
+      },
+      getSelectTime(){     
+        this.endtime=this.currentdate+' '+this.valuetime
+      },
+      getChecked(){ //选取
+      this.getSelectDate()
+        var arr=this.$refs.tree.getCheckedNodes()
+        var ziset=[]
+         for(var i=0;i<arr.length;i++){
           if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
-            this.TagCodes=this.TagCodes+arr[i].id+','
-            j++
-          }
-        }
-        this.treenumber=j
-        this.TagCodes=this.TagCodes.slice(0,-1)
-        this.InitTrenddata(this.TagCodes,this.starttime,this.endtime)
-       }
+               ziset.push(arr[i])
+          }}
+            if(ziset.length>=2){ //多个tag
+                this.dateset=[]
+                this.TagCodes=''
+                for(var i=0;i<ziset.length;i++){
+                  this.dateset.push(ziset[i].label)//多个tag
+                  this.TagCodes=this.TagCodes+ziset[i].id+','
+                }
+              this.TagCodes=this.TagCodes.slice(0,-1)
+              this.InitTrenddata(this.TagCodes,this.starttime,this.endtime)
+            }else if(ziset.length===1){//单个tag 的情况
+              this.TagCode=ziset[0].id
+              this.SingleTag(this.TagCode,this.allday)
+            }else{
+              console.log('选中的父节点')
+            } 
       },
       InitTrenddata(t,b,e){ //一天多个tag
          var params1={
@@ -433,15 +457,13 @@
             TagFlag:'first'
           }
             this.axios.get('/api/energytrendtu',{params:params1}).then((res) => {
-              var rows=[]
               var rows=res.data
-              console.log(res)
               this.dates = rows.map(function (item) {
-                return +item[1];
+               return item[0];
               });
               this.dataline1 = rows.map(function (item) {
-                return +item[1];
-              });
+                 return +item[1];
+               });
               this.dataline2 = rows.map(function (item) {
                 return +item[2];
               });
@@ -461,56 +483,42 @@
           var params={
             TagCode:tagcode,
             PointDates:allday,
-            ParagraBegin:'08:00:00',
-            ParagraEnd:'12:00:00',
+            ParagraBegin:'00:00:00',
+            ParagraEnd:this.valuetime,
           }
           this.axios.get('/api/energytrendtu',{params:params}).then((res)=>{
-            console.log(res)
-
-          })
-      },
-      dr(){
-        var params={
-          TagCode:"SCADA.AI.E119HTS_HF1AIWD",
-          PointDates:'2020-06-18,2020-06-19,2020-06-20,2020-06-21,2020-06-22,',
-          ParagraBegin:'08:00:00',
-          ParagraEnd:'12:00:00',
-        }
-        var params2={
-           TagCodes:'PersonHotLoad,People_No',
-            begin:'2020-06-20 00:00:00',
-            end:'2020-06-20 12:00:00',
-            TagFlag:'first'
-        }
-        this.axios.get('/api/energytrendtu',{params:params}).then((res) => {
-          console.log(res)
-          
-        })
-      },
-      getSelectDate(){
-        if(this.valuedate[0]===false){
-            console.log('请选择你的日期')
-            return;
-          }else if(this.valuedate.length>=2){ //5天 1个tag
-            var arr=this.valuedate
-            this.dateset=[]
-            this.allday=''
+            var arr=res.data
+            var indexs=[]
             for(var i=0;i<arr.length;i++){
-              this.yyddate=moment(arr[i]).format('YYYY-MM-DD')
-              this.starttime=moment(arr[i]).format('YYYY-MM-DD  00:00:00')
-              this.endtime=this.yyddate+' '+this.valuetime
-              this.dateset.push(this.yyddate)
-              this.allday=this.allday+this.yyddate+','
+             if(arr[i][0].slice(0,10)!=arr[i+1][0].slice(0,10)){
+               indexs.push(i) //断点分区
+               var firstarr=arr.slice(0,indexs[0]+1)
+               var secondarr=arr.slice(indexs[0]+1,indexs[1]+1)
+               var thirdarr=arr.slice(indexs[1]+1,indexs[2]+1)
+               var fourtharr=arr.slice(indexs[2]+1,indexs[3]+1)
+               var fiftharr=arr.slice(indexs[3]+1,indexs[4]+1)
+               this.dates = firstarr.map(function (item) {
+                  return item[0].slice(11, 19);
+                });
+               this.dataline1=firstarr.map(function (item) {
+                return +item[1];
+              });
+               this.dataline2=secondarr.map(function (item) {
+                return +item[1];
+              });
+               this.dataline3=thirdarr.map(function (item) {
+                return +item[1];
+              });
+               this.dataline4=fourtharr.map(function (item) {
+                return +item[1];
+              });
+               this.dataline5=fiftharr.map(function (item) {
+                return +item[1];
+              });
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+             }
             }
-           this.allday=this.allday.slice(0, -1)
-        }else{ //1天 多个tag
-            this.yyddate=moment(this.valuedate[0]).format('YYYY-MM-DD')
-            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
-            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
-        }
-      },
-      getSelectTime(){     
-        this.endtime=this.valuedate+' '+this.valuetime
+          })
       }
     }
   }
