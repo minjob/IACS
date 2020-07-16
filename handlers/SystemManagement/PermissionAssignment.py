@@ -425,7 +425,7 @@ def selectpermissionbyuser():
         data = request.values
         try:
             PermissionName = data.get("PermissionName")
-            sql = "SELECT [UserID] AS UserID FROM RoleUser t INNER JOIN RolePermission p ON t.RoleID = p.RoleID WHERE P.PermissionName = '"+PermissionName+"'"
+            sql = "SELECT UserID AS UserID FROM RoleUser t INNER JOIN RolePermission p ON t.RoleID = p.RoleID WHERE P.PermissionName = '"+PermissionName+"'"
             oclass = db_session.execute(sql).fetchall()
             db_session.close()
             user_ids = []
