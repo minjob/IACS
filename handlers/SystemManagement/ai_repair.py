@@ -63,7 +63,7 @@ def repairs():
         data = db_session.query(Repair).all()
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
     if request.method == 'POST':
-        json_data = request.json.get('params')
+        json_data = request.values
         data = Repair(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                       Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                       FaultExpound=json_data.get('FaultExpound'))
@@ -78,7 +78,7 @@ def repairs():
 @repair.route('/repair_task/<p>', methods=['PATCH'])
 def repair_tasks(p):
     if p == 'jiedan':
-        json_data = request.json.get('params')
+        json_data = request.values
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         data.Status = '维修中'
         data.ReceiveWorker = current_user.Name
@@ -90,7 +90,7 @@ def repair_tasks(p):
         db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     if p == 'over':
-        json_data = request.json.get('params')
+        json_data = request.values
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         task_data = RepairTask(EquipmentCode=data.EquipmentCode, No=data.No, Status='维修完成', Worker=data.Worker,
                                ReceiveWorker=data.ReceiveWorker, Content=json_data.get('Content'),
@@ -123,7 +123,7 @@ def repair_record(p):
 def keep_plans():
     """保养计划"""
     try:
-        json_data = request.json.get('params')
+        json_data = request.values
         equipments = json_data.get('EquipmentCode')
         if len(equipments) == 1:
             equipment_code = equipments[0]
@@ -172,7 +172,7 @@ def keep_tasks():
             return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
                               cls=AlchemyEncoder, ensure_ascii=True)
         if request.method == 'POST':
-            json_data = request.json.get('params')
+            json_data = request.values
             no = json_data.get('No')
             end_time = json_data.get('EndTime')
             content = json_data.get('Content')
