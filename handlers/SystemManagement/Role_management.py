@@ -37,7 +37,7 @@ def saveroleuser():
             if RoleIDs:
                 RoleIDs = eval(RoleIDs)
             userclass = db_session.query(User).filter(User.ID == int(UserID)).first()
-            sql = "delete from [DB_MICS].[dbo].[RoleUser] where [UserID] = " + UserID
+            sql = "delete from RoleUser where UserID = " + UserID
             db_session.execute(sql)
             db_session.commit()
             for pid in RoleIDs:
