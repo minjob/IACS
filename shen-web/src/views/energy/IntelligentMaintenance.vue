@@ -488,7 +488,7 @@
           WeekTime:this.weekNumber + this.weekTime,
           Describe:this.KeekPlanContent
         }
-        this.axios.post("/api/keep_plan",{params:params}).then(res =>{
+        this.axios.post("/api/keep_plan",this.qs.stringify(params)).then(res =>{
           if(res.data.code == 10001){
             this.$message({
               type: 'success',
@@ -531,13 +531,12 @@
               distinguishCancelAndClose:true,
               type: 'warning'
             }).then(()  => {
-              this.axios.patch("/api/repair_task/jiedan",{
-                params: {
-                  No:this.RepairTableData.multipleSelection[0].No,
-                  Time:moment().format("YYYY-MM-DD HH:mm:ss"),
-                  EquipmentCode:this.RepairTableData.multipleSelection[0].EquipmentCode
-                }
-              }).then(res =>{
+              var params =  {
+                No:this.RepairTableData.multipleSelection[0].No,
+                Time:moment().format("YYYY-MM-DD HH:mm:ss"),
+                EquipmentCode:this.RepairTableData.multipleSelection[0].EquipmentCode
+              }
+              this.axios.patch("/api/repair_task/jiedan",this.qs.stringify(params)).then(res =>{
                 if(res.data.code === "10001"){
                   this.$message({
                     type: 'success',
@@ -580,14 +579,13 @@
               confirmButtonText: '确定',
               cancelButtonText: '取消',
             }).then(({value})  => {
-              this.axios.patch("/api/repair_task/over",{
-                params: {
+              var params = {
                   EquipmentCode:this.RepairTableData.multipleSelection[0].EquipmentCode,
                   No:this.RepairTableData.multipleSelection[0].No,
                   EndTime:moment().format("YYYY-MM-DD HH:mm:ss"),
                   Content:value
                 }
-              }).then(res =>{
+              this.axios.patch("/api/repair_task/over",this.qs.stringify(params)).then(res =>{
                 if(res.data.code === "10001"){
                   this.$message({
                     type: 'success',
@@ -661,13 +659,12 @@
             confirmButtonText: '确定',
             cancelButtonText: '取消',
           }).then(({value})  => {
-            this.axios.post("/api/keep_task",{
-              params: {
+            var params = {
                 No:this.KeepTaskTableData.multipleSelection[0].No,
                 EndTime:moment().format("YYYY-MM-DD HH:mm:ss"),
                 Content:value
               }
-            }).then(res =>{
+            this.axios.post("/api/keep_task",this.qs.stringify(params)).then(res =>{
               if(res.data.code === "10001"){
                 this.$message({
                   type: 'success',
