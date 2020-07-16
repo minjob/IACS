@@ -63,39 +63,61 @@
           </el-row>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '数据汇总分析'">
               <el-col :span=24 >
-                <div class='platformContainer blackComponents'>123</div>
+                <div class='platformContainer blackComponents'>
+                    <el-button type="success">数据录入</el-button>
+                    <el-button type="warning">excel导出</el-button>
+                </div>
               </el-col>
               <el-col :span=24>
-                <div class='platformContainer blackComponents'>
+                <div class='platformContainer blackComponents' style="height:800px;">
                     <el-table
                             :data="tableData"
                             style="width: 100%">
                             <el-table-column
                               prop="name"
-                              label="统计线名称"
+                              label="日期"
                               >
                             </el-table-column>
                             <el-table-column
                               prop="comparetime"
-                              label="对比时间"
+                              label="站台温度"
+                              width="180">
+                            </el-table-column>
+                            <el-table-column
+                              prop="comparetime"
+                              label="站厅温度"
+                              width="180">
+                            </el-table-column>
+                            <el-table-column
+                              prop="comparetime"
+                              label="CO2平均值"
                               width="180">
                             </el-table-column>
                             <el-table-column
                               prop="averag"
-                              label="平均值"
+                              label="温度"
                               width="180">
                             </el-table-column>
                             <el-table-column
                               prop="max"
-                              label="最大值"
+                              label="湿度"
                               width="180">
                             </el-table-column>
                             <el-table-column
                               prop="min"
-                              label="最小值"
+                              label="编辑"
                               width="180">
                             </el-table-column>
-                    </el-table> 
+                    </el-table>
+                     <div class="paginationClass">
+                        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                         :total="10"
+                         :current-page="1"
+                         :page-sizes="[5,10,20]"
+                         :page-size="10"
+                        >
+                        </el-pagination>
+                    </div>
                 </div>
               </el-col>
           </el-row>
@@ -175,7 +197,7 @@
         starttime:'2020-06-20 00:00:00',
         endtime:'2020-06-20 08:30:00',
         childrentree:[],
-        TagCodes:'',
+        TagCodes:"TY_CO2_AVG,B_CO2_AVG",
         TagCode:'',
         treenumber:[],
         TagChecked:[],
@@ -196,7 +218,7 @@
     },
     mounted(){
         this.getAsidemenu()
-        this.applymin()
+        this.Initdesktop()
     },
     watch:{
 
@@ -345,22 +367,6 @@
               }
           ]
       };
-    // var j = 0; 
-    // var max = Math.max.apply(Math, this.dataline1); //数据的最大值
-    // option.series[0].data = this.dataline1;
-    // option.visualMap.pieces[0] = {gte: 500, lte: max, color: 'yellow'} //数据大于42742569显示黄色
-
-//数据中的某一项为某个值时 分段显示
-// var j = 0; 
-// option.series[0].data = this.data1; 
-// //连续为300时，颜色变为红色
-// var arr=this.data1
-// for(let i = 0; i < arr.length; i++) {
-//     if(arr[i] === 300 && arr[i + 1] === 300) {
-//         option.visualMap.pieces[j] =  {gte:i,lte:i+1,color:'red'}; 
-//         j++; 
-//     }
-// }
     var that=this
      myChart.on('updateAxisPointer', function (event) {  //拉着tooltips 触发滑动事件
        if(event.axesInfo.length!=0){
@@ -571,7 +577,7 @@
              
                 })
       },
-         SingleTag(tagcode,allday){ // 获取一个tag多天的数据
+      SingleTag(tagcode,allday){ // 获取一个tag多天的数据
           var params={
             TagCode:tagcode,
             PointDates:allday,
@@ -637,9 +643,37 @@
          }
         
       },
-      applymin(){
-        var min=Math.min.apply(Math, [12,34,56,78,34,45,9,28])
-        console.log(min)
+      Initdesktop(){
+         var params={
+            TagCodes:"TY_CO2_AVG,B_CO2_AVG",
+            begin:this.starttime,
+            end:this.endtime,
+            TagFlag:'first'
+          }
+          this.dateset=['桃园站CO2平均值','站厅CO2平均值']
+            this.axios.get('/api/energytrendtu',{params:params}).then((res) => {
+              var rows=res.data
+              this.dates = rows.map(function (item) {
+               return item[0];
+              });
+              this.dataline1 = rows.map(function (item) {
+                 return +item[1];
+               });
+              this.dataline2 = rows.map(function (item) {
+                return +item[2];
+              });
+              this.dataline3 = rows.map(function (item) {
+                return +item[3];
+              });
+              this.dataline4 = rows.map(function (item) {
+                return +item[4];
+              });
+              this.dataline5 = rows.map(function (item) {
+                return +item[5];
+              });
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+             
+                })
       }
     }
   }
@@ -672,5 +706,7 @@
 }
 .asidetree{
   overflow: auto;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 </style>
