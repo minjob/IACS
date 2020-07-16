@@ -158,8 +158,8 @@ def keep_tasks():
             # 当前页
             offset = int(request.values.get('offset', '1'))
             for item in query_data:
-                # q = db_session.query(KeepTask).filter_by(No=item.No).first()
-                if get_time_stamp(item.WorkTime):
+                q = db_session.query(KeepTask).filter_by(No=item.No).first()
+                if not q and get_time_stamp(item.WorkTime):
                     data = KeepTask(EquipmentCode=item.EquipmentCode, No=item.No, Worker=item.Worker, Status=item.Status,
                                     ApplyTime=item.ApplyTime, StartTime=item.StartTime, WorkTime=item.WorkTime,
                                     WeekTime=item.WeekTime, Type=item.Type)
