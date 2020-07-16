@@ -125,11 +125,14 @@ def keep_plans():
     try:
         json_data = request.json.get('params')
         equipments = json_data.get('EquipmentCode')
-        # equipment_group = '  '.join(equipments)
+        if len(equipments) == 1:
+            equipment_code = equipments[0]
+        else:
+            equipment_code = '  '.join(equipments)
         work_time = add_date(json_data.get('WeekTime'), json_data.get('StartTime'))
         work_type = json_data.get('Type')
         week_time = '单次' if work_type == '单次' else json_data.get('WeekTime')
-        data = KeepPlan(EquipmentCode=equipments, No=get_no(json_data.get('ApplyTime')),
+        data = KeepPlan(EquipmentCode=equipment_code, No=get_no(json_data.get('ApplyTime')),
                         Worker='current_user.Name', ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
                         StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
                         WorkTime=work_time, WeekTime=week_time)
@@ -205,21 +208,20 @@ def keep_record(p):
         # 每页多少条
         per_page = int(request.values.get('limit'))
 
-        # query_data = db_session.query(KeepRecord).order_by(KeepRecord.ApplyTime.desc()).all()
-        # data_list = [item for item in query_data]
-        # result = []
-        # for data in data_list:
-        #     if p in data.EquipmentCode:
-        #         result.append(data)
-        # result_data = result[(page - 1)*per_page:page*per_page]
-        # return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': result_data, 'total': len(result)}},
-        #                   cls=AlchemyEncoder, ensure_ascii=True)
-
-        total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
-        data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
-            KeepRecord.ApplyTime.desc()).limit(per_page).offset((page - 1) * per_page)
-        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
+        query_data = db_session.query(KeepRecord).order_by(KeepRecord.ApplyTime.desc()).all()
+        data_list = [item for item in query_data]
+        result = []
+        for data in data_list:
+            if p in data.EquipmentCode:
+                result.append(data)
+        result_data = result[(page - 1)*per_page:page*per_page]
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': result_data, 'total': len(result)}},
                           cls=AlchemyEncoder, ensure_ascii=True)
+        # total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
+        # data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
+        #     KeepRecord.ApplyTime.desc()).limit(per_page).offset((page - 1) * per_page)
+        # return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
+        #                   cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "保养记录查询错误：" + str(e), current_user.Name)
