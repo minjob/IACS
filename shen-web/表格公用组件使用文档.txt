@@ -74,6 +74,7 @@ column:[] 字段集参数配置
   Downtable:""     输入类型为input时，设置下拉框数据的表名
   showDownField:"" 输入类型为input时，设置下拉框表显示的字段
   value:""         绑定字段的输入值
+  width:""         绑定表头的宽度
   disabled:false   默认false，选择true时 在表单中此字段只能显示，无法输入和编辑
   showField:true   默认true，是否在表格展示此字段的表头
   searchProp:true  默认true，此字段是否可以搜索
