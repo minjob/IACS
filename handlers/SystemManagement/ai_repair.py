@@ -124,8 +124,8 @@ def keep_plans():
     """保养计划"""
     try:
         json_data = request.values
-        equipments = ['XXF-2', 'XXF-1', 'PYF-1']
-        # equipments = json_data.get('EquipmentCode')
+        # equipments = ['XXF-2', 'XXF-1', 'PYF-1']
+        equipments = json_data.get('EquipmentCode')
         if len(equipments) == 1:
             equipment_code = equipments[0]
         else:
