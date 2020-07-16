@@ -123,7 +123,7 @@ def repair_record(p):
 def keep_plans():
     """保养计划"""
     try:
-        json_data = request.values
+        json_data = request.get_json()
         # equipments = ['XXF-2', 'XXF-1', 'PYF-1']
         equipments = json_data.get('EquipmentCode')
         if len(equipments) == 1:
