@@ -124,7 +124,8 @@ def keep_plans():
     """保养计划"""
     try:
         json_data = request.values
-        equipments = json_data.get('EquipmentCode')
+        equipments = ['XXF-2', 'XXF-1', 'PYF-1']
+        # equipments = json_data.get('EquipmentCode')
         if len(equipments) == 1:
             equipment_code = equipments[0]
         else:
@@ -133,7 +134,7 @@ def keep_plans():
         work_type = json_data.get('Type')
         week_time = '单次' if work_type == '单次' else json_data.get('WeekTime')
         data = KeepPlan(EquipmentCode=equipment_code, No=get_no(json_data.get('ApplyTime')),
-                        Worker='current_user.Name', ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
+                        Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
                         StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
                         WorkTime=work_time, WeekTime=week_time)
         db_session.add(data)
@@ -178,7 +179,7 @@ def keep_tasks():
             content = json_data.get('Content')
             item = db_session.query(KeepTask).filter_by(No=no).first()
             data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成', Type=item.Type,
-                              KeepWorker='current_user.Name', ApplyTime=item.ApplyTime, StartTime=item.StartTime,
+                              KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
                               Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=end_time)
             db_session.delete(item)
             db_session.commit()
@@ -209,9 +210,9 @@ def keep_record(p):
         per_page = int(request.values.get('limit'))
 
         query_data = db_session.query(KeepRecord).order_by(KeepRecord.ApplyTime.desc()).all()
-        data_list = [item for item in query_data]
+        # data_list = [item for item in query_data]
         result = []
-        for data in data_list:
+        for data in query_data:
             if p in data.EquipmentCode:
                 result.append(data)
         result_data = result[(page - 1)*per_page:page*per_page]
