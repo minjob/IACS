@@ -123,9 +123,9 @@ def repair_record(p):
 def keep_plans():
     """保养计划"""
     try:
-        json_data = request.values
-        equipments = ['XXF-2', 'XXF-1', 'PYF-1']
-        # equipments = json_data.get('EquipmentCode')
+        json_data = request.get_json()
+        # equipments = ['XXF-2', 'XXF-1', 'PYF-1']
+        equipments = json_data.get('EquipmentCode')
         if len(equipments) == 1:
             equipment_code = equipments[0]
         else:
@@ -158,8 +158,8 @@ def keep_tasks():
             # 当前页
             offset = int(request.values.get('offset', '1'))
             for item in query_data:
-                # q = db_session.query(KeepTask).filter_by(No=item.No).first()
-                if get_time_stamp(item.WorkTime):
+                q = db_session.query(KeepTask).filter_by(No=item.No).first()
+                if not q and get_time_stamp(item.WorkTime):
                     data = KeepTask(EquipmentCode=item.EquipmentCode, No=item.No, Worker=item.Worker, Status=item.Status,
                                     ApplyTime=item.ApplyTime, StartTime=item.StartTime, WorkTime=item.WorkTime,
                                     WeekTime=item.WeekTime, Type=item.Type)

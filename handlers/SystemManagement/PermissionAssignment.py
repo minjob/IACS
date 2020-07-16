@@ -4,7 +4,7 @@ from flask import render_template,request,Blueprint,redirect,url_for
 
 from dbset.database.db_operate import db_session
 from models.core import Role, Role_Menu, Menu
-from models.system import Permission, User, RolePermission, ModulMenus
+from models.system import Permission, User, RolePermission, ModulMenus, RoleUser
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -424,18 +424,15 @@ def selectpermissionbyuser():
     if request.method == 'GET':
         data = request.values
         try:
-            PermissionName = data.get("PermissionName")
-            sql = "SELECT UserID AS UserID FROM RoleUser t INNER JOIN RolePermission p ON t.RoleID = p.RoleID WHERE P.PermissionName = '"+PermissionName+"'"
-            oclass = db_session.execute(sql).fetchall()
-            db_session.close()
-            user_ids = []
-            UserID = db_session.query(User.ID).filter(User.WorkNumber == current_user.WorkNumber).first()[0]
-            for userid in oclass:
-                user_ids.append(userid['UserID'])
-            if UserID in user_ids:
-                return 'OK'
-            else:
-                return 'NO'
+            userid = db_session.query(User.ID).filter(User.WorkNumber == current_user.WorkNumber).first()[0]
+            rolecos = db_session.query(RoleUser).filter(RoleUser.UserID == userid).all()
+            permission_list = []
+            for ro in rolecos:
+                rps = db_session.query(RolePermission).filter(RolePermission.RoleID == ro.RoleID).all()
+                for rp in rps:
+                    permission_list.append(rp.PermissionName)
+            print(permission_list)
+            return json.dumps(permission_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)

@@ -165,18 +165,18 @@
         </el-row>
         <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '冷水系统'">
           <div class="MainContain BorderRadius4 coolingSysMonbg" style="width: 1500px;" @mousedown="move" data-move >
-            <el-popover placement="bottom" title="冷却塔1" width="200" trigger="click">
+            <el-popover placement="bottom" title="冷却塔1" width="200" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LQT1','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQT1','STOP')">关闭</el-button>
               <div slot="reference" class="lqt" style="top: 75px;left: 165px;"></div>
             </el-popover>
-            <el-popover placement="bottom" title="冷却塔2" width="200" trigger="click">
+            <el-popover placement="bottom" title="冷却塔2" width="200" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LQT2','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQT2','STOP')">关闭</el-button>
               <div slot="reference" class="lqt" style="top: 75px;left: 355px;"></div>
             </el-popover>
-            <el-button style="position: absolute;top: 535px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" @click="faultReset('LS1')">故障复位</el-button>
-            <el-popover placement="right" title="冷水机组1" width="300" trigger="click">
+            <el-button style="position: absolute;top: 535px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" v-has="['系统监控操作控制']" @click="faultReset('LS1')">故障复位</el-button>
+            <el-popover placement="right" title="冷水机组1" width="300" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LS1','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LS1','STOP')">关闭</el-button>
               <div slot="reference" class="jz" style="top: 425px;left: 55px;"></div>
@@ -189,13 +189,13 @@
               <span v-if="LS2Bit[LS2Bit.length-1] === '1'">运行中</span>
               <span v-if="LS2Bit[LS2Bit.length-1] === '0'"><span class="color-offwhite">停机</span></span>
             </div>
-            <el-button style="position: absolute;top: 735px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" @click="faultReset('LS2')">故障复位</el-button>
-            <el-popover placement="right" title="冷水机组2" width="300" trigger="click">
+            <el-button style="position: absolute;top: 735px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" v-has="['系统监控操作控制']" @click="faultReset('LS2')">故障复位</el-button>
+            <el-popover placement="right" title="冷水机组2" width="300" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LS2','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LS2','STOP')">关闭</el-button>
               <div slot="reference" class="jz" style="top: 625px;left: 55px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷却泵1" width="225" trigger="click">
+            <el-popover placement="right" title="冷却泵1" width="225" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLQ1" size="mini" style="width: 58px;"></el-input>
@@ -206,7 +206,7 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQ1','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 305px;left: 450px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷却泵2" width="225" trigger="click">
+            <el-popover placement="right" title="冷却泵2" width="225" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLQ2" size="mini" style="width: 58px;"></el-input>
@@ -217,7 +217,7 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQ2','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 395px;left: 450px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷冻泵1" width="225" trigger="click">
+            <el-popover placement="right" title="冷冻泵1" width="225" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLD1" size="mini" style="width: 58px;"></el-input>
@@ -228,7 +228,7 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LD1','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 715px;left: 470px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷冻泵2" width="225" trigger="click">
+            <el-popover placement="right" title="冷冻泵2" width="225" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLD2" size="mini" style="width: 58px;"></el-input>
@@ -309,14 +309,7 @@
       this.initWebSocket()
     },
     mounted(){
-      this.axios.get("/api/permission/selectpermissionbyuser",{
-        params: {PermissionName:"系统监控操作控制"}
-      }).then(res =>{
-        console.log(res.data)
-        if(res.data === "OK"){
 
-        }
-      })
     },
     watch:{
 
