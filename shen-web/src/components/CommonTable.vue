@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true">
+    <el-form :inline="true" v-if="tableData.hasOwnProperty('searchProp') || tableData.hasOwnProperty('searchVal')">
       <el-form-item>
         <el-select v-model="tableData.searchProp" placeholder="请选择搜索字段" size="small">
           <el-option v-for="(item,index) in tableData.column" :label="item.label" :value="item.prop" :key="index" v-if="item.searchProp != false"></el-option>
@@ -18,7 +18,7 @@
     </el-form>
     <el-table :data="tableData.data" border ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
       <el-table-column type="selection" v-if="tableData.tableSelection"></el-table-column>
-      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" v-if="item.showField != false">
+      <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" :width="item.width" v-if="item.showField != false">
         <template slot-scope="scope">
           <div v-for="spanItem in item.dataJudge" :key="spanItem.value" v-if="scope.row[item.prop] === spanItem.value">
             <span :style="{ color:spanItem.color }">{{ scope.row[item.prop] }}</span>
@@ -103,11 +103,12 @@
         if(this.tableData.tableSelectionRadio){
           this.$refs.multipleTable.clearSelection();
           this.$refs.multipleTable.toggleRowSelection(row)
-          if(this.tableData.rowClick){
-            this.$emit(this.tableData.rowClick)
-          }
         }else{
           this.$refs.multipleTable.toggleRowSelection(row)
+        }
+        if(this.tableData.rowClick){
+          this.tableData.rowClickData = row
+          this.$emit(this.tableData.rowClick)
         }
       },
       searchTab(){

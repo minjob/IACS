@@ -787,10 +787,10 @@ class KeepPlan(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
-    # 预工作时间
-    WorkTime = Column(Unicode(128), nullable=True)
     # 工作类型
     Type = Column(Unicode(32), nullable=True)
+    # 工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
 
 
 class KeepTask(Base):
@@ -818,10 +818,10 @@ class KeepTask(Base):
     Describe = Column(Unicode(128), nullable=True)
     # 工作周期
     WeekTime = Column(Unicode(128), nullable=True)
-    # 预工作时间
-    WorkTime = Column(Unicode(128), nullable=True)
     # 工作类型
     Type = Column(Unicode(32), nullable=True)
+    # 工作时间
+    WorkTime = Column(Unicode(128), nullable=True)
 
 
 class KeepRecord(Base):
@@ -1000,7 +1000,60 @@ class EquipmentStatusRule(Base):
     #采集时间
     TagID = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
 
-    # 条
+    # 采集时间
+    ifconditons = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间
+    symbol = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间
+    standvalue = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间
+    ifconditonsrelation = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间
+    statuscomment = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间
+    statustype = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+
+class DataSummaryAnalysis(Base):
+    '''数据汇总分析'''
+    __tablename__ = "DataSummaryAnalysis"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 日期:
+    CollectionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 站厅温度
+    StationHallTemperature = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 站台温度
+    PlatformTemperature = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 站厅湿度
+    StationHallHumidity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 站台湿度
+    PlatformHumidity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 二氧化碳含量
+    CarbonDioxideContent = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # L1冷水机组耗量
+    ConsumptionLfirst = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # L2冷水机组耗量
+    ConsumptionLsecond = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 冷水机组总耗量
+    ConsumptionLtotal = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+
+
 
 
 # 生成表单的执行语句

@@ -95,7 +95,7 @@
             <el-divider>制定保养计划</el-divider>
             <table class="elementTable marginBottom">
               <tr>
-                <td colspan="2">设备编码：{{ TableData.multipleSelection[0].EquipmentCode }}</td>
+                <td colspan="2">设备编码：{{ KeepPlanEquipmentCode.join() }}</td>
               </tr>
               <tr>
                 <td>
@@ -225,7 +225,8 @@
             {type:"primary",label:"制定保养计划",clickEvent:"drawUpKeepPlan"},
             {type:"primary",label:"查看保养计划",clickEvent:""},
           ],
-          rowClick:"handleEQRowClick"
+          rowClick:"handleEQRowClick",
+          rowClickData:{},
         },
         showLogTypeValue:"维修记录",
         showLogType:[
@@ -278,6 +279,7 @@
         faultCondition:"", //故障阐述内容
         showMaintainForm:false,
         showKeepPlanForm:false,
+        KeepPlanEquipmentCode:"",
         KeepTaskTableData:{ //保养任务表参数
           column:[
             {prop:"Status",label:"工单状态"},
@@ -366,7 +368,7 @@
           limit:this.repairsLogTableData.limit,
           offset:this.repairsLogTableData.offset
         }
-        this.axios.get("/api/record/"+this.TableData.multipleSelection[0].EquipmentCode,{
+        this.axios.get("/api/record/"+this.TableData.rowClickData.EquipmentCode,{
           params: params
         }).then(res =>{
           if(res.data.code === "10001"){
@@ -380,7 +382,7 @@
           limit:this.keepLogTableData.limit,
           offset:this.keepLogTableData.offset
         }
-        this.axios.get("/api/keep_record/"+this.TableData.multipleSelection[0].EquipmentCode,{
+        this.axios.get("/api/keep_record/"+this.TableData.rowClickData.EquipmentCode,{
           params: params1
         }).then(res =>{
           if(res.data.code === "10001"){
@@ -462,8 +464,13 @@
         })
       },
       drawUpKeepPlan(){ //制定保养计划
-        if(this.TableData.multipleSelection.length === 1){
+        if(this.TableData.multipleSelection.length != 0){
           this.showKeepPlanForm = true
+          var EquipmentCodeArr = []
+          this.TableData.multipleSelection.forEach(item =>{
+            EquipmentCodeArr.push(item.EquipmentCode)
+          })
+          this.KeepPlanEquipmentCode = EquipmentCodeArr
         }else{
           this.$message({
             type: 'info',
@@ -474,16 +481,14 @@
       submitKeekPlan(){ //提交保养计划
         var that = this
         var params = {
-          EquipmentCode: this.TableData.multipleSelection[0].EquipmentCode,
+          EquipmentCode: this.KeepPlanEquipmentCode,
           StartTime:moment(this.keepTaskStartTime).format("YYYY-MM-DD HH:ss:mm"),
           ApplyTime:moment().format("YYYY-MM-DD HH:ss:mm"),
           Type:this.KeepTypeRadio,
           WeekTime:this.weekNumber + this.weekTime,
           Describe:this.KeekPlanContent
         }
-        this.axios.post("/api/keep_plan",{
-          params: params
-        }).then(res =>{
+        this.axios.post("/api/keep_plan",{params:params}).then(res =>{
           if(res.data.code == 10001){
             this.$message({
               type: 'success',

@@ -63,7 +63,7 @@ def repairs():
         data = db_session.query(Repair).all()
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
     if request.method == 'POST':
-        json_data = request.json.get('params')
+        json_data = request.values
         data = Repair(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
                       Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'),
                       FaultExpound=json_data.get('FaultExpound'))
@@ -78,7 +78,7 @@ def repairs():
 @repair.route('/repair_task/<p>', methods=['PATCH'])
 def repair_tasks(p):
     if p == 'jiedan':
-        json_data = request.json.get('params')
+        json_data = request.values
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         data.Status = '维修中'
         data.ReceiveWorker = current_user.Name
@@ -90,7 +90,7 @@ def repair_tasks(p):
         db_session.close()
         return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
     if p == 'over':
-        json_data = request.json.get('params')
+        json_data = request.values
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
         task_data = RepairTask(EquipmentCode=data.EquipmentCode, No=data.No, Status='维修完成', Worker=data.Worker,
                                ReceiveWorker=data.ReceiveWorker, Content=json_data.get('Content'),
@@ -123,14 +123,18 @@ def repair_record(p):
 def keep_plans():
     """保养计划"""
     try:
-        json_data = request.json.get('params')
-        equipments = json_data.get('EquipmentCode')
-        # equipment_group = '  '.join(equipments)
+        json_data = request.values
+        equipments = ['XXF-2', 'XXF-1', 'PYF-1']
+        # equipments = json_data.get('EquipmentCode')
+        if len(equipments) == 1:
+            equipment_code = equipments[0]
+        else:
+            equipment_code = '  '.join(equipments)
         work_time = add_date(json_data.get('WeekTime'), json_data.get('StartTime'))
         work_type = json_data.get('Type')
         week_time = '单次' if work_type == '单次' else json_data.get('WeekTime')
-        data = KeepPlan(EquipmentCode=equipments, No=get_no(json_data.get('ApplyTime')),
-                        Worker='current_user.Name', ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
+        data = KeepPlan(EquipmentCode=equipment_code, No=get_no(json_data.get('ApplyTime')),
+                        Worker=current_user.Name, ApplyTime=json_data.get('ApplyTime'), Type=json_data.get('Type'),
                         StartTime=json_data.get('StartTime'), Describe=json_data.get('Describe'),
                         WorkTime=work_time, WeekTime=week_time)
         db_session.add(data)
@@ -169,13 +173,13 @@ def keep_tasks():
             return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
                               cls=AlchemyEncoder, ensure_ascii=True)
         if request.method == 'POST':
-            json_data = request.json.get('params')
+            json_data = request.values
             no = json_data.get('No')
             end_time = json_data.get('EndTime')
             content = json_data.get('Content')
             item = db_session.query(KeepTask).filter_by(No=no).first()
             data = KeepRecord(EquipmentCode=item.EquipmentCode, No=no, Worker=item.Worker, Status='已完成', Type=item.Type,
-                              KeepWorker='current_user.Name', ApplyTime=item.ApplyTime, StartTime=item.StartTime,
+                              KeepWorker=current_user.Name, ApplyTime=item.ApplyTime, StartTime=item.StartTime,
                               Describe=item.Describe, Content=content, WeekTime=item.WeekTime, EndTime=end_time)
             db_session.delete(item)
             db_session.commit()
@@ -205,21 +209,20 @@ def keep_record(p):
         # 每页多少条
         per_page = int(request.values.get('limit'))
 
-        # query_data = db_session.query(KeepRecord).order_by(KeepRecord.ApplyTime.desc()).all()
+        query_data = db_session.query(KeepRecord).order_by(KeepRecord.ApplyTime.desc()).all()
         # data_list = [item for item in query_data]
-        # result = []
-        # for data in data_list:
-        #     if p in data.EquipmentCode:
-        #         result.append(data)
-        # result_data = result[(page - 1)*per_page:page*per_page]
-        # return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': result_data, 'total': len(result)}},
-        #                   cls=AlchemyEncoder, ensure_ascii=True)
-
-        total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
-        data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
-            KeepRecord.ApplyTime.desc()).limit(per_page).offset((page - 1) * per_page)
-        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
+        result = []
+        for data in query_data:
+            if p in data.EquipmentCode:
+                result.append(data)
+        result_data = result[(page - 1)*per_page:page*per_page]
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': result_data, 'total': len(result)}},
                           cls=AlchemyEncoder, ensure_ascii=True)
+        # total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
+        # data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
+        #     KeepRecord.ApplyTime.desc()).limit(per_page).offset((page - 1) * per_page)
+        # return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
+        #                   cls=AlchemyEncoder, ensure_ascii=True)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "保养记录查询错误：" + str(e), current_user.Name)

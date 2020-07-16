@@ -366,7 +366,7 @@ def saverolepermission():
             if permissionIDs:
                 permissionIDs = eval(permissionIDs)
             roleclass = db_session.query(Role).filter(Role.ID == int(roleID)).first()
-            sql = "delete from [DB_MICS].[dbo].[RolePermission] where [RoleID] = " + roleID
+            sql = "delete from RolePermission where RoleID = " + roleID
             db_session.execute(sql)
             db_session.commit()
             for pid in permissionIDs:
@@ -425,7 +425,7 @@ def selectpermissionbyuser():
         data = request.values
         try:
             PermissionName = data.get("PermissionName")
-            sql = "SELECT [UserID] AS UserID FROM [DB_MICS].[dbo].[RoleUser] t INNER JOIN [DB_MICS].[dbo].[RolePermission] p ON t.RoleID = p.RoleID WHERE P.PermissionName = '"+PermissionName+"'"
+            sql = "SELECT UserID AS UserID FROM RoleUser t INNER JOIN RolePermission p ON t.RoleID = p.RoleID WHERE P.PermissionName = '"+PermissionName+"'"
             oclass = db_session.execute(sql).fetchall()
             db_session.close()
             user_ids = []
@@ -435,7 +435,7 @@ def selectpermissionbyuser():
             if UserID in user_ids:
                 return 'OK'
             else:
-                return '没有此权限'
+                return 'NO'
         except Exception as e:
             print(e)
             logger.error(e)

@@ -309,7 +309,14 @@
       this.initWebSocket()
     },
     mounted(){
+      this.axios.get("/api/permission/selectpermissionbyuser",{
+        params: {PermissionName:"系统监控操作控制"}
+      }).then(res =>{
+        console.log(res.data)
+        if(res.data === "OK"){
 
+        }
+      })
     },
     watch:{
 

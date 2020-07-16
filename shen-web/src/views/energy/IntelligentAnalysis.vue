@@ -492,9 +492,7 @@
           EquipmentCode:this.TreeEquipmentCode,
           WorkDate:moment(this.EquipmentRunDate).format("YYYY-MM-DD"),
         }
-        this.axios.get("/api/selectrundetailbyequipmentcode",{
-          params: params
-        }).then(res =>{
+        this.axios.get("/api/selectrundetailbyequipmentcode",{params:params}).then(res =>{
           that.EquipmentFaultObj = res.data
           that.chartRunEfficiencyData.rows = []
           that.chartRunEfficiencyData.rows.push(
