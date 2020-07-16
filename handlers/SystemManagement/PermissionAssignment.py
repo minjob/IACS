@@ -435,7 +435,7 @@ def selectpermissionbyuser():
             if UserID in user_ids:
                 return 'OK'
             else:
-                return '没有此权限'
+                return 'NO'
         except Exception as e:
             print(e)
             logger.error(e)

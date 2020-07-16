@@ -14,7 +14,7 @@ from dbset.database.db_operate import SchedulingStatus, DB_URL
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.schedul_model import Scheduling, plantCalendarScheduling, product_plan, ERPproductcode_prname, \
     SchedulingStandard, SchedulingStock, scheduledate, TagMaintain, scheduleDateType
-from models.system import EquipmentEfficiencyTree, EquipmentStatusCount, Equipment
+from models.system import EquipmentEfficiencyTree, EquipmentStatusCount, Equipment, ElectricPrice
 from tools.MESLogger import MESLogger
 import json
 import socket
