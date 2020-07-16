@@ -394,6 +394,16 @@
 }
 .Datepick .ivu-date-picker-cells{
   margin:10px auto;
+  width: 230px;
+}
+.Datepick .ivu-date-picker-cells span {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+}
+.Datepick span.ivu-date-picker-cells-cell {
+  width: 32px;
+  font-size: 16px;
 }
 .Timepick .ivu-picker-panel-body{
   background-color: #3D4048;
