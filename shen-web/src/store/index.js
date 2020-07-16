@@ -8,7 +8,7 @@ export default new Vuex.Store({
     WorkNumber:null,
     UserName:null,
     UserId:null,
-    LoginStatus: false
+    LoginStatus: false,
   },
   // 创建改变状态的方法
   mutations: {
@@ -32,6 +32,9 @@ export default new Vuex.Store({
       },res =>{
         console.log("获取用户信息时请求错误")
       })
+      axios.get("/api/permission/selectpermissionbyuser").then(res =>{
+        sessionStorage.setItem('Permissions', JSON.stringify(res.data))
+      })
       sessionStorage.setItem('WorkNumber', user)
       sessionStorage.setItem('LoginStatus', true)
     },
@@ -42,6 +45,7 @@ export default new Vuex.Store({
       sessionStorage.removeItem('LoginStatus')
       sessionStorage.removeItem('UserId')
       sessionStorage.removeItem('UserName')
+      sessionStorage.removeItem('Permissions')
     }
   },
   actions: {},
