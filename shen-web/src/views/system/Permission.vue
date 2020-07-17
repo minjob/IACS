@@ -38,9 +38,9 @@
           dialogVisible: false,
           dialogTitle:'',
           handleType:[
-            {type:"primary",label:"添加"},
-            {type:"warning",label:"修改"},
-            {type:"danger",label:"删除"},
+            {type:"primary",label:"添加",hasPermissions:['权限维护']},
+            {type:"warning",label:"修改",hasPermissions:['权限维护']},
+            {type:"danger",label:"删除",hasPermissions:['权限维护']},
           ],
         },
       }

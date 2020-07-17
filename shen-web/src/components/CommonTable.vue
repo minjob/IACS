@@ -12,7 +12,10 @@
       <el-form-item>
         <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
       </el-form-item>
-      <el-form-item v-for="(item,index) in tableData.handleType" :key="index">
+      <el-form-item v-for="(item,index) in tableData.handleType" :key="index" v-if="item.hasOwnProperty('hasPermissions')" v-has="[item.hasPermissions]">
+        <el-button :type="item.type" size="small" @click="tableClickHandleButton(item.label,item.clickEvent)">{{ item.label }}</el-button>
+      </el-form-item>
+      <el-form-item v-for="(item,index) in tableData.handleType" :key="index" v-if="!item.hasOwnProperty('hasPermissions')">
         <el-button :type="item.type" size="small" @click="tableClickHandleButton(item.label,item.clickEvent)">{{ item.label }}</el-button>
       </el-form-item>
     </el-form>
