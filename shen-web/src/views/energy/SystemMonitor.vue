@@ -104,7 +104,7 @@
           </div>
         </el-col>
         <el-row :gutter="15" style="overflow: hidden;" v-if="TabControl.TabControlCurrent === '冷水系统'">
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水机组1</p>
               <el-row class="marginBottom">
@@ -122,7 +122,7 @@
               </el-row>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水机组2</p>
               <el-row class="marginBottom">
@@ -140,7 +140,7 @@
               </el-row>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水塔水阀1</p>
               <el-row class="marginBottom">
@@ -151,7 +151,7 @@
               </el-row>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="platformContainer">
               <p class="text-size-18 marginBottom">冷水塔水阀2</p>
               <el-row class="marginBottom">
@@ -160,6 +160,18 @@
               <el-row>
                 <el-col :span="24"><span>水阀开到位：<span v-if="LST2Bit[LST2Bit.length-2] === '1'">到位</span><span v-if="LST2Bit[LST2Bit.length-2] === '0'">未到位</span></span></el-col>
               </el-row>
+            </div>
+          </el-col>
+          <el-col :span="4">
+            <div class="platformContainer">
+              <el-form class="blackComponents">
+                <el-form-item label="节能模式开关：">
+                  <el-switch v-model="conservationSwitch" active-color="#13ce66" inactive-color="#ff4949" active-value="100" inactive-value="0"></el-switch>
+                </el-form-item>
+                <el-form-item label="复位：">
+
+                </el-form-item>
+              </el-form>
             </div>
           </el-col>
         </el-row>
@@ -293,6 +305,7 @@
         },
         websock:null,
         websockVarData:{},
+        conservationSwitch:false,
         LS1Bit:"",
         LS2Bit:"",
         LST1Bit:"",

@@ -9,15 +9,12 @@
           </div>
           <div class="platformContainer blackComponents">
             <el-row :gutter="15">
-              <el-col :span="18">
+              <el-col :span="20">
                 <tableView :tableData="SchedulelqtTableData" @getTableData="getSchedulelqtTableData" @row-click="handlescheduledateRowClick"></tableView>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-timeline>
-                  <el-timeline-item
-                    v-for="(activity, index) in SchedulelqtTimeLine"
-                    :key="index"
-                    :timestamp="activity.time">
+                  <el-timeline-item v-for="(activity, index) in SchedulelqtTimeLine" :key="index" :timestamp="activity.time" placement="top">
                     {{ activity.label }}
                   </el-timeline-item>
                 </el-timeline>
@@ -145,8 +142,8 @@
           that.SchedulelqtTimeLine = []
           that.SchedulelqtTableData.data.forEach(item =>{
             that.SchedulelqtTimeLine.push(
-              {time:item.enablestarttime,label:"开始时间"},
-              {time:item.enableendtime,label:"结束时间"},
+              {time:item.enablestarttime,label:"开始"},
+              {time:item.enableendtime,label:"结束"},
             )
           })
         })
