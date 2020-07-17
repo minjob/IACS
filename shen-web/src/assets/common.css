@@ -145,9 +145,12 @@
   background: #3D4048;
   color: #ffffff;
 }
-/* 分割线 */
+/* 时间线 */
 .blackComponents .el-timeline .el-timeline-item__content{
   color: #ffffff;
+}
+.blackComponents .el-timeline-item__timestamp{
+  color: #00FAE7;
 }
 /* 公用组件样式 */
 .platformContainer{
