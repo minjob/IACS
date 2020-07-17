@@ -165,11 +165,11 @@
           <el-col :span="4">
             <div class="platformContainer">
               <el-form class="blackComponents">
-                <el-form-item label="节能模式开关：">
-                  <el-switch v-model="conservationSwitch" active-color="#13ce66" inactive-color="#ff4949" active-value="100" inactive-value="0"></el-switch>
+                <el-form-item label="节能开关：" class="marginBottom">
+                  <el-switch v-model="conservationSwitch" active-color="#13ce66" inactive-color="#727786" active-value="100" inactive-value="0"></el-switch>
                 </el-form-item>
-                <el-form-item label="复位：">
-
+                <el-form-item label="复位：" style="margin-bottom: 5px;">
+                  <el-button type="primary" size="small">开始复位</el-button>
                 </el-form-item>
               </el-form>
             </div>
