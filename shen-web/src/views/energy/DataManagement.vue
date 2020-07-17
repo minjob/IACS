@@ -63,62 +63,7 @@
           </el-row>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '数据汇总分析'">
               <el-col :span=24 >
-                <div class='platformContainer blackComponents'>
-                    <el-button type="success">数据录入</el-button>
-                    <el-button type="warning">excel导出</el-button>
-                </div>
-              </el-col>
-              <el-col :span=24>
-                <div class='platformContainer blackComponents' style="height:800px;">
-                    <el-table
-                            :data="tableData"
-                            style="width: 100%">
-                            <el-table-column
-                              prop="name"
-                              label="日期"
-                              >
-                            </el-table-column>
-                            <el-table-column
-                              prop="comparetime"
-                              label="站台温度"
-                              width="180">
-                            </el-table-column>
-                            <el-table-column
-                              prop="comparetime"
-                              label="站厅温度"
-                              width="180">
-                            </el-table-column>
-                            <el-table-column
-                              prop="comparetime"
-                              label="CO2平均值"
-                              width="180">
-                            </el-table-column>
-                            <el-table-column
-                              prop="averag"
-                              label="温度"
-                              width="180">
-                            </el-table-column>
-                            <el-table-column
-                              prop="max"
-                              label="湿度"
-                              width="180">
-                            </el-table-column>
-                            <el-table-column
-                              prop="min"
-                              label="编辑"
-                              width="180">
-                            </el-table-column>
-                    </el-table>
-                     <div class="paginationClass">
-                        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
-                         :total="10"
-                         :current-page="1"
-                         :page-sizes="[5,10,20]"
-                         :page-size="10"
-                        >
-                        </el-pagination>
-                    </div>
-                </div>
+                         <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
               </el-col>
           </el-row>
       </el-col>
@@ -127,12 +72,13 @@
 
 <script>
   import TabControl from '@/components/TabControl'
+  import tableView from '@/components/CommonTable'
   var moment = require('moment');
   import echarts from '@/assets/js/echarts.js'
 
   export default {
     name: "Home",
-    components:{TabControl},
+    components:{TabControl,tableView},
     data(){
       return {
         TabControl:{
@@ -179,6 +125,7 @@
           label: 'label'
         },
         dates:[],
+        myChart:null,
         dataline1:[],
         dataline2:[],
         dataline3:[],
@@ -213,12 +160,48 @@
         tag4Max:0,
         tag4Min:0,
         tag5Max:0,
-        tag5Min:0
+        tag5Min:0,
+        TableData:{
+          tableName:"DataSummaryAnalysis",
+          column:[
+            {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
+            {prop:"CollectionDate",label:"日期",type:"input",value:""},
+            {prop:"StationHallTemperature",label:"站厅温度",type:"input",value:"",showField:false,searchProp:false},
+            {prop:"PlatformTemperature",label:"站台温度",type:"input",value:""},
+            {prop:"StationHallHumidity",label:"站厅湿度",type:"input",value:""},
+            {prop:"PlatformHumidity ",label:" 站台湿度",type:"input",value:""},
+            {prop:"CarbonDioxideConten",label:"二氧化碳含量",type:"input",value:""},
+            {prop:"ConsumptionLfirst",label:"L1冷水机组耗量",type:"input",value:""},
+            {prop:"ConsumptionLsecond",label:"L2冷水机组耗量",type:"input",value:""},
+            {prop:"ConsumptionLtotal",label:"冷水机组总耗量",type:"input",value:""}
+          ],
+          data:[],
+          limit:5,
+          offset:1,
+          total:0,
+          multipleSelection:[],
+          tableSelection:true, //是否在第一列添加复选框
+          tableSelectionRadio:false, //是否需要单选
+          searchProp:"",
+          searchVal:"",  //控制搜索框
+          dialogVisible: false,
+          dialogTitle:'',
+          handleType:[
+            {type:"primary",label:"添加"},
+            {type:"primary",label:"修改"},
+            {type:"primary",label:"删除"},//操作
+            {type:"primary",label:"数据导入",clickEvent:"takeOrder"}, //对应的按钮事件
+            {type:"success",label:"excel导出",clickEvent:"maintainOK"},
+          ],
+          rowClick:"handleEQRowClick",
+          rowClickData:{},
+        },
       }
     },
     mounted(){
         this.getAsidemenu()
         this.Initdesktop()
+        this.getRepairTable()
     },
     watch:{
 
@@ -228,8 +211,33 @@
 
     },
     methods: {
+      takeOrder(){
+        console.log(1)
+        console.log(this.TableData.multipleSelection)
+      },
+      getRepairTable(){
+        var that = this
+        var params = {
+          tableName: this.TableData.tableName,
+          limit:this.TableData.limit,
+          offset:this.TableData.offset - 1
+        }
+        this.axios.get("/api/CUID",{
+          params: params
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          console.log(data)
+          that.TableData.data = data.rows
+          that.TableData.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
+      },
       drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dateset){
-        var myChart = echarts.init(document.getElementById('main'));
+        if(this.myChart){
+          this.myChart.dispose()
+        }
+        this.myChart= echarts.init(document.getElementById('main'));
         var option = {
               backgroundColor: '#3D4048',
               color:['#2db7f5','#ff6600'], 
@@ -368,7 +376,7 @@
           ]
       };
     var that=this
-     myChart.on('updateAxisPointer', function (event) {  //拉着tooltips 触发滑动事件
+     this.myChart.on('updateAxisPointer', function (event) {  //拉着tooltips 触发滑动事件
        if(event.axesInfo.length!=0){
          var index=event.dataIndex
         if(index>that.dataIndex){
@@ -424,7 +432,7 @@
          that.InitTable()
        }
      })
-    myChart.on('click', renderBrushed);
+    this.myChart.on('click', renderBrushed);
     function renderBrushed(params) {
       var time=params.name
       var datas=params.data
@@ -434,7 +442,7 @@
       var maxline=[]
       maxline.push(that.dataline1[index],that.dataline2[index],that.dataline3[index],that.dataline4[index],that.dataline5[index])
       var max=Math.max.apply(Math, maxline)
-       myChart.setOption({
+       this.myChart.setOption({
           series:{
 	          name: '平行于y轴的对比线',
             type: 'line',
@@ -454,7 +462,7 @@
        })
        that.InitTable()
         }
-    myChart.setOption(option);
+    this.myChart.setOption(option);
       },
       getAsidemenu(){
          var params = {
@@ -674,6 +682,15 @@
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
              
                 })
+      },
+      asD(){
+        var params={
+          StartTime:"2020-06-20",
+          EndTime:"2020-06-21"
+        }
+        this.axios.get('/api/exceloutdatasummaryanalysis',{params:params}).then((value) => {
+          console.log(value)
+        })
       }
     }
   }
