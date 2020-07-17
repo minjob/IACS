@@ -435,7 +435,7 @@
         });
       },
       faultReset(value){
-        this.$confirm('您是否要对'+value+'进行故障重置', '提示', {
+        this.$confirm('您是否要对'+value+'进行故障复位', '提示', {
           distinguishCancelAndClose:true,
           center:true,
           type: 'warning'

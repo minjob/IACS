@@ -98,6 +98,10 @@
 .blackComponents .el-radio{
   color: #ffffff;
 }
+/* 复选框 */
+.blackComponents .el-checkbox{
+  color: #ffffff;
+}
 /* 表单样式 */
 .blackComponents .el-form-item__label{
   color: #ffffff;
@@ -139,6 +143,10 @@
 }
 .blackComponents .el-divider__text{
   background: #3D4048;
+  color: #ffffff;
+}
+/* 分割线 */
+.blackComponents .el-timeline .el-timeline-item__content{
   color: #ffffff;
 }
 /* 公用组件样式 */

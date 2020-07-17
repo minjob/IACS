@@ -59,7 +59,7 @@
                   <el-row>
                     <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.runcount }}</p></el-col>
                     <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.runtime }}</p></el-col>
-                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.run_Proportion }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.run_Proportion }}%</p></el-col>
                   </el-row>
                 </div>
               </el-col>
@@ -74,7 +74,7 @@
                   <el-row>
                     <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stopcount }}</p></el-col>
                     <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stoptime }}</p></el-col>
-                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stop_Proportion }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.stop_Proportion }}%</p></el-col>
                   </el-row>
                 </div>
               </el-col>
@@ -89,7 +89,7 @@
                   <el-row>
                     <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.faultcount }}</p></el-col>
                     <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.faulttime }}</p></el-col>
-                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.fault_Proportion }}</p></el-col>
+                    <el-col :span="8"><p class="color-lightgreen">{{ EquipmentFaultObj.fault_Proportion }}%</p></el-col>
                   </el-row>
                 </div>
               </el-col>
