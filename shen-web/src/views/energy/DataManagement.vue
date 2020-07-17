@@ -7,24 +7,23 @@
                 <div class="Datepick platformContainer blackComponents" style="height:310px;">
                     <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="large" :open='true'></DatePicker>
                 </div>
-                <div class="platformContainer blackComponents asidetree" style="height:750px;">
+                <div class="platformContainer blackComponents asidetree" style="height:791px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
                       node-key="id"
                       ref="tree"
                       @check-change='getChecked()'
-                      :default-checked-keys="['TY_CO2_AVG','B_CO2_AVG']"
                       :props="defaultProps">
                     </el-tree>
                 </div>
               </el-col>
               <el-col :span="18">
-                <div class="platformContainer blackComponents" style="position:relative;">
-                   <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;">数据图表</div>
-                   <div class="Timepick" style="height:33px;width:175px">
-                      <TimePicker  placeholder="选择时间" style="width: 168px" v-model='valuetime' :confirm='true' @on-ok="getSelectTime" ></TimePicker>
+                 <div class="Timepick" style="height:42px;">
+                      <el-time-picker is-range v-model="value1"  range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"  @change="getSelectTime" placeholder="选择时间范围"></el-time-picker>
                   </div>
+                <div class="platformContainer blackComponents" style="position:relative;">
+                   <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
                    <div class="staticbox" style="width:100%; height:295px;">
                      <div class="platformContainer blackComponents">
                         <el-table
@@ -63,7 +62,16 @@
           </el-row>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '数据汇总分析'">
               <el-col :span=24 >
-                         <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
+                   <div class="blackComponents">
+                     <el-form ref="ruleForm">
+                        <el-form-item>
+                              <el-time-picker is-range v-model="value2"   class="selecttime" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"  @change="getVal2" placeholder="选择时间范围"></el-time-picker>
+                              <el-button type="primary">数据导入</el-button>
+                              <el-button type="success">excel导出</el-button>
+                        </el-form-item>
+                     </el-form>
+                   </div>
+                    <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
               </el-col>
           </el-row>
       </el-col>
@@ -132,6 +140,11 @@
         dataline4:[],
         dataline5:[],
         maxvalue:10,
+        time1:'06:00:00',
+        time2:'18:00:00',
+        loading:false,
+        value1:[new Date(2020, 6, 20, 8, 40), new Date(2020, 6, 20, 9, 40)],
+        value2:[new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
         averagevalue1:0,
         averagevalue2:0,
         averagevalue3:0,
@@ -139,7 +152,6 @@
         averagevalue5:0,
         dataIndex:0,
         comparetime:'00:00:04',
-        valuetime:'23:59:59',
         valuedate:[],
         starttime:'2020-06-20 00:00:00',
         endtime:'2020-06-20 08:30:00',
@@ -179,19 +191,20 @@
           limit:5,
           offset:1,
           total:0,
+          
           multipleSelection:[],
           tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:false, //是否需要单选
-          searchProp:"",
-          searchVal:"",  //控制搜索框
+          // searchProp:"",
+          // searchVal:"",  //控制搜索框
           dialogVisible: false,
           dialogTitle:'',
           handleType:[
-            {type:"primary",label:"添加"},
-            {type:"primary",label:"修改"},
-            {type:"primary",label:"删除"},//操作
-            {type:"primary",label:"数据导入",clickEvent:"takeOrder"}, //对应的按钮事件
-            {type:"success",label:"excel导出",clickEvent:"maintainOK"},
+            // {type:"primary",label:"添加"},
+            // {type:"primary",label:"修改"},
+            // {type:"primary",label:"删除"},//操作
+            // {type:"primary",label:"数据导入",clickEvent:"takeOrder"}, //对应的按钮事件
+            // {type:"success",label:"excel导出",clickEvent:"maintainOK"},
           ],
           rowClick:"handleEQRowClick",
           rowClickData:{},
@@ -202,6 +215,7 @@
         this.getAsidemenu()
         this.Initdesktop()
         this.getRepairTable()
+        this.asD()
     },
     watch:{
 
@@ -211,6 +225,9 @@
 
     },
     methods: {
+      getVal2(){
+        console.log(this.value2)
+      },
       takeOrder(){
         console.log(1)
         console.log(this.TableData.multipleSelection)
@@ -369,7 +386,7 @@
                     },
                 data: [[
                     { coord: [this.dates[0],0] },
-                    { coord: [this.dates[0],10] }
+                    { coord: [this.dates[0],100] }
                 ]]
             }
               }
@@ -442,7 +459,7 @@
       var maxline=[]
       maxline.push(that.dataline1[index],that.dataline2[index],that.dataline3[index],that.dataline4[index],that.dataline5[index])
       var max=Math.max.apply(Math, maxline)
-       this.myChart.setOption({
+      that.myChart.setOption({
           series:{
 	          name: '平行于y轴的对比线',
             type: 'line',
@@ -512,22 +529,27 @@
             this.allday='' //请求拼接字符
             for(var i=0;i<arr.length;i++){
               this.currentdate=moment(arr[i]).format('YYYY-MM-DD')
-              this.starttime=moment(arr[i]).format('YYYY-MM-DD  00:00:00')
-              this.endtime=this.currentdate+' '+this.valuetime
+              this.starttime=this.currentdate+' '+this.time1
+              this.endtime=this.currentdate+' '+this.time2
               this.dateset.push(this.currentdate)
               this.allday=this.allday+this.currentdate+','
             }
             this.allday=this.allday.slice(0, -1)
+            console.log(this.starttime)
+            console.log(this.endtime)
         }else{ //1天 多个tag
             this.allday=''
             this.currentdate=moment(this.valuedate[0]).format('YYYY-MM-DD')
-            this.starttime=moment(this.valuedate[0]).format('YYYY-MM-DD 00:00:00')
-            this.endtime=moment(this.valuedate[0]).format('YYYY-MM-DD 23:59:59')
+            this.starttime=this.currentdate+' '+this.time1
+            this.endtime=this.currentdate+' '+this.time2
             this.allday=this.currentdate
+             console.log(this.starttime)
+            console.log(this.endtime)
         }
       },
       getSelectTime(){     
-        this.endtime=this.currentdate+' '+this.valuetime
+        this.time1=moment(this.value1[0]).format('hh:mm:ss')
+        this.time2=moment(this.value1[1]).format('hh:mm:ss')
       },
       getChecked(){ //选取
       this.getSelectDate()
@@ -554,13 +576,14 @@
               console.log('选中的父节点')
             }
       },
-      InitTrenddata(t,b,e){ //一天多个tag
+       InitTrenddata(t,b,e){ //一天多个tag
          var params1={
             TagCodes:t,
             begin:b,
             end:e,
             TagFlag:'first'
           }
+            this.loading=true
             this.axios.get('/api/energytrendtu',{params:params1}).then((res) => {
               var rows=res.data
               this.dates = rows.map(function (item) {
@@ -581,17 +604,18 @@
               this.dataline5 = rows.map(function (item) {
                 return +item[5];
               });
+              this.loading=false
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
-             
                 })
       },
       SingleTag(tagcode,allday){ // 获取一个tag多天的数据
           var params={
             TagCode:tagcode,
             PointDates:allday,
-            ParagraBegin:'00:00:00',
-            ParagraEnd:this.valuetime,
+            ParagraBegin:this.time1,
+            ParagraEnd:this.time2,
           }
+          this.loading=true
           this.axios.get('/api/energytrendtu',{params:params}).then((res)=>{
             var arr=res.data
             var indexs=[]
@@ -621,8 +645,8 @@
                this.dataline5=fiftharr.map(function (item) {
                 return +item[1];
               });
+              this.loading=false
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
-              
              }
             }
           })
@@ -717,9 +741,9 @@
   padding-left:0px;
 }
 .Timepick{
-    width: 175px;
-    position: absolute;
-    top: 10px;
+    width: 100%;
+    padding-bottom: 10px;
+    background-color: #3D4048;
 }
 .asidetree{
   overflow: auto;
