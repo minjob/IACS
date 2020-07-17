@@ -1,15 +1,15 @@
 <template>
   <div>
-    <el-form :inline="true">
-      <el-form-item v-if="tableData.hasOwnProperty('searchProp') || tableData.hasOwnProperty('searchVal')">
+    <el-form :inline="true" v-if="tableData.hasOwnProperty('searchProp') || tableData.hasOwnProperty('searchVal')">
+      <el-form-item>
         <el-select v-model="tableData.searchProp" placeholder="请选择搜索字段" size="small">
           <el-option v-for="(item,index) in tableData.column" :label="item.label" :value="item.prop" :key="index" v-if="item.searchProp != false"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="tableData.hasOwnProperty('searchProp') || tableData.hasOwnProperty('searchVal')">
+      <el-form-item>
         <el-input placeholder="请输入搜索内容" size="small" v-model="tableData.searchVal"></el-input>
       </el-form-item>
-      <el-form-item v-if="tableData.hasOwnProperty('searchProp') || tableData.hasOwnProperty('searchVal')">
+      <el-form-item>
         <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
       </el-form-item>
       <el-form-item v-for="(item,index) in tableData.handleType" :key="index" v-if="item.hasOwnProperty('hasPermissions')" v-has="[item.hasPermissions]">
