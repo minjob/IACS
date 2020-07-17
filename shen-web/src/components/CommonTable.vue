@@ -24,7 +24,8 @@
       <el-table-column v-for="(item,index) in tableData.column" :key="index" :prop="item.prop" :label="item.label" :width="item.width" v-if="item.showField != false">
         <template slot-scope="scope">
           <div v-for="spanItem in item.dataJudge" :key="spanItem.value" v-if="scope.row[item.prop] === spanItem.value">
-            <span :style="{ color:spanItem.color }">{{ scope.row[item.prop] }}</span>
+            <span :style="{ color:spanItem.color }" v-if="spanItem.change" v-text="spanItem.change"></span>
+            <span :style="{ color:spanItem.color }" v-if="!spanItem.change">{{ scope.row[item.prop] }}</span>
           </div>
           <span v-if="!item.hasOwnProperty('dataJudge') || item.dataJudge.length === 0">{{ scope.row[item.prop] }}</span>
         </template>

@@ -10,12 +10,29 @@
           <div class="platformContainer blackComponents">
             <el-row :gutter="15">
               <el-col :span="20">
+                <el-form :inline="true" class="blackComponents">
+                  <el-form-item>
+                    <el-button type="primary" size="small">添加</el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="warning" size="small">修改</el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="danger" size="small">删除</el-button>
+                  </el-form-item>
+                </el-form>
                 <tableView :tableData="SchedulelqtTableData" @getTableData="getSchedulelqtTableData" @row-click="handlescheduledateRowClick"></tableView>
               </el-col>
               <el-col :span="4">
                 <el-timeline>
                   <el-timeline-item v-for="(activity, index) in SchedulelqtTimeLine" :key="index" :timestamp="activity.time" placement="top">
-                    {{ activity.label }}
+                    <p>{{ activity.label }}</p>
+                    <p>
+                      <span v-if="activity.lqt1 === '1'">冷却塔1<span class="color-success">开启</span></span>
+                      <span v-if="activity.lqt1 === '0'">冷却塔1<span class="color-grayblack">关闭</span></span>
+                      <span v-if="activity.lqt2 === '1'">冷却塔2<span class="color-success">开启</span></span>
+                      <span v-if="activity.lqt2 === '0'">冷却塔2<span class="color-grayblack">关闭</span></span>
+                    </p>
                   </el-timeline-item>
                 </el-timeline>
               </el-col>
@@ -78,8 +95,8 @@
             {label:"开始时间",prop:"enablestarttime",type:"input",value:""},
             {label:"结束时间",prop:"enableendtime",type:"input",value:""},
             {label:"编码",prop:"energystrategyCode",type:"input",value:""},
-            {label:"冷却塔1",prop:"lqt1_allowrun",type:"input",value:""},
-            {label:"冷却塔2",prop:"lqt2_allowrun",type:"input",value:""},
+            {label:"冷却塔1",prop:"lqt1_allowrun",type:"input",value:"",dataJudge:[{value:"1",change:"开启"},{value:"0",change:"关闭"}]},
+            {label:"冷却塔2",prop:"lqt2_allowrun",type:"input",value:"",dataJudge:[{value:"1",change:"开启"},{value:"0",change:"关闭"}]},
             {label:"说明",prop:"comment",type:"input",value:"",searchProp:false},
           ],
           data:[],
@@ -90,8 +107,7 @@
           tableSelectionRadio:true, //是否需要单选
           multipleSelection: [],
           handleType:[
-            // {type:"primary",label:"启用",hasPermissions:['管理工作日历']},
-            // {type:"primary",label:"不启用",hasPermissions:['管理工作日历']},
+
           ],
         },
         SchedulelqtTimeLine:[],
@@ -142,8 +158,8 @@
           that.SchedulelqtTimeLine = []
           that.SchedulelqtTableData.data.forEach(item =>{
             that.SchedulelqtTimeLine.push(
-              {time:item.enablestarttime,label:"开始"},
-              {time:item.enableendtime,label:"结束"},
+              {time:item.enablestarttime,label:"开始时间",lqt1:item.lqt1_allowrun,lqt2:item.lqt2_allowrun},
+              {time:item.enableendtime,label:"结束时间",lqt1:item.lqt1_allowrun,lqt2:item.lqt2_allowrun},
             )
           })
         })
