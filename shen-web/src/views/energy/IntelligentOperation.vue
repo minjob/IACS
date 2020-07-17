@@ -7,7 +7,7 @@
         </div>
       </el-col>
       <el-col :span="24">
-        <el-form :inline="true" class="blackComponents">
+        <el-form :inline="true" class="blackComponents" v-has="['管理工作日历']">
           <el-form-item label="选择月份：">
             <el-date-picker type="month" v-model="scheduleMonth" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
           </el-form-item>
@@ -71,10 +71,10 @@
           tableName:"scheduledatetype",
           column:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
-            {label:"类型编码",prop:"DateTypeCode",type:"input",value:"",showField:true,searchProp:true},
-            {label:"类型名称",prop:"DateTypeName",type:"input",value:"",showField:true,searchProp:true},
-            {label:"注释",prop:"Desc",type:"input",value:"",showField:true,searchProp:true},
-            {label:"颜色",prop:"color",type:"input",value:"",showField:true,searchProp:false},
+            {label:"类型编码",prop:"DateTypeCode",type:"input",value:""},
+            {label:"类型名称",prop:"DateTypeName",type:"input",value:""},
+            {label:"注释",prop:"Desc",type:"input",value:""},
+            {label:"颜色",prop:"color",type:"input",value:"",searchProp:false},
           ],
           data:[],
           limit:5,
@@ -88,9 +88,9 @@
           dialogVisible: false,
           dialogTitle:'',
           handleType:[
-            {type:"primary",label:"添加"},
-            {type:"warning",label:"修改"},
-            {type:"danger",label:"删除"},
+            {type:"primary",label:"添加",hasPermissions:['管理工作日历']},
+            {type:"warning",label:"修改",hasPermissions:['管理工作日历']},
+            {type:"danger",label:"删除",hasPermissions:['管理工作日历']},
           ],
         },
         calendarPlugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -134,7 +134,7 @@
 
     },
     methods: {
-      getScheduleTableData(){ //获取日程并实例化可拖动
+      getScheduleTableData(){ //获取日程表
         var that = this
         var params = {
           tableName: this.scheduleTableData.tableName,

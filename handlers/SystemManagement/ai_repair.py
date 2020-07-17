@@ -61,7 +61,7 @@ def get_no(no):
 def repairs():
     if request.method == 'GET':
         data = db_session.query(Repair).all()
-        return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
     if request.method == 'POST':
         json_data = request.values
         data = Repair(EquipmentCode=json_data.get('EquipmentCode'), No=get_no(json_data.get('ApplyTime')),
@@ -72,7 +72,7 @@ def repairs():
         db_session.add_all([data, equipment])
         db_session.commit()
         db_session.close()
-        return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '10000', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @repair.route('/repair_task/<p>', methods=['PATCH'])
@@ -88,7 +88,7 @@ def repair_tasks(p):
         db_session.add_all([data, equipment])
         db_session.commit()
         db_session.close()
-        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
     if p == 'over':
         json_data = request.values
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
@@ -102,7 +102,7 @@ def repair_tasks(p):
         db_session.delete(data)
         db_session.commit()
         db_session.close()
-        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @repair.route('/record/<p>', methods=['GET', 'POST'])
@@ -116,7 +116,7 @@ def repair_record(p):
     data = db_session.query(RepairTask).filter(RepairTask.EquipmentCode == p).order_by(
         RepairTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
     return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
-                      cls=AlchemyEncoder, ensure_ascii=True)
+                      cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @repair.route('/keep_plan', methods=['POST'])
@@ -140,11 +140,11 @@ def keep_plans():
         db_session.add(data)
         db_session.commit()
         db_session.close()
-        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "保养计划表添加错误：" + str(e), current_user.Name)
-        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @repair.route('/keep_task', methods=['GET', 'POST'])
@@ -171,7 +171,7 @@ def keep_tasks():
             data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
             total = db_session.query(KeepTask).count()
             return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
-                              cls=AlchemyEncoder, ensure_ascii=True)
+                              cls=AlchemyEncoder, ensure_ascii=False)
         if request.method == 'POST':
             json_data = request.values
             no = json_data.get('No')
@@ -189,16 +189,16 @@ def keep_tasks():
                 db_session.add_all([data, keep_plan])
                 db_session.commit()
                 db_session.close()
-                return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+                return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
             else:
                 db_session.add(data)
                 db_session.commit()
                 db_session.close()
-            return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+            return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "保养任务表修改错误：" + str(e), current_user.Name)
-        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @repair.route('/keep_record/<p>', methods=['GET'])
@@ -217,14 +217,14 @@ def keep_record(p):
                 result.append(data)
         result_data = result[(page - 1)*per_page:page*per_page]
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': result_data, 'total': len(result)}},
-                          cls=AlchemyEncoder, ensure_ascii=True)
+                          cls=AlchemyEncoder, ensure_ascii=False)
         # total = db_session.query(KeepRecord).filter_by(EquipmentCode=p).count()
         # data = db_session.query(KeepRecord).filter(KeepRecord.EquipmentCode == p).order_by(
         #     KeepRecord.ApplyTime.desc()).limit(per_page).offset((page - 1) * per_page)
         # return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
-        #                   cls=AlchemyEncoder, ensure_ascii=True)
+        #                   cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "保养记录查询错误：" + str(e), current_user.Name)
-        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 

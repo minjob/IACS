@@ -160,7 +160,7 @@
           <div class="platformContainer blackComponents">
             <el-form :inline="true">
               <el-form-item>
-                <el-button type="primary" size="small" @click="KeepOK">保养完成</el-button>
+                <el-button type="primary" size="small" @click="KeepOK" v-has="['设备保养工作']">保养完成</el-button>
               </el-form-item>
             </el-form>
             <el-table :data="KeepTaskTableData.data" border ref="multipleTableKeepTask" @selection-change="handleKeepTaskSelectionChange" @row-click="handleKeepTaskRowClick">
@@ -221,8 +221,8 @@
           searchProp:"",
           searchVal:"",
           handleType:[
-            {type:"warning",label:"快速报修",clickEvent:"repairs"},
-            {type:"primary",label:"制定保养计划",clickEvent:"drawUpKeepPlan"},
+            {type:"warning",label:"快速报修",clickEvent:"repairs",hasPermissions:['设备报修']},
+            {type:"primary",label:"制定保养计划",clickEvent:"drawUpKeepPlan",hasPermissions:['设备制定保养计划']},
             {type:"primary",label:"查看保养计划",clickEvent:""},
           ],
           rowClick:"handleEQRowClick",
@@ -271,8 +271,8 @@
           searchProp:"",
           searchVal:"",
           handleType:[
-            {type:"primary",label:"我要接单",clickEvent:"takeOrder"},
-            {type:"success",label:"维修完成",clickEvent:"maintainOK"},
+            {type:"primary",label:"我要接单",clickEvent:"takeOrder",hasPermissions:['设备维修工作']},
+            {type:"success",label:"维修完成",clickEvent:"maintainOK",hasPermissions:['设备维修工作']},
           ],
         },
         showRepairsForm:false,
@@ -488,7 +488,7 @@
           WeekTime:this.weekNumber + this.weekTime,
           Describe:this.KeekPlanContent
         }
-        this.axios.post("/api/keep_plan",this.qs.stringify(params)).then(res =>{
+        this.axios.post("/api/keep_plan",params).then(res =>{
           if(res.data.code == 10001){
             this.$message({
               type: 'success',

@@ -40,7 +40,7 @@
             <el-slider v-model="sliderValue" :max="1" :min="0" :step="0.1" @input="changeSettings"></el-slider>
           </div>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-has="['管理人员']">
           <el-radio-group v-model="modeValue" size="mini" @change="changeSettings">
             <el-radio-button v-for="item in modeSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
