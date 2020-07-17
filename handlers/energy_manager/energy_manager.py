@@ -54,11 +54,11 @@ def energytrendtu():
                 tag_str = ""
                 for TagCode in TagCodes:
                     if tag_str == "":
-                        tag_str =  "`"+TagCode+"` AS "+"`"+TagCode+"`"
+                        tag_str =  "AVG(`"+TagCode+"`) AS "+"`"+TagCode+"`"
                     else:
-                        tag_str = tag_str + "," + "`"+TagCode+"` AS "+"`"+TagCode+"`"
+                        tag_str = tag_str + "," + "AVG(`"+TagCode+"`) AS "+"`"+TagCode+"`"
                 sql = "SELECT  " + tag_str + ",SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '"\
-                      + begin + "' AND '" + end + "'  order by SampleTime"
+                      + begin + "' AND '" + end + "' group by CollectionHour order by SampleTime"
                 re = db_session.execute(sql).fetchall()
                 dict_list = []
                 for i in range(len(re)):
@@ -69,7 +69,7 @@ def energytrendtu():
                             oc_list.append("-" if re[i][TagCode] is None else re[i][TagCode])
                     dict_list.append(oc_list)
             else:
-                TagCode = "`"+data.get("TagCode")+"`"
+                TagCode = "AVG(`"+data.get("TagCode")+"`)"
                 PointDates = data.get("PointDates")
                 PointDates = PointDates.split(",")
                 ParagraBegin = data.get("ParagraBegin")
@@ -82,7 +82,7 @@ def energytrendtu():
                     else:
                         parameter_str = parameter_str + "' OR SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
                     j = j + 1
-                parameter_str = parameter_str + "'  order by SampleTime"
+                parameter_str = parameter_str + "' group by CollectionHour order by SampleTime"
                 sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE " + parameter_str
                 re = db_session.execute(sql)
                 dict_list = []
@@ -351,13 +351,13 @@ def selectrundetailbyequipmentcode():
             dict_run["faulttime"] = round(faulttime, 2)
             total_time = runtime + stoptime + faulttime
             if total_time != 0:
-                dict_run["run_Proportion"] = str(round(100*(runtime/total_time),2))+"%"
-                dict_run["stop_Proportion"] = str(round(100 * (stoptime / total_time), 2))+"%"
-                dict_run["fault_Proportion"] = str(round(100 * (faulttime / total_time), 2))+"%"
+                dict_run["run_Proportion"] = round(100*(runtime/total_time),2)
+                dict_run["stop_Proportion"] = round(100 * (stoptime / total_time), 2)
+                dict_run["fault_Proportion"] = round(100 * (faulttime / total_time), 2)
             else:
-                dict_run["run_Proportion"] = "0%"
-                dict_run["stop_Proportion"] = "0%"
-                dict_run["fault_Proportion"] = "0%"
+                dict_run["run_Proportion"] = 0
+                dict_run["stop_Proportion"] = 0
+                dict_run["fault_Proportion"] = 0
             return json.dumps(dict_run, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             logger.error(e)
