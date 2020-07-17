@@ -351,11 +351,11 @@ def fault():
         equipment_code = json_data.get('EquipmentCode')
         ctrl = ScheduleCTRLWORD('TY')
         ctrl.Write_LS_FaultReset(equipment_code)
-        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "故障恢复错误：" + str(e), current_user.Name)
-        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @opc.route('/run', methods=['POST'])
@@ -380,11 +380,11 @@ def change_run():
             else:
                 ctrl.Equip_LS2Control(equipment_code, status)
         insertSyslog("机组开关操作", f"对{equipment_code}设备进行了{status}操作", current_user.Name)
-        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "机组开关修改错误：" + str(e), current_user.Name)
-        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
 @opc.route('/status', methods=['POST'])
@@ -400,8 +400,10 @@ def change_status():
         elif equipment_code in ['LD2', 'LQ2']:
             ctrl.Write_LS2_Params(equipment_code, hz)
         insertSyslog("频率修改操作", f"将{equipment_code}设备的频率修改为{hz}", current_user.Name)
-        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "频率修改错误：" + str(e), current_user.Name)
-        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=True)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
+
+

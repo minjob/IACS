@@ -431,7 +431,6 @@ def selectpermissionbyuser():
                 rps = db_session.query(RolePermission).filter(RolePermission.RoleID == ro.RoleID).all()
                 for rp in rps:
                     permission_list.append(rp.PermissionName)
-            print(permission_list)
             return json.dumps(permission_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
