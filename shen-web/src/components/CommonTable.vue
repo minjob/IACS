@@ -31,7 +31,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="paginationClass">
+    <div class="paginationClass" v-if="tableData.hasOwnProperty('limit') || tableData.hasOwnProperty('offset')">
       <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
        :total="tableData.total"
        :current-page="tableData.offset"

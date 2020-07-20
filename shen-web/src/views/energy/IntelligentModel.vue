@@ -5,23 +5,58 @@
       <el-row v-if="TabControl.TabControlCurrent === '冷却塔运行策略'">
         <el-col :span="24">
           <div class="platformContainer blackComponents">
-            <tableView :tableData="EnergyStrategyTableData" @getTableData="getScheduleTableData" @row-click="handlescheduledateRowClick"></tableView>
+            <tableView :tableData="EnergyStrategyTableData" @getTableData="getScheduleTableData" @getSchedulelqtTableData="getSchedulelqtTableData"></tableView>
           </div>
           <div class="platformContainer blackComponents">
             <el-row :gutter="15">
               <el-col :span="20">
                 <el-form :inline="true" class="blackComponents">
                   <el-form-item>
-                    <el-button type="primary" size="small">添加</el-button>
+                    <el-button type="primary" size="small" @click="add">添加</el-button>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="warning" size="small">修改</el-button>
+                    <el-button type="warning" size="small" @click="edit">修改</el-button>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="danger" size="small">删除</el-button>
+                    <el-button type="danger" size="small" @click="del">删除</el-button>
                   </el-form-item>
                 </el-form>
-                <tableView :tableData="SchedulelqtTableData" @getTableData="getSchedulelqtTableData" @row-click="handlescheduledateRowClick"></tableView>
+                <tableView :tableData="SchedulelqtTableData" @getTableData="getSchedulelqtTableData"></tableView>
+                <el-dialog :title="SchedulelqtTableData.dialogTitleSchedule" :visible.sync="SchedulelqtTableData.dialogVisibleSchedule" :close-on-click-modal="false" :append-to-body="true" width="40%">
+                  <el-form :model="SchedulelqtTableData.form" label-width="110px">
+                    <el-form-item label="ID">
+                      <el-input v-model="SchedulelqtTableData.form.ID" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="编号">
+                      <el-input v-model="SchedulelqtTableData.form.energystrategyCode" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开始时间">
+                      <el-time-picker v-model="SchedulelqtTableData.form.enablestarttime" value-format="HH:mm:ss"></el-time-picker>
+                    </el-form-item>
+                    <el-form-item label="结束时间">
+                      <el-time-picker v-model="SchedulelqtTableData.form.enableendtime" value-format="HH:mm:ss"></el-time-picker>
+                    </el-form-item>
+                    <el-form-item label="冷却塔1">
+                      <el-select v-model="SchedulelqtTableData.form.lqt1_allowrun">
+                        <el-option label="开启" value="1"></el-option>
+                        <el-option label="关闭" value="0"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="冷却塔2">
+                      <el-select v-model="SchedulelqtTableData.form.lqt2_allowrun">
+                        <el-option label="开启" value="1"></el-option>
+                        <el-option label="关闭" value="0"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="说明">
+                      <el-input v-model="SchedulelqtTableData.form.comment" placeholder="请输入内容"></el-input>
+                    </el-form-item>
+                  </el-form>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="SchedulelqtTableData.dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="saveSchedulelqt">保存</el-button>
+                  </span>
+                </el-dialog>
               </el-col>
               <el-col :span="4">
                 <el-timeline>
@@ -85,7 +120,7 @@
             // {type:"primary",label:"启用",hasPermissions:['管理工作日历']},
             // {type:"primary",label:"不启用",hasPermissions:['管理工作日历']},
           ],
-          rowClick:"handlescheduledateRowClick",
+          rowClick:"getSchedulelqtTableData",
           rowClickData:{},
         },
         SchedulelqtTableData:{
@@ -94,18 +129,27 @@
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
             {label:"开始时间",prop:"enablestarttime",type:"input",value:""},
             {label:"结束时间",prop:"enableendtime",type:"input",value:""},
-            {label:"编码",prop:"energystrategyCode",type:"input",value:""},
+            {label:"编号",prop:"energystrategyCode",type:"input",value:""},
             {label:"冷却塔1",prop:"lqt1_allowrun",type:"input",value:"",dataJudge:[{value:"1",change:"开启"},{value:"0",change:"关闭"}]},
             {label:"冷却塔2",prop:"lqt2_allowrun",type:"input",value:"",dataJudge:[{value:"1",change:"开启"},{value:"0",change:"关闭"}]},
             {label:"说明",prop:"comment",type:"input",value:"",searchProp:false},
           ],
           data:[],
-          limit:5,
-          offset:1,
           total:0,
           tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:true, //是否需要单选
           multipleSelection: [],
+          dialogVisibleSchedule: false,
+          dialogTitleSchedule:'',
+          form:{
+            tableName:"Schedulelqt",
+            energystrategyCode:"",
+            enablestarttime:"",
+            enableendtime:"",
+            lqt1_allowrun:"",
+            lqt2_allowrun:"",
+            comment:"",
+          },
           handleType:[
 
           ],
@@ -115,7 +159,6 @@
     },
     created(){
       this.getScheduleTableData()
-      this.getSchedulelqtTableData()
     },
     mounted(){
 
@@ -146,12 +189,14 @@
         var that = this
         var params = {
           tableName: this.SchedulelqtTableData.tableName,
-          limit:this.SchedulelqtTableData.limit,
-          offset:this.SchedulelqtTableData.offset - 1
+            field:"energystrategyCode",
+            fieldvalue:this.EnergyStrategyTableData.rowClickData.Code,
+            limit:10000,
+            offset:0
         }
         this.axios.get("/api/CUID",{
           params: params
-        }).then(res => {
+        }).then(res =>{
           var data = JSON.parse(res.data)
           that.SchedulelqtTableData.data = data.rows
           that.SchedulelqtTableData.total = data.total
@@ -162,10 +207,137 @@
               {time:item.enableendtime,label:"结束时间",lqt1:item.lqt1_allowrun,lqt2:item.lqt2_allowrun},
             )
           })
+        },res =>{
+          console.log("请求错误")
         })
       },
-      handlescheduledateRowClick(){
-
+      add(){
+        if(this.EnergyStrategyTableData.multipleSelection.length === 1) {
+          this.SchedulelqtTableData.dialogVisibleSchedule = true
+          this.SchedulelqtTableData.dialogTitleSchedule = "添加"
+          this.SchedulelqtTableData.form = {
+            tableName:"Schedulelqt",
+            ID: "",
+            energystrategyCode: this.EnergyStrategyTableData.rowClickData.Code,
+            enablestarttime: moment().format("HH:mm:ss"),
+            enableendtime: moment().format("HH:mm:ss"),
+            lqt1_allowrun: "1",
+            lqt2_allowrun: "1",
+            comment: "",
+          }
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请单选一条日程类型 '
+          })
+        }
+      },
+      edit(){
+        if(this.SchedulelqtTableData.multipleSelection.length === 1) {
+          this.SchedulelqtTableData.dialogVisibleSchedule = true
+          this.SchedulelqtTableData.dialogTitleSchedule = "修改"
+          this.SchedulelqtTableData.form = {
+            tableName:"Schedulelqt",
+            ID: this.SchedulelqtTableData.multipleSelection[0].ID,
+            energystrategyCode: this.SchedulelqtTableData.multipleSelection[0].energystrategyCode,
+            enablestarttime: this.SchedulelqtTableData.multipleSelection[0].enablestarttime,
+            enableendtime: this.SchedulelqtTableData.multipleSelection[0].enableendtime,
+            lqt1_allowrun: this.SchedulelqtTableData.multipleSelection[0].lqt1_allowrun,
+            lqt2_allowrun: this.SchedulelqtTableData.multipleSelection[0].lqt2_allowrun,
+            comment: this.SchedulelqtTableData.multipleSelection[0].comment,
+          }
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请单选一条数据 '
+          })
+        }
+      },
+      saveSchedulelqt(){
+        var enablestarttime = moment().format("YYYY-MM-DD ") + this.SchedulelqtTableData.form.enablestarttime
+        var enableendtime =  moment().format("YYYY-MM-DD ") + this.SchedulelqtTableData.form.enableendtime
+        if(moment(enableendtime).diff(moment(enablestarttime),"hours") > 0){
+          if(this.SchedulelqtTableData.dialogTitleSchedule === "添加"){
+            this.axios.post("/api/CUID",this.qs.stringify(this.SchedulelqtTableData.form)).then(res =>{
+              if(res.data == "OK"){
+                this.$message({
+                  type: 'success',
+                  message: '添加成功'
+                });
+                this.getSchedulelqtTableData()
+              }else{
+                this.$message({
+                  type: 'info',
+                  message: res.data
+                });
+              }
+              this.SchedulelqtTableData.dialogVisibleSchedule = false
+            },res =>{
+              console.log("请求错误")
+            })
+          }else if(this.SchedulelqtTableData.dialogTitleSchedule === "修改"){
+            this.axios.put("/api/CUID",this.qs.stringify(this.SchedulelqtTableData.form)).then(res =>{
+              if(res.data == "OK"){
+                this.$message({
+                  type: 'success',
+                  message: '修改成功'
+                });
+                this.getSchedulelqtTableData()
+              }else{
+                this.$message({
+                  type: 'info',
+                  message: res.data
+                });
+              }
+              this.SchedulelqtTableData.dialogVisibleSchedule = false
+            },res =>{
+              console.log("请求错误")
+            })
+          }
+        }else{
+          this.$message({
+            type: 'info',
+            message: '结束时间必须比开始时间大于一小时 '
+          })
+        }
+      },
+      del(){
+        if(this.SchedulelqtTableData.multipleSelection.length > 0) {
+          var params = {tableName:this.SchedulelqtTableData.tableName}
+          var mulId = []
+          this.SchedulelqtTableData.multipleSelection.forEach(item =>{
+            mulId.push({id:item.ID});
+          })
+          params.delete_data = JSON.stringify(mulId)
+          this.$confirm('确定删除所选记录？', '提示', {
+            distinguishCancelAndClose:true,
+            type: 'warning'
+          }).then(()  => {
+            this.axios.delete("/api/CUID",{
+              params: params
+            }).then(res =>{
+              if(res.data == "OK"){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功'
+                });
+              }
+              this.getSchedulelqtTableData()
+            },res =>{
+              console.log("请求错误")
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择要删除的数据 '
+          })
+        }
       }
     }
   }
