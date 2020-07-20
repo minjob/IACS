@@ -166,10 +166,10 @@
             <div class="platformContainer">
               <el-form class="blackComponents">
                 <el-form-item label="节能开关：" class="marginBottom">
-                  <el-switch v-model="conservationSwitch" active-color="#13ce66" inactive-color="#727786" active-value="100" inactive-value="0"></el-switch>
+                  <el-switch v-model="conservationSwitch" v-has="['系统监控操作控制']" active-color="#13ce66" inactive-color="#727786" active-value="1" inactive-value="0" @change="changeConservationSwitch"></el-switch>
                 </el-form-item>
                 <el-form-item label="复位：" style="margin-bottom: 5px;">
-                  <el-button type="primary" size="small">开始复位</el-button>
+                  <el-button type="primary" size="small" v-has="['系统监控操作控制']" @click="startReseting">开始复位</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -320,6 +320,7 @@
     },
     created(){
       this.initWebSocket()
+      this.getonservationSwitch()
     },
     mounted(){
 
@@ -458,6 +459,87 @@
               EquipmentCode:value,
             }
           }).then(res =>{
+            if(res.data.code === "20001"){
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: res.data.message
+              });
+            }
+          },res =>{
+            console.log("请求错误")
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+        });
+      },
+      getonservationSwitch(){
+        this.axios.get("/api/reset").then(res =>{
+          if(res.data === "1"){
+            this.conservationSwitch = "1"
+          }else if(res.data === "0"){
+            this.conservationSwitch = "0"
+          }
+        },res =>{
+          console.log("请求错误")
+        })
+      },
+      changeConservationSwitch(){
+        var SwitchState = ""
+        var SwitchParams = ""
+        if(this.conservationSwitch === "1"){
+          SwitchState = "开"
+          SwitchParams = "on"
+          this.conservationSwitch = "0"
+        }else if(this.conservationSwitch === "0"){
+          SwitchState = "关"
+          SwitchParams = "off"
+          this.conservationSwitch = "1"
+        }
+        this.$confirm('您是否要进行'+ SwitchState +'节能模式的操作？', '提示', {
+          distinguishCancelAndClose:true,
+          center:true,
+          type: 'warning'
+        }).then(()  => {
+          var params = {
+              switch:SwitchParams,
+            }
+          this.axios.post("/api/reset",this.qs.stringify(params)).then(res =>{
+            if(res.data.code === "20001"){
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: res.data.message
+              });
+              if(this.conservationSwitch === "1"){
+                this.conservationSwitch = "1"
+              }else if(this.conservationSwitch === "0"){
+                this.conservationSwitch = "0"
+              }
+            }
+          },res =>{
+            console.log("请求错误")
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+        });
+      },
+      startReseting(){
+        this.$confirm('您确认要复位吗？', '提示', {
+          distinguishCancelAndClose:true,
+          center:true,
+          type: 'warning'
+        }).then(()  => {
+          var params = {
+              reset:"yes",
+            }
+          this.axios.post("/api/reset",this.qs.stringify(params)).then(res =>{
             if(res.data.code === "20001"){
               this.$message({
                 showClose: true,
