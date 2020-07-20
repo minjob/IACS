@@ -475,13 +475,13 @@ def energy_trends():
             Begin = request.values.get('begin')
             End = request.values.get('end')
             data = []
+            count = 0
             for item in TagCodes:
+                count += 1
                 sql = "select " + "SampleTime as time, " + item + " as value" + " from datahistory where" \
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
-                count = 0
                 for result in results[::6]:
-                    count += 1
                     data.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                  f'value{count}': result['value']})
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
