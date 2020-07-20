@@ -477,8 +477,9 @@ def energy_trends():
             for item in TagCodes:
                 sql = "select " + "SampleTime as time, " + item + " as value" + " from datahistory where" \
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
-                result = db_session.execute(sql).fetchall()
-                data.append({'time': result[0]['time'], 'value': result[0]['value']})
+                results = db_session.execute(sql).fetchall()
+                for result in results[::6]:
+                    data.append({'time': result['time'], 'value': result['value']})
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             # 一个tag查询多天
