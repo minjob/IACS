@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 
 import redis
 from flask import Blueprint, request
@@ -479,7 +480,8 @@ def energy_trends():
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
                 for result in results[::6]:
-                    data.append({'time': time.strftime("%Y-%m-%d %H:%M:%S", result['time']), 'value': result['value']})
+                    data.append({'time': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                                 'value': result['value']})
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             # 一个tag查询多天
