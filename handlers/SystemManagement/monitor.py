@@ -479,9 +479,11 @@ def energy_trends():
                 sql = "select " + "SampleTime as time, " + item + " as value" + " from datahistory where" \
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
+                count = 0
                 for result in results[::6]:
-                    data.append({'time': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
-                                 'value': result['value']})
+                    count += 1
+                    data.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                                 f'value{count}': result['value']})
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             # 一个tag查询多天
