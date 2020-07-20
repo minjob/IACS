@@ -417,6 +417,7 @@ def change_status():
 
 @opc.route('/schedule_lqt', methods=['POST'])
 def schedule_lqt():
+    """排班日程"""
     try:
         new_start = request.values.get('start_time')
         new_end = request.values.get('end_time')
@@ -439,11 +440,11 @@ def schedule_lqt():
 
 @opc.route('/reset', methods=['GET', 'POST'])
 def reset():
+    """复位"""
     try:
-        pool = redis.ConnectionPool(host=constant.REDIS_HOST)
-        redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
+        redis_conn = redis.Redis(password=constant.REDIS_PASSWORD, decode_responses=True)
         if request.method == 'GET':
-            data = redis_conn.hget(constant.REDIS_TABLENAME, 'LS_JN_FLAG',)
+            data = redis_conn.hget(constant.REDIS_TABLENAME, 'LS_JN_FLAG')
             return json.dumps({'code': '20001', 'message': '成功', 'data': data},
                               cls=AlchemyEncoder, ensure_ascii=False)
         if request.values.get('reset') == 'yes':
@@ -452,12 +453,50 @@ def reset():
             ctrl.Write_LS_INIWORD('LS2', '100')
             return json.dumps({'code': '20001', 'message': '设置成功'})
         if request.values.get('switch') == 'on':
-            redis_conn.hset(constant.REDIS_TABLENAME, 'LS_JN_FLAG', '1')
-            return json.dumps({'code': '20001', 'message': '设置成功'})
+            data = redis_conn.hset(constant.REDIS_TABLENAME, 'LS_JN_FLAG', '1')
+            return json.dumps({'code': '20001', 'message': '设置成功', 'data': data})
         if request.values.get('switch') == 'off':
-            redis_conn.hset(constant.REDIS_TABLENAME, 'LS_JN_FLAG', '0')
-            return json.dumps({'code': '20001', 'message': '设置成功'})
+            data = redis_conn.hset(constant.REDIS_TABLENAME, 'LS_JN_FLAG', '0')
+            return json.dumps({'code': '20001', 'message': '设置成功', 'data': data})
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "工时安排设置出错：" + str(e), current_user.Name)
         return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@opc.route('/energy_trend', methods=['GET'])
+def energy_trends():
+    """趋势图"""
+    try:
+        if request.values.get('TagFlag') == 'first':
+            # 多个tag点查询一天
+            TagCodes = request.values.get('TagCodes').split(",")
+            Begin = request.values.get('begin')
+            End = request.values.get('end')
+            data = []
+            for item in TagCodes:
+                sql = "select " + "AVG(`" + item + "`)" + "as total_value from datahistory where" \
+                      " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
+                result = db_session.execute(sql).fetchall()
+                data.append(round(result[0]['total_value'], 2))
+            return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+        else:
+            # 一个tag查询多天
+            # TagCode = request.values.get('TagCode') + "`)"
+            PointDates = request.values.get("PointDates").split(",")
+            Begin = request.values.get("ParagraBegin")
+            End = request.values.get("ParagraEnd")
+            data = []
+            for item in PointDates:
+                start_time = item + " " + Begin
+                end_time = item + " " + End
+                sql = "select " + "AVG(`" + request.values.get('TagCode') + "`)" + "as total_value from datahistory" \
+                      " where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                result = db_session.execute(sql).fetchall()
+                data.append(round(result[0]['total_value'], 2))
+            return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+    except Exception as e:
+        logger.error(e)
+        insertSyslog("error", "energy_trend错误：" + str(e), current_user.Name)
+        return json.dumps({'code': '20002', 'message': 'energy_trend错误： ' + str(e)},
+                          cls=AlchemyEncoder, ensure_ascii=False)
