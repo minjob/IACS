@@ -825,8 +825,8 @@ class KeepTask(Base):
 
 
 class KeepRecord(Base):
-    __tablename__ = 'keeprecord'
     """保养记录表"""
+    __tablename__ = 'keeprecord'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     # 工单号
@@ -881,8 +881,9 @@ class Repair(Base):
 
 
 class RepairTask(Base):
-    __tablename__ = 'repairtask'
     """维修任务表"""
+    __tablename__ = 'repairtask'
+
     id = Column(Integer, autoincrement=True, primary_key=True)
     # 工单号
     No = Column(Unicode(128), nullable=True)
@@ -904,6 +905,46 @@ class RepairTask(Base):
     ReceiveTime = Column(Unicode(32), nullable=True)
     # 完成时间
     EndTime = Column(Unicode(32), nullable=True)
+
+
+class EnergyStrategy(Base):
+    """工作日设备运行说明"""
+    __tablename__ = "EnergyStrategy"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    # 编号:
+    Code = Column(Unicode(32), nullable=True)
+    # 创建时间:
+    CreateTime = Column(Unicode(32), nullable=True)
+    # 创建人:
+    CreatePerson = Column(Unicode(32), nullable=True)
+    # 启用标志:
+    UseFlag = Column(Unicode(32), nullable=True)
+    # 编号:
+    type = Column(Unicode(32), nullable=True)
+    # 说明
+    Comment = Column(Unicode(200), nullable=True)
+
+
+class Schedulelqt(Base):
+    """日程安排表"""
+    __tablename__ = "Schedulelqt"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    # 开始时间
+    enablestarttime = Column(Unicode(32), nullable=True)
+    # 结束时间:
+    enableendtime = Column(Unicode(32), nullable=True)
+    # 说明
+    comment = Column(Unicode(128), nullable=True)
+    # 关联表code
+    energystrategyCode = Column(Unicode(32), nullable=True)
+    # 冷却塔1
+    lqt1_allowrun = Column(Unicode(32), nullable=True)
+    # 冷却塔2
+    lqt2_allowrun = Column(Unicode(32), nullable=True)
 
 
 class CollectionPoint(Base):

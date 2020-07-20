@@ -8,9 +8,17 @@ from opcua import ua, Client
 
 from dbset.database import constant
 from dbset.main.BSFramwork import AlchemyEncoder
+from dbset.database.db_operate import db_session
+from models.system import Schedulelqt
 from tools.common import logger, insertSyslog
 
 opc = Blueprint('opc', __name__)
+
+
+def count_time(start_time, end_time, new_start, new_end):
+    t1 = [start_time, end_time]
+    t2 = [new_start, new_end]
+    return t1[0] < t2[0] < t2[1] < t1[1]
 
 
 class ScheduleCTRLWORD(object):
@@ -271,7 +279,7 @@ class ScheduleCTRLWORD(object):
         elif (ALQT_T1_RUN == 0) and (ALQT_T1_RUN == 0):
             shigh = '00' + shigh
 
-        shigh = '10' + shigh
+        shigh = '00' + shigh
         print("字符串" + shigh + slow + ":整型:" + str(int(shigh + slow, 2)))
         return int(shigh + slow, 2)
 
@@ -407,3 +415,49 @@ def change_status():
         return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
+@opc.route('/schedule_lqt', methods=['POST'])
+def schedule_lqt():
+    try:
+        new_start = request.values.get('start_time')
+        new_end = request.values.get('end_time')
+        query_list = db_session.query(Schedulelqt).all()
+        for item in query_list:
+            if not count_time(item.enablestarttime, item.enableendtime, new_start, new_end):
+                return json.dumps({'code': '20003', 'message': '工作时间设置出现冲突'})
+        data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
+                           energystrategyCode=request.values.get('energystrategyCode'),
+                           lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2'))
+        db_session.add(data)
+        db_session.commit()
+        db_session.close()
+        return json.dumps({'code': '20001', 'message': '设置成功'})
+    except Exception as e:
+        logger.error(e)
+        insertSyslog("error", "工时安排设置出错：" + str(e), current_user.Name)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@opc.route('/reset', methods=['GET', 'POST'])
+def reset():
+    try:
+        pool = redis.ConnectionPool(host=constant.REDIS_HOST)
+        redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
+        if request.method == 'GET':
+            data = redis_conn.hget(constant.REDIS_TABLENAME, 'LS_JN_FLAG',)
+            return json.dumps({'code': '20001', 'message': '成功', 'data': data},
+                              cls=AlchemyEncoder, ensure_ascii=False)
+        if request.values.get('reset') == 'yes':
+            ctrl = ScheduleCTRLWORD('TY')
+            ctrl.Write_LS_INIWORD('LS1', '100')
+            ctrl.Write_LS_INIWORD('LS2', '100')
+            return json.dumps({'code': '20001', 'message': '设置成功'})
+        if request.values.get('switch') == 'on':
+            redis_conn.hset(constant.REDIS_TABLENAME, 'LS_JN_FLAG', '1')
+            return json.dumps({'code': '20001', 'message': '设置成功'})
+        if request.values.get('switch') == 'off':
+            redis_conn.hset(constant.REDIS_TABLENAME, 'LS_JN_FLAG', '0')
+            return json.dumps({'code': '20001', 'message': '设置成功'})
+    except Exception as e:
+        logger.error(e)
+        insertSyslog("error", "工时安排设置出错：" + str(e), current_user.Name)
+        return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
