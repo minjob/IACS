@@ -469,8 +469,12 @@ def schedule_lqt():
             query_data = db_session.query(Schedulelqt).filter_by(energystrategyCode=request.values.get('ID')).first()
             code = request.values.get('energystrategyCode')
             query_list = db_session.query(Schedulelqt).filter_by(energystrategyCode=code).all()
-            if query_list:
-                for item in query_list:
+            results = []
+            for i in query_list:
+                if i.ID != query_data.ID:
+                    results.append(i)
+            if results:
+                for item in results:
                     if count_time(item.enablestarttime, item.enableendtime, new_start, new_end) != 'yes':
                         return json.dumps({'code': '20003', 'message': '工作时间设置出现冲突'})
                 query_data.comment = request.values.get('comment')
@@ -480,7 +484,14 @@ def schedule_lqt():
                 db_session.commit()
                 db_session.close()
                 return json.dumps({'code': '20001', 'message': '设置成功'})
-            pass
+            else:
+                query_data.comment = request.values.get('comment')
+                query_data.lqt1_allowrun = request.values.get('lqt1')
+                query_data.lqt2_allowrun = request.values.get('lqt2')
+                db_session.add(query_data)
+                db_session.commit()
+                db_session.close()
+            return json.dumps({'code': '20001', 'message': '设置成功'})
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "工时安排设置出错：" + str(e), current_user.Name)
