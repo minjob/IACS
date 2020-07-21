@@ -24,7 +24,7 @@ def count_time(start_time, end_time, new_start, new_end):
     if t2[0] < t1[0] < t2[1] < t1[1] or t2[0] < t1[0] < t1[1] < t2[1]:
         return '2'
 
-        return t1[0] < t2[0] < t2[1] < t1[1]
+    # return t1[0] < t2[0] < t2[1] < t1[1]
 
 
 class ScheduleCTRLWORD(object):
