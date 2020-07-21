@@ -19,11 +19,14 @@ opc = Blueprint('opc', __name__)
 def count_time(start_time, end_time, new_start, new_end):
     t1 = [start_time, end_time]
     t2 = [new_start, new_end]
+    if t2[1] < t1[0]:
+        return 'yes'
+    if t2[0] > t1[1]:
+        return 'yes'
     if t1[0] < t2[0] < t2[1] < t1[1]:
         return '1'
     if t2[0] < t1[0] < t2[1] < t1[1] or t2[0] < t1[0] < t1[1] < t2[1]:
         return '2'
-
     # return t1[0] < t2[0] < t2[1] < t1[1]
 
 
@@ -434,7 +437,7 @@ def schedule_lqt():
             query_list = db_session.query(Schedulelqt).all()
             if query_list:
                 for item in query_list:
-                    if not count_time(item.enablestarttime, item.enableendtime, new_start, new_end):
+                    if count_time(item.enablestarttime, item.enableendtime, new_start, new_end) != 'yes':
                         return json.dumps({'code': '20003', 'message': '工作时间设置出现冲突'})
                 data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
                                    energystrategyCode=request.values.get('energystrategyCode'),
@@ -452,7 +455,7 @@ def schedule_lqt():
                 db_session.close()
                 return json.dumps({'code': '20001', 'message': '设置成功'})
         if request.method == 'DELETE':
-            items = request.values.get('ID')
+            items = request.values.get('ID').split(',')
             for item in items:
                 data = db_session.query(Schedulelqt).filter_by(ID=int(item)).first()
                 db_session.delete(data)
