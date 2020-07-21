@@ -492,13 +492,18 @@ def energy_trends():
             Begin = request.values.get("ParagraBegin")
             End = request.values.get("ParagraEnd")
             data = []
+            count = 0
             for item in PointDates:
+                count += 1
                 start_time = item + " " + Begin
                 end_time = item + " " + End
-                sql = "select " + "AVG(`" + request.values.get('TagCode') + "`)" + "as total_value from datahistory" \
-                      " where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
-                result = db_session.execute(sql).fetchall()
-                data.append(round(result[0]['total_value'], 2))
+                sql = "select SampleTime as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
+                      "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                results = db_session.execute(sql).fetchall()
+                for result in results[::6]:
+                    data.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                                 f'value{count}': result['value']})
+                # data.append(round(result[0]['total_value'], 2))
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
