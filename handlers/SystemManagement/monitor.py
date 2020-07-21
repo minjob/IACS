@@ -487,6 +487,8 @@ def schedule_lqt():
                 db_session.close()
                 return json.dumps({'code': '20001', 'message': '设置成功'})
             else:
+                query_data.enablestarttime = new_start
+                query_data.enableendtime = new_end
                 query_data.comment = request.values.get('comment')
                 query_data.lqt1_allowrun = request.values.get('lqt1')
                 query_data.lqt2_allowrun = request.values.get('lqt2')
