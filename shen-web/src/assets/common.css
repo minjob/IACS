@@ -391,9 +391,10 @@
 .Datepick .ivu-picker-panel-body{
   background-color: #3D4048;
   width: 250px;
+  margin: auto;
 }
 .blackComponents .el-tree-node__label {
-  font-size: 13px;
+  font-size: 15px;
 }
 .Datepick .ivu-input-wrapper{
   display: none;
@@ -420,6 +421,15 @@
   background-color: #3D4048;
   width: 198px;
 }
+.Timepick .el-form-item{
+  float: left;
+  width:292px; 
+  margin-bottom: 0px;
+}
+.Timepick .el-form-item__content{
+  width:222px;
+  float: left;
+  }
 .ivu-picker-confirm .ivu-btn-primary{
   display: none;
 }

@@ -13,16 +13,23 @@
                       show-checkbox
                       node-key="id"
                       ref="tree"
-                      @check-change='getChecked()'
                       :props="defaultProps">
                     </el-tree>
                 </div>
               </el-col>
               <el-col :span="18">
                  <div class="Timepick" style="height:42px;">
-                      <el-time-picker is-range v-model="value1"  range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"  @change="getSelectTime" placeholder="选择时间范围"></el-time-picker>
-                  </div>
-                <div class="platformContainer blackComponents" style="position:relative;">
+                   <el-form>
+                   <el-form-item label="开始时间">
+                      <el-time-picker v-model="time1" value-format="HH:mm:ss"></el-time-picker>
+                  </el-form-item>
+                  <el-form-item label="结束时间">
+                      <el-time-picker v-model="time2" value-format="HH:mm:ss"></el-time-picker>
+                  </el-form-item>
+                   </el-form>
+                  <el-button type="primary" @click="StartMake">开始渲染</el-button>
+              </div>
+              <div class="platformContainer blackComponents" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
                    <div class="staticbox" style="width:100%; height:295px;">
                      <div class="platformContainer blackComponents">
@@ -126,7 +133,7 @@
             name: 'Tag5',
             max: 0,
             min:0
-          },],
+          }],
         treedata:[],
         defaultProps: {
           children: 'children',
@@ -140,11 +147,9 @@
         dataline4:[],
         dataline5:[],
         maxvalue:10,
-        time1:'06:00:00',
-        time2:'18:00:00',
+        time1:moment().format("00:00:00"),
+        time2:moment().format("23:59:59"),
         loading:false,
-        value1:[new Date(2020, 6, 20, 8, 40), new Date(2020, 6, 20, 9, 40)],
-        value2:[new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
         averagevalue1:0,
         averagevalue2:0,
         averagevalue3:0,
@@ -154,7 +159,7 @@
         comparetime:'00:00:04',
         valuedate:[],
         starttime:'2020-06-20 00:00:00',
-        endtime:'2020-06-20 08:30:00',
+        endtime:'2020-06-20 23:59:59',
         childrentree:[],
         TagCodes:"TY_CO2_AVG,B_CO2_AVG",
         TagCode:'',
@@ -214,8 +219,6 @@
     mounted(){
         this.getAsidemenu()
         this.Initdesktop()
-        this.getRepairTable()
-        this.asD()
     },
     watch:{
 
@@ -257,7 +260,7 @@
         this.myChart= echarts.init(document.getElementById('main'));
         var option = {
               backgroundColor: '#3D4048',
-              color:['#2db7f5','#ff6600'], 
+              color:['#4472C5','#ED7C30','#80FF80','#FF8096','#800080'], 
               legend: {
                   data:dateset ,
                   inactiveColor: '#777',
@@ -431,11 +434,11 @@
         for(var i=0;i<arr5.length;i++){
             num5=num5+arr5[i]
          }
-         that.averagevalue1=num1/index1
-         that.averagevalue2=num2/index1
-         that.averagevalue3=num3/index1
-         that.averagevalue4=num4/index1
-         that.averagevalue5=num5/index1
+         that.averagevalue1=(num1/index1).toFixed(2)
+         that.averagevalue2=(num2/index1).toFixed(2)
+         that.averagevalue3=(num3/index1).toFixed(2)
+         that.averagevalue4=(num4/index1).toFixed(2)
+         that.averagevalue5=(num5/index1).toFixed(2)
          that.tag1Max=Math.max.apply(Math, arr1)
          that.tag1Min=Math.min.apply(Math, arr1)
          that.tag2Max=Math.max.apply(Math, arr2)
@@ -507,8 +510,8 @@
         }
         this.axios.get('/api/CUID',{params:params2}).then((value) => {
           var arr=JSON.parse(value.data).rows
-              this.childrentree=arr.map((item, index) => {
-              return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
+          this.childrentree=arr.map((item, index) => {
+            return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
             })
             for(var i=0;i<this.treedata.length;i++){
               for(var j=0;j<this.childrentree.length;j++){
@@ -519,11 +522,16 @@
             }
             })
       },
+      StartMake(){
+        this.getSelectDate();
+        this.getSelectTime();
+        this.getChecked()
+      },
       getSelectDate(){
         if(this.valuedate[0]===false){
             console.log('请选择你的日期')
             return;
-          }else if(this.valuedate.length>=2){ //5天 1个tag
+        }else if(this.valuedate.length>=2){ //5天 1个tag
             var arr=this.valuedate
             this.dateset=[] //传给echarts时间
             this.allday='' //请求拼接字符
@@ -535,24 +543,21 @@
               this.allday=this.allday+this.currentdate+','
             }
             this.allday=this.allday.slice(0, -1)
-            console.log(this.starttime)
-            console.log(this.endtime)
         }else{ //1天 多个tag
-            this.allday=''
             this.currentdate=moment(this.valuedate[0]).format('YYYY-MM-DD')
             this.starttime=this.currentdate+' '+this.time1
             this.endtime=this.currentdate+' '+this.time2
             this.allday=this.currentdate
-             console.log(this.starttime)
-            console.log(this.endtime)
         }
       },
-      getSelectTime(){     
-        this.time1=moment(this.value1[0]).format('hh:mm:ss')
-        this.time2=moment(this.value1[1]).format('hh:mm:ss')
+      getSelectTime(){
+        var t1=moment().format('YYYY-MM-DD ')+this.time1
+        var t2=moment().format('YYYY-MM-DD ')+this.time2
+        if(moment(t2).diff(moment(t1),'hours')<0){
+          alert('时间格式不正确，开始时间大于结束时间')
+        }
       },
-      getChecked(){ //选取
-      this.getSelectDate()
+      getChecked(){ //选取选中的节点
         var arr=this.$refs.tree.getCheckedNodes()
         var ziset=[]
          for(var i=0;i<arr.length;i++){
@@ -560,50 +565,64 @@
                ziset.push(arr[i])
           }}
             if(ziset.length>=2){ //多个tag
-                this.dateset=[]
-                this.TagCodes=''
-                for(var i=0;i<ziset.length;i++){
+              if(this.valuedate.length>=2){
+                alert('选中多个tag点与多个时间有冲突')
+              }
+              this.dateset=[]
+              this.TagCodes=''
+              for(var i=0;i<ziset.length;i++){
                   this.dateset.push(ziset[i].label)//多个tag
                   this.TagCodes=this.TagCodes+ziset[i].id+','
                 }
               this.TagCodes=this.TagCodes.slice(0,-1)
-              this.InitTrenddata(this.TagCodes,this.starttime,this.endtime)
+              this.InitTrenddata(this.TagCodes)
             }else if(ziset.length===1){//单个tag 的情况
-              this.getSelectTime()
               this.TagCode=ziset[0].id
               this.SingleTag(this.TagCode,this.allday)
             }else{
               console.log('选中的父节点')
             }
       },
-       InitTrenddata(t,b,e){ //一天多个tag
+       InitTrenddata(t){ //一天多个tag
          var params1={
             TagCodes:t,
-            begin:b,
-            end:e,
+            begin:this.starttime,
+            end:this.endtime,
             TagFlag:'first'
           }
             this.loading=true
-            this.axios.get('/api/energytrendtu',{params:params1}).then((res) => {
-              var rows=res.data
-              this.dates = rows.map(function (item) {
-               return item[0];
-              });
-              this.dataline1 = rows.map(function (item) {
-                 return +item[1];
+            this.axios.get('/api/energy_trend',{params:params1}).then((res) => {
+              var rows=res.data.data
+              this.dates = rows[0].map(function (item) {
+                return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
                });
-              this.dataline2 = rows.map(function (item) {
-                return +item[2];
-              });
-              this.dataline3 = rows.map(function (item) {
-                return +item[3];
-              });
-              this.dataline4 = rows.map(function (item) {
-                return +item[4];
-              });
-              this.dataline5 = rows.map(function (item) {
-                return +item[5];
-              });
+              this.dataline2 = rows[1].map(function (item) {
+                  return +item.value2;
+               });
+               if(rows[2]){
+                 this.dataline3 = rows[2].map(function (item) {
+                  return +item.value3;
+               });
+               }else{
+                 this.dataline3=[]
+               }
+              if(rows[3]){
+                this.dataline4 = rows[3].map(function (item) {
+                  return +item.value4;
+               });
+              }else{
+                 this.dataline4=[]
+               }
+              if(rows[4]){
+                this.dataline5 = rows[4].map(function (item) {
+                  return +item.value5;
+               });     
+              }else{
+                 this.dataline5=[]
+               }
               this.loading=false
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
                 })
@@ -616,42 +635,48 @@
             ParagraEnd:this.time2,
           }
           this.loading=true
-          this.axios.get('/api/energytrendtu',{params:params}).then((res)=>{
-            var arr=res.data
-            var indexs=[]
-            for(var i=0;i<arr.length;i++){
-             if(arr[i][0].slice(0,10)!=arr[i+1][0].slice(0,10)){
-               indexs.push(i) //断点分区
-               var firstarr=arr.slice(0,indexs[0]+1)
-               var secondarr=arr.slice(indexs[0]+1,indexs[1]+1)
-               var thirdarr=arr.slice(indexs[1]+1,indexs[2]+1)
-               var fourtharr=arr.slice(indexs[2]+1,indexs[3]+1)
-               var fiftharr=arr.slice(indexs[3]+1,indexs[4]+1)
-               this.dates=firstarr.map(function (item) {
-                  return item[0].slice(11, 19);
+          this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
+              var rows=res.data.data
+              this.dates= rows[0].map(function (item) {
+                      return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
                 });
-               this.dataline1=firstarr.map(function (item) {
-                return +item[1];
-              });
-               this.dataline2=secondarr.map(function (item) {
-                return +item[1];
-              });
-               this.dataline3=thirdarr.map(function (item) {
-                return +item[1];
-              });
-               this.dataline4=fourtharr.map(function (item) {
-                return +item[1];
-              });
-               this.dataline5=fiftharr.map(function (item) {
-                return +item[1];
-              });
+              if(rows[1]){
+                  this.dataline2 = rows[1].map(function (item) {
+                    return +item.value2;
+                });
+                }else{
+                 this.dataline2=[]
+               }
+              if(rows[2]){
+                 this.dataline3 = rows[2].map(function (item) {
+                  return +item.value3;
+               });
+               }else{
+                 this.dataline3=[]
+               }
+              if(rows[3]){
+                this.dataline4 = rows[3].map(function (item) {
+                  return +item.value4;
+               });
+              }else{
+                 this.dataline4=[]
+               }
+              if(rows[4]){
+                this.dataline5 = rows[4].map(function (item) {
+                  return +item.value5;
+               });     
+              }else{
+                 this.dataline5=[]
+               }
               this.loading=false
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
-             }
-            }
           })
       },
       InitTable(){
+        this.tableData= [{averag: 0,name: 'Tag1',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag2',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag3',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag4',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag5',comparetime:'00:00:04',max: 0,min:0}]
         for(var i=0;i<this.dateset.length;i++){
           this.tableData[i].name=this.dateset[i]
         }
@@ -683,28 +708,18 @@
             TagFlag:'first'
           }
           this.dateset=['桃园站CO2平均值','站厅CO2平均值']
-            this.axios.get('/api/energytrendtu',{params:params}).then((res) => {
-              var rows=res.data
-              this.dates = rows.map(function (item) {
-               return item[0];
-              });
-              this.dataline1 = rows.map(function (item) {
-                 return +item[1];
+          this.axios.get('/api/energy_trend',{params:params}).then((res) => {
+              var rows=res.data.data
+              this.dates= rows[0].map(function (item) {
+                return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
                });
-              this.dataline2 = rows.map(function (item) {
-                return +item[2];
-              });
-              this.dataline3 = rows.map(function (item) {
-                return +item[3];
-              });
-              this.dataline4 = rows.map(function (item) {
-                return +item[4];
-              });
-              this.dataline5 = rows.map(function (item) {
-                return +item[5];
+              this.dataline2 = rows[1].map(function (item) {
+                  return +item.value2;
               });
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
-             
                 })
       },
       asD(){
