@@ -434,14 +434,16 @@ def schedule_lqt():
         if request.method == 'POST':
             new_start = request.values.get('start_time')
             new_end = request.values.get('end_time')
-            query_list = db_session.query(Schedulelqt).all()
+            code = request.values.get('energystrategyCode')
+            query_list = db_session.query(Schedulelqt).filter_by(energystrategyCode=code).all()
             if query_list:
                 for item in query_list:
                     if count_time(item.enablestarttime, item.enableendtime, new_start, new_end) != 'yes':
                         return json.dumps({'code': '20003', 'message': '工作时间设置出现冲突'})
-                data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
-                                   energystrategyCode=request.values.get('energystrategyCode'),
-                                   lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2'))
+                data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end,
+                                   comment=request.values.get('comment'), energystrategyCode=code,
+                                   lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2')
+                                   )
                 db_session.add(data)
                 db_session.commit()
                 db_session.close()
