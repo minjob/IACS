@@ -545,7 +545,7 @@ def energy_trends():
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
-                for result in results[::12]:
+                for result in results[::30]:
                     list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                  f'value{count}': result['value']})
                 data.append(list1)
@@ -566,7 +566,7 @@ def energy_trends():
                       "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
-                for result in results[::12]:
+                for result in results[::30]:
                     list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                  f'value{count}': result['value']})
                 data.append(list1)
