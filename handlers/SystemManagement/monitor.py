@@ -541,7 +541,7 @@ def energy_trends():
             count = 0
             for item in TagCodes:
                 count += 1
-                sql = "select " + "SampleTime as time, " + item + " as value" + " from datahistory where" \
+                sql = "select " + "`SampleTime` as time, " + "`" + item + "`" + " as value" + " from datahistory where" \
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
@@ -562,7 +562,7 @@ def energy_trends():
                 count += 1
                 start_time = item + " " + Begin
                 end_time = item + " " + End
-                sql = "select SampleTime as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
+                sql = "select `SampleTime` as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
                       "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
