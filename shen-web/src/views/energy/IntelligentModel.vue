@@ -110,7 +110,7 @@
           offset:1,
           total:0,
           searchProp:"",
-          tableSelection:true, //是否在第一列添加复选框
+          tableSelection:false, //是否在第一列添加复选框
           tableSelectionRadio:true, //是否需要单选
           searchVal:"",
           multipleSelection: [],
@@ -135,7 +135,6 @@
             {label:"说明",prop:"comment",type:"input",value:"",searchProp:false},
           ],
           data:[],
-          total:0,
           tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:true, //是否需要单选
           multipleSelection: [],
@@ -188,18 +187,12 @@
       getSchedulelqtTableData(){
         var that = this
         var params = {
-          tableName: this.SchedulelqtTableData.tableName,
-            field:"energystrategyCode",
-            fieldvalue:this.EnergyStrategyTableData.rowClickData.Code,
-            limit:10000,
-            offset:0
+          code:this.EnergyStrategyTableData.rowClickData.Code,
         }
-        this.axios.get("/api/CUID",{
+        this.axios.get("/api/schedule_lqt",{
           params: params
         }).then(res =>{
-          var data = JSON.parse(res.data)
-          that.SchedulelqtTableData.data = data.rows
-          that.SchedulelqtTableData.total = data.total
+          that.SchedulelqtTableData.data = res.data.data
           that.SchedulelqtTimeLine = []
           that.SchedulelqtTableData.data.forEach(item =>{
             that.SchedulelqtTimeLine.push(
@@ -216,7 +209,6 @@
           this.SchedulelqtTableData.dialogVisibleSchedule = true
           this.SchedulelqtTableData.dialogTitleSchedule = "添加"
           this.SchedulelqtTableData.form = {
-            tableName:"Schedulelqt",
             ID: "",
             energystrategyCode: this.EnergyStrategyTableData.rowClickData.Code,
             enablestarttime: moment().format("HH:mm:ss"),
@@ -237,7 +229,6 @@
           this.SchedulelqtTableData.dialogVisibleSchedule = true
           this.SchedulelqtTableData.dialogTitleSchedule = "修改"
           this.SchedulelqtTableData.form = {
-            tableName:"Schedulelqt",
             ID: this.SchedulelqtTableData.multipleSelection[0].ID,
             energystrategyCode: this.SchedulelqtTableData.multipleSelection[0].energystrategyCode,
             enablestarttime: this.SchedulelqtTableData.multipleSelection[0].enablestarttime,
@@ -258,17 +249,25 @@
         var enableendtime =  moment().format("YYYY-MM-DD ") + this.SchedulelqtTableData.form.enableendtime
         if(moment(enableendtime).diff(moment(enablestarttime),"hours") > 0){
           if(this.SchedulelqtTableData.dialogTitleSchedule === "添加"){
-            this.axios.post("/api/CUID",this.qs.stringify(this.SchedulelqtTableData.form)).then(res =>{
-              if(res.data == "OK"){
+            var params = {
+              start_time:this.SchedulelqtTableData.form.enablestarttime,
+              end_time:this.SchedulelqtTableData.form.enableendtime,
+              comment:this.SchedulelqtTableData.form.comment,
+              energystrategyCode:this.SchedulelqtTableData.form.energystrategyCode,
+              lqt1:this.SchedulelqtTableData.form.lqt1_allowrun,
+              lqt2:this.SchedulelqtTableData.form.lqt2_allowrun,
+            }
+            this.axios.post("/api/schedule_lqt",this.qs.stringify(params)).then(res =>{
+              if(res.data.code === "20001"){
                 this.$message({
                   type: 'success',
-                  message: '添加成功'
+                  message: res.data.message
                 });
                 this.getSchedulelqtTableData()
-              }else{
+              }else if(res.data.code === "20003"){
                 this.$message({
                   type: 'info',
-                  message: res.data
+                  message: res.data.message
                 });
               }
               this.SchedulelqtTableData.dialogVisibleSchedule = false
@@ -276,20 +275,23 @@
               console.log("请求错误")
             })
           }else if(this.SchedulelqtTableData.dialogTitleSchedule === "修改"){
-            this.axios.put("/api/CUID",this.qs.stringify(this.SchedulelqtTableData.form)).then(res =>{
-              if(res.data == "OK"){
+            var params = {
+              ID:this.SchedulelqtTableData.form.ID,
+              start_time:this.SchedulelqtTableData.form.enablestarttime,
+              end_time:this.SchedulelqtTableData.form.enableendtime,
+              comment:this.SchedulelqtTableData.form.comment,
+              energystrategyCode:this.SchedulelqtTableData.form.energystrategyCode,
+              lqt1:this.SchedulelqtTableData.form.lqt1_allowrun,
+              lqt2:this.SchedulelqtTableData.form.lqt2_allowrun,
+            }
+            this.axios.put("/api/schedule_lqt",this.qs.stringify(params)).then(res =>{
+              if(res.data.code === "20001"){
                 this.$message({
                   type: 'success',
-                  message: '修改成功'
+                  message: res.data.message
                 });
-                this.getSchedulelqtTableData()
-              }else{
-                this.$message({
-                  type: 'info',
-                  message: res.data
-                });
+                this.SchedulelqtTableData.dialogVisibleSchedule = false
               }
-              this.SchedulelqtTableData.dialogVisibleSchedule = false
             },res =>{
               console.log("请求错误")
             })
@@ -303,23 +305,22 @@
       },
       del(){
         if(this.SchedulelqtTableData.multipleSelection.length > 0) {
-          var params = {tableName:this.SchedulelqtTableData.tableName}
           var mulId = []
           this.SchedulelqtTableData.multipleSelection.forEach(item =>{
-            mulId.push({id:item.ID});
+            mulId.push(item.ID);
           })
-          params.delete_data = JSON.stringify(mulId)
+          var params = {
+            ID:mulId.join(",")
+          }
           this.$confirm('确定删除所选记录？', '提示', {
             distinguishCancelAndClose:true,
             type: 'warning'
           }).then(()  => {
-            this.axios.delete("/api/CUID",{
-              params: params
-            }).then(res =>{
-              if(res.data == "OK"){
+            this.axios.delete("/api/schedule_lqt",{params: params}).then(res =>{
+              if(res.data.code === "20001"){
                 this.$message({
                   type: 'success',
-                  message: '删除成功'
+                  message: res.data.message
                 });
               }
               this.getSchedulelqtTableData()
