@@ -19,7 +19,11 @@ opc = Blueprint('opc', __name__)
 def count_time(start_time, end_time, new_start, new_end):
     t1 = [start_time, end_time]
     t2 = [new_start, new_end]
-    return t1[0] < t2[0] < t2[1] < t1[1]
+    if t1[0] < t2[0] < t2[1] < t1[1]:
+        return '1'
+    if t2[0] < t1[0] < t2[1] < t1[1] or t2[0] < t1[0] < t2[1] < t1[1]:
+
+        return t1[0] < t2[0] < t2[1] < t1[1]
 
 
 class ScheduleCTRLWORD(object):
@@ -500,9 +504,11 @@ def energy_trends():
                 sql = "select " + "SampleTime as time, " + item + " as value" + " from datahistory where" \
                       " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
+                list1 = []
                 for result in results[::6]:
-                    data.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                    list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                  f'value{count}': result['value']})
+                data.append(list1)
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             # 一个tag查询多天
@@ -519,10 +525,11 @@ def energy_trends():
                 sql = "select SampleTime as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
                       "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                 results = db_session.execute(sql).fetchall()
+                list1 = []
                 for result in results[::6]:
-                    data.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                    list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                  f'value{count}': result['value']})
-                # data.append(round(result[0]['total_value'], 2))
+                data.append(list1)
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
         logger.error(e)
