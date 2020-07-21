@@ -454,7 +454,7 @@ def schedule_lqt():
             data = db_session.query(Schedulelqt).filter_by(ID=int(request.values.get('ID'))).first()
             db_session.delete(data)
             db_session.commit()
-            return json.dumps({'code': '20001', 'message': '成功'})
+            return json.dumps({'code': '20001', 'message': '删除成功'})
 
     except Exception as e:
         logger.error(e)
