@@ -425,7 +425,7 @@ def schedule_lqt():
     """排班日程"""
     try:
         if request.method == 'GET':
-            data = db_session.query(Schedulelqt).all()
+            data = db_session.query(Schedulelqt).filter_by(energystrategyCode=request.values.get('code')).first()
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         if request.method == 'POST':
             new_start = request.values.get('start_time')
