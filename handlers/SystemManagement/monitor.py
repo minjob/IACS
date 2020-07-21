@@ -21,7 +21,8 @@ def count_time(start_time, end_time, new_start, new_end):
     t2 = [new_start, new_end]
     if t1[0] < t2[0] < t2[1] < t1[1]:
         return '1'
-    if t2[0] < t1[0] < t2[1] < t1[1] or t2[0] < t1[0] < t2[1] < t1[1]:
+    if t2[0] < t1[0] < t2[1] < t1[1] or t2[0] < t1[0] < t1[1] < t2[1]:
+        return '2'
 
         return t1[0] < t2[0] < t2[1] < t1[1]
 
@@ -451,8 +452,10 @@ def schedule_lqt():
                 db_session.close()
                 return json.dumps({'code': '20001', 'message': '设置成功'})
         if request.method == 'DELETE':
-            data = db_session.query(Schedulelqt).filter_by(ID=int(request.values.get('ID'))).first()
-            db_session.delete(data)
+            items = request.values.get('ID')
+            for item in items:
+                data = db_session.query(Schedulelqt).filter_by(ID=int(item)).first()
+                db_session.delete(data)
             db_session.commit()
             return json.dumps({'code': '20001', 'message': '删除成功'})
 
