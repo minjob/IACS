@@ -478,9 +478,9 @@
       },
       getonservationSwitch(){
         this.axios.get("/api/reset").then(res =>{
-          if(res.data === "1"){
+          if(res.data.data === "1"){
             this.conservationSwitch = "1"
-          }else if(res.data === "0"){
+          }else if(res.data.data === "0"){
             this.conservationSwitch = "0"
           }
         },res =>{
@@ -514,11 +514,7 @@
                 type: 'success',
                 message: res.data.message
               });
-              if(this.conservationSwitch === "1"){
-                this.conservationSwitch = "1"
-              }else if(this.conservationSwitch === "0"){
-                this.conservationSwitch = "0"
-              }
+              this.getonservationSwitch()
             }
           },res =>{
             console.log("请求错误")
