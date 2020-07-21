@@ -118,6 +118,7 @@ def delete(data):
                     db_session.rollback()
                     insertSyslog("error", "删除户ID为"+str(id)+"报错Error：" + str(ee), current_user.Name)
                     return json.dumps("删除用户报错", cls=AlchemyEncoder,ensure_ascii=False)
+            db_session.commit()
             return 'OK'
     except Exception as e:
         db_session.rollback()
