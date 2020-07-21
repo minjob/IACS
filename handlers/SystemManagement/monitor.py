@@ -416,32 +416,42 @@ def change_status():
         return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
-@opc.route('/schedule_lqt', methods=['POST'])
+@opc.route('/schedule_lqt', methods=['GET', 'POST', 'DELETE'])
 def schedule_lqt():
     """排班日程"""
     try:
-        new_start = request.values.get('start_time')
-        new_end = request.values.get('end_time')
-        query_list = db_session.query(Schedulelqt).all()
-        if query_list:
-            for item in query_list:
-                if not count_time(item.enablestarttime, item.enableendtime, new_start, new_end):
-                    return json.dumps({'code': '20003', 'message': '工作时间设置出现冲突'})
-            data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
-                               energystrategyCode=request.values.get('energystrategyCode'),
-                               lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2'))
-            db_session.add(data)
+        if request.method == 'GET':
+            data = db_session.query(Schedulelqt).all()
+            return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+        if request.method == 'POST':
+            new_start = request.values.get('start_time')
+            new_end = request.values.get('end_time')
+            query_list = db_session.query(Schedulelqt).all()
+            if query_list:
+                for item in query_list:
+                    if not count_time(item.enablestarttime, item.enableendtime, new_start, new_end):
+                        return json.dumps({'code': '20003', 'message': '工作时间设置出现冲突'})
+                data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
+                                   energystrategyCode=request.values.get('energystrategyCode'),
+                                   lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2'))
+                db_session.add(data)
+                db_session.commit()
+                db_session.close()
+                return json.dumps({'code': '20001', 'message': '设置成功'})
+            else:
+                data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
+                                   energystrategyCode=request.values.get('energystrategyCode'),
+                                   lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2'))
+                db_session.add(data)
+                db_session.commit()
+                db_session.close()
+                return json.dumps({'code': '20001', 'message': '设置成功'})
+        if request.method == 'DELETE':
+            data = db_session.query(Schedulelqt).filter_by(ID=int(request.values.get('ID'))).first()
+            db_session.delete(data)
             db_session.commit()
-            db_session.close()
-            return json.dumps({'code': '20001', 'message': '设置成功'})
-        else:
-            data = Schedulelqt(enablestarttime=new_start, enableendtime=new_end, comment=request.values.get('comment'),
-                               energystrategyCode=request.values.get('energystrategyCode'),
-                               lqt1_allowrun=request.values.get('lqt1'), lqt2_allowrun=request.values.get('lqt2'))
-            db_session.add(data)
-            db_session.commit()
-            db_session.close()
-            return json.dumps({'code': '20001', 'message': '设置成功'})
+            return json.dumps({'code': '20001', 'message': '成功'})
+
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "工时安排设置出错：" + str(e), current_user.Name)
