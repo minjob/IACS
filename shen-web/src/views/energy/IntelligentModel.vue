@@ -110,7 +110,7 @@
           offset:1,
           total:0,
           searchProp:"",
-          tableSelection:false, //是否在第一列添加复选框
+          tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:true, //是否需要单选
           searchVal:"",
           multipleSelection: [],
@@ -291,6 +291,12 @@
                   message: res.data.message
                 });
                 this.SchedulelqtTableData.dialogVisibleSchedule = false
+                this.getSchedulelqtTableData()
+              }else if(res.data.code === "20003"){
+                this.$message({
+                  type: 'info',
+                  message: res.data.message
+                });
               }
             },res =>{
               console.log("请求错误")
