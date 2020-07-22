@@ -143,7 +143,8 @@ def energyanalysis():
                     if currhour in dict_i.keys():
                         dict_h["今日能耗"] = dict_i[currhour]
                     else:
-                        if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') > datetime.datetime.now():
+                        # if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') >= datetime.datetime.now():
+                        if currhour >= datetime.datetime.now().strftime('%Y-%m-%d %H'):
                             dict_h["今日能耗"] = ""
                         else:
                             dict_h["今日能耗"] = 0
