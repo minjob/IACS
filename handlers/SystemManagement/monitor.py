@@ -10,6 +10,7 @@ from opcua import ua, Client
 from dbset.database import constant
 from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.database.db_operate import db_session
+from models.schedul_model import TagMaintain
 from models.system import Schedulelqt
 from tools.common import logger, insertSyslog
 
@@ -576,3 +577,17 @@ def energy_trends():
         insertSyslog("error", "energy_trend错误：" + str(e), current_user.Name)
         return json.dumps({'code': '20002', 'message': 'energy_trend错误： ' + str(e)},
                           cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@opc.route('/tags', methods=['GET'])
+def tags():
+    data = [{"factory": "桃园站", 'LS1机组': {'出水温度': "SCADA.AI.E119LS__LS1AI01", '蒸发器回水温度': 'SCADA.AI.E119LS__LS1AI07',
+             '冷凝器出水温度': 'SCADA.AI.E119LS__LS1AI08', '冷凝器回水温度': 'SCADA.AI.E119LS__LS1AI09', '冷水主机吸气压力': 'SCADA.AI.E119LS__LS1AI02',
+             'LD1频率运行反馈': 'SCADA.AI.E119LD__LD1AIFR', 'LQ1频率运行反馈': 'SCADA.AI.E119LQ__LQ1AIFR'},
+             'LS2机组': {'出水温度': "SCADA.AI.E119LS__LS2AI01", '蒸发器回水温度': 'SCADA.AI.E119LS__LS2AI07', '冷凝器出水温度': 'SCADA.AI.E119LS__LS2AI08',
+              '冷凝器回水温度': 'SCADA.AI.E119LS__LS2AI09', '冷水主机吸气压力': 'SCADA.AI.E119LS__LS2AI02', 'LD2频率运行反馈': 'SCADA.AI.E119LD__LD2AIFR',
+              'LQ2频率运行反馈': 'SCADA.AI.E119LQ__LQ2AIFR'}, '站厅': {'站厅温度平均值': 'ZT02_TEMP_AVG', '站厅湿度平均值': 'ZT02_SD_AVG',
+               '站厅CO2平均值': 'B_CO2_AVG'}, '站台': {'站台温度平均值': 'ZT01_TEMP_AVG', '站台湿度平均值': 'ZT01_SD_AVG',
+               '站台CO2平均值': 'A_CO2_AVG'}, '能耗': {'LS1机组电表': 'MB2TCP3.A_ACR_10.Ep_total', 'LS2机组电表': 'MB2TCP3.A_ACR_13.Ep_total',
+                '能耗指数': 'NH_CONSUM'}, '温度': {'新风室温度': 'SCADA.AI.E119HTS_HF1AIWD', '新风室湿度': 'SCADA.AI.E119HTS_HF1AISD'}}]
+    return json.dumps({'code': '20001', 'message': '成功', 'data': data}, ensure_ascii=False)
