@@ -579,7 +579,7 @@ def energy_trends():
                           cls=AlchemyEncoder, ensure_ascii=False)
 
 
-@opc.route('/tags', methods=['GEsT'])
+@opc.route('/tags', methods=['GET'])
 def tags():
     data = [{'LS1机组': {'LS1': {'出水温度': "SCADA.AI.E119LS__LS1AI01", '蒸发器回水温度': 'SCADA.AI.E119LS__LS1AI07',
              '冷凝器出水温度': 'SCADA.AI.E119LS__LS1AI08', '冷凝器回水温度': 'SCADA.AI.E119LS__LS1AI09', '冷水主机吸气压力': 'SCADA.AI.E119LS__LS1AI02'},
