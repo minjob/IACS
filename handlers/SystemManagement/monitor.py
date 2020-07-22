@@ -543,12 +543,12 @@ def energy_trends():
             for item in TagCodes:
                 count += 1
                 sql = "select " + "`SampleTime` as time, " + "`" + item + "`" + " as value" + " from datahistory where" \
-                      " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
+                                                                                              " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
                 for result in results[::30]:
                     list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
-                                 f'value{count}': result['value']})
+                                  f'value{count}': result['value']})
                 data.append(list1)
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
@@ -563,13 +563,14 @@ def energy_trends():
                 count += 1
                 start_time = item + " " + Begin
                 end_time = item + " " + End
-                sql = "select `SampleTime` as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
-                      "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                sql = "select date_format(`SampleTime`, '%Y-%m-%d %H:%i:%s') as time, " + "`" + request.values.get(
+                    'TagCode') + "`" + "as value from " \
+                                       "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
                 for result in results[::30]:
                     list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
-                                 f'value{count}': result['value']})
+                                  f'value{count}': result['value']})
                 data.append(list1)
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
     except Exception as e:
@@ -581,19 +582,148 @@ def energy_trends():
 
 @opc.route('/tags', methods=['GET'])
 def tags():
-    data = [{'LS1机组': {'LS1': {'出水温度': "SCADA.AI.E119LS__LS1AI01", '蒸发器回水温度': 'SCADA.AI.E119LS__LS1AI07',
-             '冷凝器出水温度': 'SCADA.AI.E119LS__LS1AI08', '冷凝器回水温度': 'SCADA.AI.E119LS__LS1AI09', '冷水主机吸气压力': 'SCADA.AI.E119LS__LS1AI02'},
-            'LD1冷冻泵': {'LD1频率运行反馈': 'SCADA.AI.E119LD__LD1AIFR'}, 'LQ1冷却泵': {'LQ1频率运行反馈': 'SCADA.AI.E119LQ__LQ1AIFR'}},
-             'LS2机组': {'LS2': {'出水温度': "SCADA.AI.E119LS__LS2AI01", '蒸发器回水温度': 'SCADA.AI.E119LS__LS2AI07',
-                                '冷凝器出水温度': 'SCADA.AI.E119LS__LS2AI08', '冷凝器回水温度': 'SCADA.AI.E119LS__LS2AI09',
-                                '冷水主机吸气压力': 'SCADA.AI.E119LS__LS2AI02'},
-                       'LD2冷冻泵': {'LD2频率运行反馈': 'SCADA.AI.E119LD__LD2AIFR'},
-                       'LQ2冷却泵': {'LQ2频率运行反馈': 'SCADA.AI.E119LQ__LQ2AIFR'}},
-             '站厅': {'站厅温度平均值': 'ZT02_TEMP_AVG', '站厅湿度平均值': 'ZT02_SD_AVG',
-                    '站厅CO2平均值': 'B_CO2_AVG'}, '站台': {'站台温度平均值': 'ZT01_TEMP_AVG', '站台湿度平均值': 'ZT01_SD_AVG',
-                                                     '站台CO2平均值': 'A_CO2_AVG'},
-             '能耗': {'LS1机组电表': 'MB2TCP3.A_ACR_12.Ep_total_q', 'LS2机组电表': 'MB2TCP3.A_ACR_20.Ep_total_q',
-                    '能耗指数': 'NH_CONSUM'},
-             '室外温度': {'新风室温度': 'SCADA.AI.E119HTS_HF1AIWD', '新风室湿度': 'SCADA.AI.E119HTS_HF1AISD'}
-             }]
+    # data = [{"LS1机组": {"LS1": {"出水温度": "SCADA.AI.E119LS__LS1AI01", "蒸发器回水温度": "SCADA.AI.E119LS__LS1AI07",
+    #                            "冷凝器出水温度": "SCADA.AI.E119LS__LS1AI08", "冷凝器回水温度": "SCADA.AI.E119LS__LS1AI09",
+    #                            "冷水主机吸气压力": "SCADA.AI.E119LS__LS1AI02"},
+    #                    "LD1冷冻泵": {"LD1频率运行反馈": "SCADA.AI.E119LD__LD1AIFR"},
+    #                    "LQ1冷却泵": {"LQ1频率运行反馈": "SCADA.AI.E119LQ__LQ1AIFR"}},
+    #          "LS2机组": {"LS2": {"出水温度": "SCADA.AI.E119LS__LS2AI01", "蒸发器回水温度": "SCADA.AI.E119LS__LS2AI07",
+    #                            "冷凝器出水温度": "SCADA.AI.E119LS__LS2AI08", "冷凝器回水温度": "SCADA.AI.E119LS__LS2AI09",
+    #                            "冷水主机吸气压力": "SCADA.AI.E119LS__LS2AI02"},
+    #                    "LD2冷冻泵": {"LD2频率运行反馈": "SCADA.AI.E119LD__LD2AIFR"},
+    #                    "LQ2冷却泵": {"LQ2频率运行反馈": "SCADA.AI.E119LQ__LQ2AIFR"}},
+    #          "站厅": {"站厅温度平均值": "ZT02_TEMP_AVG", "站厅湿度平均值": "ZT02_SD_AVG",
+    #                 "站厅CO2平均值": "B_CO2_AVG"}, "站台": {"站台温度平均值": "ZT01_TEMP_AVG", "站台湿度平均值": "ZT01_SD_AVG",
+    #                                                  "站台CO2平均值": "A_CO2_AVG"},
+    #          "能耗": {"LS1机组电表": "MB2TCP3.A_ACR_12.Ep_total_q", "LS2机组电表": "MB2TCP3.A_ACR_20.Ep_total_q",
+    #                 "能耗指数": "NH_CONSUM"},
+    #          "室外温度": {"新风室温度": "SCADA.AI.E119HTS_HF1AIWD", "新风室湿度": "SCADA.AI.E119HTS_HF1AISD"}
+    #          }]
+
+    data = [{
+        "id": "1",
+        "label": "LS1机组",
+        "children": [{
+            "id": "1-1",
+            "label": "LD1冷冻泵",
+            "children": [{"id": "SCADA.AI.E119LD__LD1AIFR", "label": "LD1频率运行反馈", "ParentTagCode": '1'}]
+        },
+            {
+                "id": "1-2",
+                "label": "LQ1冷却泵",
+                "children": [{"id": "SCADA.AI.E119LQ__LQ1AIFR", "label": "LQ1频率运行反馈", "ParentTagCode": '1'}]
+            },
+            {
+                "id": "1-3",
+                "label": "LS1",
+                "children": [
+                    {"id": "SCADA.AI.E119LS__LS1AI08", "label": "冷凝器出水温度", "ParentTagCode": "1"},
+                    {"id": "SCADA.AI.E119LS__LS1AI09", "label": "冷凝器回水温度", "ParentTagCode": "1"},
+                    {"id": "SCADA.AI.E119LS__LS1AI02", "label": "冷水主机吸气压力", "ParentTagCode": "1"},
+                    {"id": "SCADA.AI.E119LS__LS1AI01", "label": "出水温度", "ParentTagCode": "1"},
+                    {"id": "SCADA.AI.E119LS__LS1AI07", "label": "蒸发器回水温度", "ParentTagCode": "1"}
+                ]
+            }]
+    },
+        {
+            "id": "2",
+            "label": "LS2机组",
+            "children": [{
+                "id": "2-1",
+                "label": "LD2冷冻泵",
+                "children": [{"id": "SCADA.AI.E119LD__LD2AIFR", "label": "LD2频率运行反馈", "ParentTagCode": '2'}]
+            },
+                {
+                    "id": "2-2",
+                    "label": "LQ2冷却泵",
+                    "children": [{"id": "SCADA.AI.E119LQ__LQ2AIFR", "label": "LQ2频率运行反馈", "ParentTagCode": '2'}]
+                },
+                {
+                    "id": "2-3",
+                    "label": "LS2",
+                    "children": [
+                        {"id": "SCADA.AI.E119LS__LS2AI01", "label": "出水温度", "ParentTagCode": '2'},
+                        {"id": "SCADA.AI.E119LS__LS2AI07", "label": "蒸发器回水温度", "ParentTagCode": '2'},
+                        {"id": "SCADA.AI.E119LS__LS2AI08", "label": "冷凝器出水温度", "ParentTagCode": '2'},
+                        {"id": "SCADA.AI.E119LS__LS2AI09", "label": "冷凝器回水温度", "ParentTagCode": '2'},
+                        {"id": "SCADA.AI.E119LS__LS2AI02", "label": "冷水主机吸气压力", "ParentTagCode": '2'}
+                    ]
+                }]
+        },
+        {
+            "id": "3",
+            "label": "室外温度",
+            "children": [{
+                "id": "SCADA.AI.E119HTS_HF1AIWD",
+                "label": "新风室温度",
+                "ParentTagCode": '3'
+            },
+                {
+                    "id": "SCADA.AI.E119HTS_HF1AISD",
+                    "label": "新风室湿度",
+                    "ParentTagCode": '3'
+                }]
+        },
+        {
+            "id": "4",
+            "label": "站厅",
+            "children": [{
+                "id": "B_CO2_AVG",
+                "label": "站厅CO2平均值",
+                "ParentTagCode": '4'
+            },
+                {
+                    "id": "ZT02_TEMP_AVG",
+                    "label": "站厅温度平均值",
+                    "ParentTagCode": '4'
+                },
+                {
+                    "id": "ZT02_SD_AVG",
+                    "label": "站厅湿度平均值",
+                    "ParentTagCode": '4'
+                },
+            ]
+        },
+        {
+            "id": "5",
+            "label": "站台",
+            "children": [{
+                "id": "A_CO2_AVG",
+                "label": "站台CO2平均值",
+                "ParentTagCode": '5'
+            },
+                {
+                    "id": "ZT01_TEMP_AVG",
+                    "label": "站台温度平均值",
+                    "ParentTagCode": '5'
+                },
+                {
+                    "id": "ZT01_SD_AVG",
+                    "label": "站台湿度平均值",
+                    "ParentTagCode": '5'
+                },
+            ]
+        },
+        {
+            "id": "6",
+            "label": "能耗",
+            "children": [{
+                "id": "MB2TCP3.A_ACR_12.Ep_total_q",
+                "label": "LS1机组电表",
+                "ParentTagCode": '6'
+            },
+                {
+                    "id": "MB2TCP3.A_ACR_20.Ep_total_q",
+                    "label": "LS2机组电表",
+                    "ParentTagCode": '6'
+                },
+                {
+                    "id": "NH_CONSUM",
+                    "label": "能耗指数",
+                    "ParentTagCode": '6'
+                }
+            ]
+        }
+    ]
+
     return json.dumps({'code': '20001', 'message': '成功', 'data': data}, ensure_ascii=False)
