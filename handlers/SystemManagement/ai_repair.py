@@ -49,7 +49,7 @@ def get_time_stamp(work_time):
     """
     time_array = time.strptime(work_time, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
-    return 0 < time_stamp - int(time.time()) < 604800 * 7
+    return 0 < time_stamp - int(time.time()) < 259200
 
 
 def get_no(no):
