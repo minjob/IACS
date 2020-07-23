@@ -490,7 +490,7 @@
         var that = this
         var params = {
           EquipmentCode:this.TreeEquipmentCode,
-          WorkDate:moment(this.EquipmentRunDate).format("YYYY-MM-DD"),
+          WorkDate:moment(this.formParameters.EquipmentRunDate).format("YYYY-MM-DD"),
         }
         this.axios.get("/api/selectrundetailbyequipmentcode",{params:params}).then(res =>{
           that.EquipmentFaultObj = res.data
