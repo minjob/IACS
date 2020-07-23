@@ -442,9 +442,7 @@
           FaultExpound:this.faultCondition,
           ApplyTime:moment().format("YYYY-MM-DD HH:mm:ss")
         }
-        this.axios.post("/api/repair",{
-          params: params
-        }).then(res =>{
+        this.axios.post("/api/repair",this.qs.stringify(params)).then(res =>{
           if(res.data.code == 10000){
             this.$message({
               type: 'success',

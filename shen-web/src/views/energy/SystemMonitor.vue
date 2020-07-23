@@ -477,14 +477,14 @@
       changeConservationSwitch(){
         var SwitchState = ""
         var SwitchParams = ""
-        if(this.conservationSwitch === "1"){
+        if(this.websockVarData['LS_JN_FLAG'] === "1"){
           SwitchState = "开"
           SwitchParams = "on"
-          this.conservationSwitch = "0"
-        }else if(this.conservationSwitch === "0"){
+          this.websockVarData['LS_JN_FLAG'] = "0"
+        }else if(this.websockVarData['LS_JN_FLAG'] === "0"){
           SwitchState = "关"
           SwitchParams = "off"
-          this.conservationSwitch = "1"
+          this.websockVarData['LS_JN_FLAG'] = "1"
         }
         this.$confirm('您是否要进行'+ SwitchState +'节能模式的操作？', '提示', {
           distinguishCancelAndClose:true,
