@@ -38,19 +38,30 @@
           <ul>
             <li>
               <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
-                <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
+                <i class="color-white text-size-18" :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
             </li>
             <li>
               <el-dropdown trigger="click" @command="handleCommand" style="cursor: pointer;color: #fff;">
                 <span class="text-size-16">
-                  <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.UserName }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  <i class="dotState bg-lightgreen"></i>{{ this.$store.state.UserName }}<i class="el-icon-arrow-down el-icon--right text-size-12"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a">个人信息</el-dropdown-item>
                   <el-dropdown-item command="b" style="text-align: center"><i class="fa fa-power-off"></i></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
+              <el-dialog title="用户信息" :visible.sync="dialogUserVisible" width="50%">
+                <el-form>
+                  <el-form-item label="用户名：">{{ userInfo.Name }}</el-form-item>
+                  <el-form-item label="工号：">{{ userInfo.WorkNumber }}</el-form-item>
+                  <el-form-item label="最近登录时间：">{{ userInfo.LastLoginTime }}</el-form-item>
+                  <el-form-item label="权限：">{{ userInfo.Permissions }}</el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="dialogUserVisible = false">取 消</el-button>
+                </span>
+              </el-dialog>
             </li>
           </ul>
         </div>
@@ -79,9 +90,8 @@ export default {
       isCollapse: false, //左侧菜单栏是否缩进了
       sideIcon:'el-icon-arrow-left', //左侧菜单栏缩进点击切换图标
       isClickElseMenu:false,
-      AreaArr:[],
-      time:"",  //实时显示当前的时间
       dialogUserVisible:false, //是否弹出个人信息
+      userInfo:{},
       isactive:"0", //主菜单选中索引值
       defaultActiveUrl:"",
       mainMenuList:[ //主菜单导航列表
@@ -108,9 +118,6 @@ export default {
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],
       isFullScreen:false, //是否全屏
-      areaObj:{
-        areaName:""
-      },
     }
   },
   //依赖注入传值
@@ -131,18 +138,6 @@ export default {
     this.getMenuHeight()
     if(sessionStorage.getItem("LoginStatus")) {
       this.$store.commit('setUser',sessionStorage.getItem('WorkNumber'))
-      this.axios.get("/api/CUID",{
-        params: {
-          tableName: "User",
-          field:"WorkNumber",
-          fieldvalue:sessionStorage.getItem('WorkNumber'),
-          limit:1,
-          offset:0
-        }
-      }).then(res =>{
-        var data = JSON.parse(res.data)
-        this.UserInfo =  data.rows[0]
-      })
     }else{
       this.$router.push("/login");
     }
@@ -159,12 +154,13 @@ export default {
         query:moment()
       })
     },
-    clickSubMenu(areaName){  //点击左菜单传区域给子组件
-      this.areaObj.areaName = areaName
-    },
     handleCommand(command) {  //判断用户下拉点击
       if(command == "a"){
         this.dialogUserVisible = true
+        this.userInfo.LastLoginTime = sessionStorage.getItem('LastLoginTime')
+        this.userInfo.WorkNumber = sessionStorage.getItem('WorkNumber')
+        this.userInfo.Name = sessionStorage.getItem('UserName')
+        this.userInfo.Permissions = JSON.parse(sessionStorage.getItem('Permissions')).join('，')
       }else if(command == "b"){
         this.$store.commit('removeUser')
         this.$router.replace("/login")
@@ -267,17 +263,9 @@ export default {
     flex-direction: column;
     justify-content: center;
   }
-  .head-menu i{
-    font-size: 24px;
-    color: #fff;
-    cursor:pointer;
-  }
   .head-menu li{
     display: inline-block;
     margin-right: 30px;
-  }
-  .head-menu li i{
-    vertical-align: bottom;
   }
   .head-menu li .item-title{
     font-size: 22px;

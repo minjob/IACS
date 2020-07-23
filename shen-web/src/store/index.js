@@ -7,7 +7,6 @@ export default new Vuex.Store({
   state: {
     WorkNumber:null,
     UserName:null,
-    UserId:null,
     LoginStatus: false,
   },
   // 创建改变状态的方法
@@ -26,9 +25,8 @@ export default new Vuex.Store({
       }).then(res =>{
         var data = JSON.parse(res.data)
         state.UserName = data.rows[0].Name
-        state.UserId = data.rows[0].id
         sessionStorage.setItem('UserName', data.rows[0].Name)
-        sessionStorage.setItem('UserId', data.rows[0].id)
+        sessionStorage.setItem('LastLoginTime', data.rows[0].LastLoginTime)
       },res =>{
         console.log("获取用户信息时请求错误")
       })
@@ -40,12 +38,13 @@ export default new Vuex.Store({
     },
     removeUser(state){
       state.WorkNumber = null
+      state.UserName = null
       state.LoginStatus = false;
       sessionStorage.removeItem('WorkNumber')
       sessionStorage.removeItem('LoginStatus')
-      sessionStorage.removeItem('UserId')
       sessionStorage.removeItem('UserName')
       sessionStorage.removeItem('Permissions')
+      sessionStorage.removeItem('LastLoginTime')
     }
   },
   actions: {},
