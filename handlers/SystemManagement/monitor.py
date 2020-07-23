@@ -1,6 +1,6 @@
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import redis
 from flask import Blueprint, request
@@ -503,15 +503,15 @@ def schedule_lqt():
         return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
 
-@opc.route('/reset', methods=['GET', 'POST'])
+@opc.route('/reset', methods=['POST'])
 def reset():
     """复位"""
     try:
         redis_conn = redis.Redis(password=constant.REDIS_PASSWORD, decode_responses=True)
-        if request.method == 'GET':
-            data = redis_conn.hget(constant.REDIS_TABLENAME, 'LS_JN_FLAG')
-            return json.dumps({'code': '20001', 'message': '成功', 'data': data},
-                              cls=AlchemyEncoder, ensure_ascii=False)
+        # if request.method == 'GET':
+        #     data = redis_conn.hget(constant.REDIS_TABLENAME, 'LS_JN_FLAG')
+        #     return json.dumps({'code': '20001', 'message': '成功', 'data': data},
+        #                       cls=AlchemyEncoder, ensure_ascii=False)
         if request.values.get('reset') == 'yes':
             ctrl = ScheduleCTRLWORD('TY')
             ctrl.Write_LS_INIWORD('LS1', '100')
@@ -553,26 +553,55 @@ def energy_trends():
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             # 一个tag查询多天
-            # TagCode = request.values.get('TagCode') + "`)"
-            PointDates = request.values.get("PointDates").split(",")
-            Begin = request.values.get("ParagraBegin")
-            End = request.values.get("ParagraEnd")
-            data = []
-            count = 0
-            for item in PointDates:
-                count += 1
-                start_time = item + " " + Begin
-                end_time = item + " " + End
-                sql = "select `SampleTime` as time, " + "`" + request.values.get(
-                    'TagCode') + "`" + "as value from " \
-                    "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
-                results = db_session.execute(sql).fetchall()
-                list1 = []
-                for result in results[::30]:
-                    list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
-                                  f'value{count}': result['value']})
-                data.append(list1)
-            return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+            start_date = datetime.strptime(request.values.get('start_date'), "%Y-%m-%d")
+            end_date = datetime.strptime(request.values.get('end_date'), "%Y-%m-%d")
+            if start_date != end_date:
+                date_list = [request.values.get('start_date')]
+                while True:
+                    start_date += timedelta(days=1)
+                    if start_date == end_date:
+                        date_list.append(datetime.strftime(end_date, "%Y-%m-%d"))
+                        break
+                    else:
+                        date_list.append(datetime.strftime(start_date, "%Y-%m-%d"))
+                Begin = request.values.get("start_time")
+                End = request.values.get("end_time")
+                data = []
+                count = 0
+                for item in date_list:
+                    count += 1
+                    start_time = item + " " + Begin
+                    end_time = item + " " + End
+                    sql = "select `SampleTime` as time, " + "`" + request.values.get(
+                        'TagCode') + "`" + "as value from " \
+                        "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                    results = db_session.execute(sql).fetchall()
+                    list1 = []
+                    for result in results[::30]:
+                        list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                                      f'value{count}': result['value']})
+                    data.append(list1)
+                return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+            else:
+                Begin = request.values.get("start_time")
+                End = request.values.get("end_time")
+                data = []
+                count = 0
+                for item in [request.values.get('start_date')]:
+                    count += 1
+                    start_time = item + " " + Begin
+                    end_time = item + " " + End
+                    sql = "select `SampleTime` as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
+                          "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                    results = db_session.execute(sql).fetchall()
+                    list1 = []
+                    for result in results[::30]:
+                        list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
+                                      f'value{count}': result['value']})
+                    data.append(list1)
+                return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder,
+                                  ensure_ascii=False)
+
     except Exception as e:
         logger.error(e)
         insertSyslog("error", "energy_trend错误：" + str(e), current_user.Name)

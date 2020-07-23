@@ -138,21 +138,21 @@ def energyanalysis():
                 for h in myHours:
                     dict_h = {}
                     currhour = datetime.datetime.now().strftime("%Y-%m-%d") + " " + h
-                    dict_h["时间"] = currhour
-                    comphour = CompareTime + " " + h
-                    if currhour in dict_i.keys():
-                        dict_h["今日能耗"] = dict_i[currhour]
-                    else:
-                        # if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') >= datetime.datetime.now():
-                        if currhour >= datetime.datetime.now().strftime('%Y-%m-%d %H'):
-                            dict_h["今日能耗"] = ""
+                    if currhour != datetime.datetime.now().strftime("%Y-%m-%d %H"):
+                        dict_h["时间"] = currhour
+                        comphour = CompareTime + " " + h
+                        if currhour in dict_i.keys():
+                            dict_h["今日能耗"] = dict_i[currhour]
                         else:
-                            dict_h["今日能耗"] = 0
-                    if comphour in dict_i.keys():
-                        dict_h["对比日能耗"] = dict_i[comphour]
-                    else:
-                        dict_h["对比日能耗"] = 0
-                    dir_list.append(dict_h)
+                            if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') >= datetime.datetime.now():
+                                dict_h["今日能耗"] = ""
+                            else:
+                                dict_h["今日能耗"] = 0
+                        if comphour in dict_i.keys():
+                            dict_h["对比日能耗"] = dict_i[comphour]
+                        else:
+                            dict_h["对比日能耗"] = 0
+                        dir_list.append(dict_h)
                 dir = {}
                 dir["lineChartRows"] = dir_list
                 row1_list = []
