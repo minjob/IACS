@@ -4,32 +4,42 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="Datepick platformContainer blackComponents" style="height:310px;">
-                    <DatePicker type="date" multiple placeholder="Select date" style="width: 300px" v-model='valuedate' size="large" :open='true'></DatePicker>
-                </div>
-                <div class="platformContainer blackComponents asidetree" style="height:791px;">
+                <div class="platformContainer blackComponents asidetree" style="height:1115px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
                       node-key="id"
                       ref="tree"
+                      :default-expanded-keys="[0,2, 3,4]"
                       :props="defaultProps">
                     </el-tree>
                 </div>
               </el-col>
               <el-col :span="18">
-                 <div class="Timepick" style="height:42px;">
+                 <div class="Timepick blackComponents" style="height:42px;">
                    <el-form>
                    <el-form-item label="开始时间">
-                      <el-time-picker v-model="time1" value-format="HH:mm:ss"></el-time-picker>
+                      <el-date-picker
+                        v-model="valuedatetime1"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        @change="changestart"
+                        default-time="12:00:00">
+                      </el-date-picker>
                   </el-form-item>
                   <el-form-item label="结束时间">
-                      <el-time-picker v-model="time2" value-format="HH:mm:ss"></el-time-picker>
+                       <el-date-picker
+                        v-model="valuedatetime2"
+                        type="datetime"
+                        @change="changeend"
+                        placeholder="选择日期时间"
+                        default-time="13:00:00">
+                      </el-date-picker>
                   </el-form-item>
                    </el-form>
                   <el-button type="primary" @click="StartMake">开始渲染</el-button>
               </div>
-              <div class="platformContainer blackComponents" style="position:relative;">
+              <div class="platformContainer blackComponents mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
                    <div class="staticbox" style="width:100%; height:295px;">
                      <div class="platformContainer blackComponents">
@@ -147,8 +157,8 @@
         dataline4:[],
         dataline5:[],
         maxvalue:10,
-        time1:moment().format("00:00:00"),
-        time2:moment().format("23:59:59"),
+        date1:moment().format('YYYY-MM-DD'),
+        date2:moment().format('YYYY-MM-DD'),
         loading:false,
         averagevalue1:0,
         averagevalue2:0,
@@ -157,9 +167,12 @@
         averagevalue5:0,
         dataIndex:0,
         comparetime:'00:00:04',
-        valuedate:[],
-        starttime:'2020-06-20 00:00:00',
-        endtime:'2020-06-20 23:59:59',
+        time1:'12:00:00',
+        time2:'13:00:00',
+        valuedatetime1:'2020-06-20 12:00:00',
+        valuedatetime2:'2020-06-22 13:00:00',
+        starttime:'2020-06-20 12:00:00',
+        endtime:'2020-06-20 13:00:00',
         childrentree:[],
         TagCodes:"TY_CO2_AVG,B_CO2_AVG",
         TagCode:'',
@@ -219,6 +232,7 @@
     mounted(){
         this.getAsidemenu()
         this.Initdesktop()
+        this.asD()
     },
     watch:{
 
@@ -232,7 +246,6 @@
         console.log(this.value2)
       },
       takeOrder(){
-        console.log(1)
         console.log(this.TableData.multipleSelection)
       },
       getRepairTable(){
@@ -246,7 +259,6 @@
           params: params
         }).then(res =>{
           var data = JSON.parse(res.data)
-          console.log(data)
           that.TableData.data = data.rows
           that.TableData.total = data.total
         },res =>{
@@ -297,33 +309,44 @@
                       colorAlpha: 0.1
                   }
               },
-          xAxis: {
+              xAxis: {
               type: 'category',
               data:this.dates,
               axisLine: { lineStyle: { color: '#8392A5' } }
-          },
-          yAxis: {
-              scale: true,
-              axisLine: { lineStyle: { color: '#8392A5' } },
-              splitLine: { show: false }
-          },
-          grid: {
-              bottom: 80,
-              top:80
-          },
-          animation: false,
-          visualMap: {
-              show: false,
-              dimension: 1,
-              pieces: [],  //pieces的值由动态数据决定
-              outOfRange: {
-                  color: 'green'
+              },
+              yAxis: [{
+                type: 'value',
+                name: dateset[0],
+                min: 10,
+                max: 2500,
+                position: 'left',
+                axisLabel: {
+                    formatter: '{value}',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#4E6EC1',
+                    },
+                },
+              }],
+              grid: {
+                bottom: 80,
+                top:80
+              },
+              animation: false,
+              visualMap: {
+                show: false,
+                dimension: 1,
+                pieces: [],  //pieces的值由动态数据决定
+                outOfRange: {
+                color: 'green'
               }
           },
          
           series: [
               {
                   name: dateset[0],
+                  yAxisIndex:0, 
                   type: 'line',
                   data: dataline1,
                   smooth: true,
@@ -439,20 +462,39 @@
          that.averagevalue3=(num3/index1).toFixed(2)
          that.averagevalue4=(num4/index1).toFixed(2)
          that.averagevalue5=(num5/index1).toFixed(2)
-         that.tag1Max=Math.max.apply(Math, arr1)
-         that.tag1Min=Math.min.apply(Math, arr1)
-         that.tag2Max=Math.max.apply(Math, arr2)
-         that.tag2Min=Math.min.apply(Math, arr2)
-         that.tag3Max=Math.max.apply(Math, arr3)
-         that.tag3Min=Math.min.apply(Math, arr3)
-         that.tag4Max=Math.max.apply(Math, arr4)
-         that.tag4Min=Math.min.apply(Math, arr4)
-         that.tag5Max=Math.max.apply(Math, arr5)
-         that.tag5Min=Math.min.apply(Math, arr5)
+         that.tag1Max=Math.max.apply(Math, arr1).toFixed(2)
+         that.tag1Min=Math.min.apply(Math, arr1).toFixed(2)
+         that.tag2Max=Math.max.apply(Math, arr2).toFixed(2)
+         that.tag2Min=Math.min.apply(Math, arr2).toFixed(2)
+         that.tag3Max=Math.max.apply(Math, arr3).toFixed(2)
+         that.tag3Min=Math.min.apply(Math, arr3).toFixed(2)
+         that.tag4Max=Math.max.apply(Math, arr4).toFixed(2)
+         that.tag4Min=Math.min.apply(Math, arr4).toFixed(2)
+         that.tag5Max=Math.max.apply(Math, arr5).toFixed(2)
+         that.tag5Min=Math.min.apply(Math, arr5).toFixed(2)
          that.InitTable()
        }
      })
-    this.myChart.on('click', renderBrushed);
+    this.myChart.on('legendselectchanged',function(params){
+      that.myChart.setOption({
+         yAxis: [{
+                type: 'value',
+                name: params.name,
+                min: 10,
+                max: 2000,
+                position: 'left',
+                axisLabel: {
+                    formatter: '{value}',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#4E6EC1',
+                    },
+                },
+              }]
+       })
+    })
+    this.myChart.on('click', renderBrushed); //点击绘制对比线
     function renderBrushed(params) {
       var time=params.name
       var datas=params.data
@@ -482,73 +524,28 @@
        })
        that.InitTable()
         }
-    this.myChart.setOption(option);
+        this.myChart.setOption(option);
       },
       getAsidemenu(){
-         var params = {
-          tableName:'ParentTagMaintain',
-          limit:1000,
-          offset:0
-        }
-         this.axios.get('/api/CUID',{params}).then((res) => {
-           var arr=JSON.parse(res.data).rows
-           for(var i=0;i<arr.length;i++){
-            this.getTagcode(arr[i].ParentTagCode)
-           }
-           this.treedata=arr.map((item, index) => {
-              return { id:item.ParentTagCode,label: item.ParentTagName,children:[]}
-            })
+         this.axios.get('/api/tags').then((res) => {
+            this.treedata=[{id:0,label:'桃园地铁站',children:res.data.data}]
          })
       },
-      getTagcode(ParentTag){
-         var params2={
-          tableName:'TagMaintain',
-          field:'ParentTagCode',
-          fieldvalue:ParentTag,
-          limit:100,
-          offset:0
-        }
-        this.axios.get('/api/CUID',{params:params2}).then((value) => {
-          var arr=JSON.parse(value.data).rows
-          this.childrentree=arr.map((item, index) => {
-            return { id: item.TagCode,label: item.TagName,ParentTagCode:item.ParentTagCode}
-            })
-            for(var i=0;i<this.treedata.length;i++){
-              for(var j=0;j<this.childrentree.length;j++){
-                if(this.treedata[i].id===this.childrentree[j].ParentTagCode){
-                  this.treedata[i].children=this.childrentree
-                }
-              }
-            }
-            })
-      },
       StartMake(){
-        this.getSelectDate();
-        this.getSelectTime();
+        this.changestart()
+        this.changeend()
         this.getChecked()
       },
-      getSelectDate(){
-        if(this.valuedate[0]===false){
-            console.log('请选择你的日期')
-            return;
-        }else if(this.valuedate.length>=2){ //5天 1个tag
-            var arr=this.valuedate
-            this.dateset=[] //传给echarts时间
-            this.allday='' //请求拼接字符
-            for(var i=0;i<arr.length;i++){
-              this.currentdate=moment(arr[i]).format('YYYY-MM-DD')
-              this.starttime=this.currentdate+' '+this.time1
-              this.endtime=this.currentdate+' '+this.time2
-              this.dateset.push(this.currentdate)
-              this.allday=this.allday+this.currentdate+','
-            }
-            this.allday=this.allday.slice(0, -1)
-        }else{ //1天 多个tag
-            this.currentdate=moment(this.valuedate[0]).format('YYYY-MM-DD')
-            this.starttime=this.currentdate+' '+this.time1
-            this.endtime=this.currentdate+' '+this.time2
-            this.allday=this.currentdate
-        }
+      changestart(){
+        this.time1=moment(this.valuedatetime1).format('HH:mm:ss')
+        this.date1=moment(this.valuedatetime1).format('YYYY-MM-DD')
+        this.starttime=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
+      
+      },
+      changeend(){
+        this.time2=moment(this.valuedatetime2).format('HH:mm:ss')
+        this.date2=moment(this.valuedatetime2).format('YYYY-MM-DD')
+        this.endtime=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
       },
       getSelectTime(){
         var t1=moment().format('YYYY-MM-DD ')+this.time1
@@ -565,9 +562,6 @@
                ziset.push(arr[i])
           }}
             if(ziset.length>=2){ //多个tag
-              if(this.valuedate.length>=2){
-                alert('选中多个tag点与多个时间有冲突')
-              }
               this.dateset=[]
               this.TagCodes=''
               for(var i=0;i<ziset.length;i++){
@@ -578,7 +572,8 @@
               this.InitTrenddata(this.TagCodes)
             }else if(ziset.length===1){//单个tag 的情况
               this.TagCode=ziset[0].id
-              this.SingleTag(this.TagCode,this.allday)
+              this.SingleTag(this.TagCode)
+
             }else{
               console.log('选中的父节点')
             }
@@ -627,52 +622,54 @@
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
                 })
       },
-      SingleTag(tagcode,allday){ // 获取一个tag多天的数据
+      SingleTag(tagcode){ // 获取一个tag多天的数据
           var params={
             TagCode:tagcode,
-            PointDates:allday,
-            ParagraBegin:this.time1,
-            ParagraEnd:this.time2,
+            start_date:this.date1,
+            end_date:this.date2,
+            start_tim:this.time1,
+            end_time:this.time2
           }
           this.loading=true
           this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
               var rows=res.data.data
-              this.dates= rows[0].map(function (item) {
-                      return item.time1.slice(11, 19)
-              })
-              this.dataline1 = rows[0].map(function (item) {
-                  return +item.value1;
-                });
-              if(rows[1]){
-                  this.dataline2 = rows[1].map(function (item) {
-                    return +item.value2;
-                });
-                }else{
-                 this.dataline2=[]
-               }
-              if(rows[2]){
-                 this.dataline3 = rows[2].map(function (item) {
-                  return +item.value3;
-               });
-               }else{
-                 this.dataline3=[]
-               }
-              if(rows[3]){
-                this.dataline4 = rows[3].map(function (item) {
-                  return +item.value4;
-               });
-              }else{
-                 this.dataline4=[]
-               }
-              if(rows[4]){
-                this.dataline5 = rows[4].map(function (item) {
-                  return +item.value5;
-               });     
-              }else{
-                 this.dataline5=[]
-               }
-              this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              console.log(rows)
+              // this.dates= rows[0].map(function (item) {
+              //         return item.time1.slice(11, 19)
+              // })
+              // this.dataline1 = rows[0].map(function (item) {
+              //     return +item.value1;
+              //   });
+              // if(rows[1]){
+              //     this.dataline2 = rows[1].map(function (item) {
+              //       return +item.value2;
+              //   });
+              //   }else{
+              //    this.dataline2=[]
+              //  }
+              // if(rows[2]){
+              //    this.dataline3 = rows[2].map(function (item) {
+              //     return +item.value3;
+              //  });
+              //  }else{
+              //    this.dataline3=[]
+              //  }
+              // if(rows[3]){
+              //   this.dataline4 = rows[3].map(function (item) {
+              //     return +item.value4;
+              //  });
+              // }else{
+              //    this.dataline4=[]
+              //  }
+              // if(rows[4]){
+              //   this.dataline5 = rows[4].map(function (item) {
+              //     return +item.value5;
+              //  });     
+              // }else{
+              //    this.dataline5=[]
+              //  }
+              // this.loading=false
+              // this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
           })
       },
       InitTable(){
@@ -702,12 +699,12 @@
       },
       Initdesktop(){
          var params={
-            TagCodes:"TY_CO2_AVG,B_CO2_AVG",
+            TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
             begin:this.starttime,
             end:this.endtime,
             TagFlag:'first'
           }
-          this.dateset=['桃园站CO2平均值','站厅CO2平均值']
+          this.dateset=['站厅湿度平均值','站厅温度平均值']
           this.axios.get('/api/energy_trend',{params:params}).then((res) => {
               var rows=res.data.data
               this.dates= rows[0].map(function (item) {
@@ -723,13 +720,13 @@
                 })
       },
       asD(){
-        var params={
-          StartTime:"2020-06-20",
-          EndTime:"2020-06-21"
-        }
-        this.axios.get('/api/exceloutdatasummaryanalysis',{params:params}).then((value) => {
-          console.log(value)
-        })
+        // var params={
+        //   StartTime:"2020-06-20",
+        //   EndTime:"2020-06-21"
+        // }
+        // this.axios.get('/api/exceloutdatasummaryanalysis',{params:params}).then((value) => {
+        //   console.log(value)
+        // })
       }
     }
   }
@@ -738,7 +735,7 @@
 .containBottom{
   float: left;
   width:33%;
-  height: 100px;;
+  height: 100px;
   padding-right: 20px;
   text-align: center;
 }
@@ -758,11 +755,16 @@
 .Timepick{
     width: 100%;
     padding-bottom: 10px;
+    border-radius: 4px 4px 0px 0px;
     background-color: #3D4048;
 }
 .asidetree{
   overflow: auto;
   padding-left: 0px;
   padding-right: 0px;
+  border-radius: 4px;
+}
+.mainechart{
+  border-radius: 0px;
 }
 </style>

@@ -394,7 +394,7 @@
   margin: auto;
 }
 .blackComponents .el-tree-node__label {
-  font-size: 15px;
+  font-size: 18px;
 }
 .Datepick .ivu-input-wrapper{
   display: none;
@@ -423,8 +423,12 @@
 }
 .Timepick .el-form-item{
   float: left;
-  width:292px; 
+  width:292px;
+  margin-right: 100px;
   margin-bottom: 0px;
+}
+.Timepick .el-form-item .el-form-item__label{
+ color:#fff;
 }
 .Timepick .el-form-item__content{
   width:222px;
