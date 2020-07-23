@@ -581,7 +581,7 @@ def energy_trends():
                         list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                       f'value{count}': result['value']})
                     data.append(list1)
-                return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+                return json.dumps({'code': '20001', 'message': '成功', 'data': data, 'date': date_list}, cls=AlchemyEncoder, ensure_ascii=False)
             else:
                 Begin = request.values.get("start_time")
                 End = request.values.get("end_time")
