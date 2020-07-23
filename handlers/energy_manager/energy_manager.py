@@ -45,6 +45,7 @@ def energytrendtu():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             TagFlag = data.get("TagFlag")
             if TagFlag == "first":
                 begin = data.get("begin")
@@ -109,6 +110,7 @@ def energyanalysis():
         try:
             CompareTime = data.get("CompareTime")
             if CompareTime:
+                db_session.commit()
                 begin = CompareTime + " 00:00:00"
                 end = CompareTime + " 23:59:59"
                 beginnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
@@ -178,6 +180,7 @@ def energyselectbytime():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             begin = data.get("begin")
             end = data.get("end")
             tag_str = "SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS A_ACR_13"
@@ -204,6 +207,7 @@ def makecoolanalysis():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             CompareTime = data.get("CompareTime")
             if CompareTime:
                 begin = CompareTime + " 00:00:00"
@@ -270,6 +274,7 @@ def makecoolselectbytime():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             TagCode = data.get("TagCode")
             begin = data.get("begin")
             end = data.get("end")
@@ -317,6 +322,7 @@ def selectrundetailbyequipmentcode():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             EquipmentCode = data.get("EquipmentCode")
             WorkDate = data.get("WorkDate")
             run = db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate,
