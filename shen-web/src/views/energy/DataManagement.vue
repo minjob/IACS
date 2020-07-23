@@ -23,7 +23,6 @@
                         v-model="valuedatetime1"
                         type="datetime"
                         placeholder="选择日期时间"
-                        @change="changestart"
                         default-time="12:00:00">
                       </el-date-picker>
                   </el-form-item>
@@ -31,7 +30,6 @@
                        <el-date-picker
                         v-model="valuedatetime2"
                         type="datetime"
-                        @change="changeend"
                         placeholder="选择日期时间"
                         default-time="13:00:00">
                       </el-date-picker>
@@ -170,7 +168,7 @@
         time1:'12:00:00',
         time2:'13:00:00',
         valuedatetime1:'2020-06-20 12:00:00',
-        valuedatetime2:'2020-06-22 13:00:00',
+        valuedatetime2:'2020-06-20 13:00:00',
         starttime:'2020-06-20 12:00:00',
         endtime:'2020-06-20 13:00:00',
         childrentree:[],
@@ -481,7 +479,7 @@
                 type: 'value',
                 name: params.name,
                 min: 10,
-                max: 2000,
+                max: 4000,
                 position: 'left',
                 axisLabel: {
                     formatter: '{value}',
@@ -537,12 +535,20 @@
         this.getChecked()
       },
       changestart(){
+        if(moment(moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')), 'seconds')>0){
+          alert('时间选取错误，开始时间大于结束时间')
+          return;
+        }
         this.time1=moment(this.valuedatetime1).format('HH:mm:ss')
         this.date1=moment(this.valuedatetime1).format('YYYY-MM-DD')
         this.starttime=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
-      
+        
       },
       changeend(){
+        if(moment(moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')), 'seconds')>0){
+          alert('时间选取错误，开始时间大于结束时间')
+          return;
+        }
         this.time2=moment(this.valuedatetime2).format('HH:mm:ss')
         this.date2=moment(this.valuedatetime2).format('YYYY-MM-DD')
         this.endtime=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
@@ -627,49 +633,49 @@
             TagCode:tagcode,
             start_date:this.date1,
             end_date:this.date2,
-            start_tim:this.time1,
+            start_time:this.time1,
             end_time:this.time2
           }
           this.loading=true
           this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
               var rows=res.data.data
-              console.log(rows)
-              // this.dates= rows[0].map(function (item) {
-              //         return item.time1.slice(11, 19)
-              // })
-              // this.dataline1 = rows[0].map(function (item) {
-              //     return +item.value1;
-              //   });
-              // if(rows[1]){
-              //     this.dataline2 = rows[1].map(function (item) {
-              //       return +item.value2;
-              //   });
-              //   }else{
-              //    this.dataline2=[]
-              //  }
-              // if(rows[2]){
-              //    this.dataline3 = rows[2].map(function (item) {
-              //     return +item.value3;
-              //  });
-              //  }else{
-              //    this.dataline3=[]
-              //  }
-              // if(rows[3]){
-              //   this.dataline4 = rows[3].map(function (item) {
-              //     return +item.value4;
-              //  });
-              // }else{
-              //    this.dataline4=[]
-              //  }
-              // if(rows[4]){
-              //   this.dataline5 = rows[4].map(function (item) {
-              //     return +item.value5;
-              //  });     
-              // }else{
-              //    this.dataline5=[]
-              //  }
-              // this.loading=false
-              // this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              this.dates= rows[0].map(function (item) {
+                      return item.time1.slice(11, 19)
+              })
+              this.dateset=res.data.date
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
+                });
+              if(rows[1]){
+                  this.dataline2 = rows[1].map(function (item) {
+                    return +item.value2;
+                });
+                }else{
+                 this.dataline2=[]
+               }
+              if(rows[2]){
+                 this.dataline3 = rows[2].map(function (item) {
+                  return +item.value3;
+               });
+               }else{
+                 this.dataline3=[]
+               }
+              if(rows[3]){
+                this.dataline4 = rows[3].map(function (item) {
+                  return +item.value4;
+               });
+              }else{
+                 this.dataline4=[]
+               }
+              if(rows[4]){
+                this.dataline5 = rows[4].map(function (item) {
+                  return +item.value5;
+               });     
+              }else{
+                 this.dataline5=[]
+               }
+              this.loading=false
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
           })
       },
       InitTable(){
