@@ -319,7 +319,6 @@
     },
     created(){
       this.initWebSocket()
-      this.getonservationSwitch()
     },
     mounted(){
 
