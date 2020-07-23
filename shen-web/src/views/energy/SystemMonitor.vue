@@ -166,7 +166,7 @@
             <div class="platformContainer">
               <el-form class="blackComponents">
                 <el-form-item label="节能开关：" class="marginBottom">
-                  <el-switch v-model="conservationSwitch" v-has="['系统监控操作控制']" active-color="#13ce66" inactive-color="#727786" active-value="1" inactive-value="0" @change="changeConservationSwitch"></el-switch>
+                  <el-switch v-model="websockVarData['LS_JN_FLAG']" v-has="['系统监控操作控制']" active-color="#13ce66" inactive-color="#727786" active-value="1" inactive-value="0" @change="changeConservationSwitch"></el-switch>
                 </el-form-item>
                 <el-form-item label="复位：" style="margin-bottom: 5px;">
                   <el-button type="primary" size="small" v-has="['系统监控操作控制']" @click="startReseting">开始复位</el-button>
@@ -305,7 +305,6 @@
         },
         websock:null,
         websockVarData:{},
-        conservationSwitch:false,
         LS1Bit:"",
         LS2Bit:"",
         LST1Bit:"",
@@ -320,7 +319,6 @@
     },
     created(){
       this.initWebSocket()
-      this.getonservationSwitch()
     },
     mounted(){
 
@@ -476,17 +474,6 @@
           });
         });
       },
-      getonservationSwitch(){
-        this.axios.get("/api/reset").then(res =>{
-          if(res.data.data === "1"){
-            this.conservationSwitch = "1"
-          }else if(res.data.data === "0"){
-            this.conservationSwitch = "0"
-          }
-        },res =>{
-          console.log("请求错误")
-        })
-      },
       changeConservationSwitch(){
         var SwitchState = ""
         var SwitchParams = ""
@@ -514,7 +501,6 @@
                 type: 'success',
                 message: res.data.message
               });
-              this.getonservationSwitch()
             }
           },res =>{
             console.log("请求错误")

@@ -268,12 +268,55 @@
 .bg-black{
   background-color:#1B1E27;
 }
+.bg-success{
+  background-color:#15CC48;
+}
+.bg-red{
+  background-color:#FB3A06;
+}
+.bg-lightgreen{
+  background-color:#00FAE7;
+}
+.bg-darkblue{
+  background-color:#228AD5;
+}
 /* 间距 */
 .marginTop{
   margin-top: 15px;
 }
 .marginBottom{
   margin-bottom: 15px;
+}
+/* 文本位置 */
+.vertical-align-middle{
+  vertical-align: middle;
+}
+.vertical-align-top{
+  vertical-align: top;
+}
+.vertical-align-bottom{
+  vertical-align: bottom;
+}
+/* 圆点 */
+.dotState{
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  vertical-align: middle;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+/* 可滚动 */
+.scrollable{
+  width: 100%;
+  height: 100%;
+  scrollbar-width: none; /* firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.scrollable::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 
 .MainContain{
@@ -424,7 +467,10 @@
 .Timepick .el-form-item{
   float: left;
   width:292px;
+<<<<<<< HEAD
   margin-right: 100px;
+=======
+>>>>>>> 83f725edf7d233ca9205c6ba924d5e9c03c5a660
   margin-bottom: 0px;
 }
 .Timepick .el-form-item .el-form-item__label{

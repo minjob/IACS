@@ -45,6 +45,7 @@ def energytrendtu():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             TagFlag = data.get("TagFlag")
             if TagFlag == "first":
                 begin = data.get("begin")
@@ -109,6 +110,7 @@ def energyanalysis():
         try:
             CompareTime = data.get("CompareTime")
             if CompareTime:
+                db_session.commit()
                 begin = CompareTime + " 00:00:00"
                 end = CompareTime + " 23:59:59"
                 beginnow = datetime.datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
@@ -138,21 +140,21 @@ def energyanalysis():
                 for h in myHours:
                     dict_h = {}
                     currhour = datetime.datetime.now().strftime("%Y-%m-%d") + " " + h
-                    dict_h["时间"] = currhour
-                    comphour = CompareTime + " " + h
-                    if currhour in dict_i.keys():
-                        dict_h["今日能耗"] = dict_i[currhour]
-                    else:
-                        # if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') >= datetime.datetime.now():
-                        if currhour >= datetime.datetime.now().strftime('%Y-%m-%d %H'):
-                            dict_h["今日能耗"] = ""
+                    if currhour != datetime.datetime.now().strftime("%Y-%m-%d %H"):
+                        dict_h["时间"] = currhour
+                        comphour = CompareTime + " " + h
+                        if currhour in dict_i.keys():
+                            dict_h["今日能耗"] = dict_i[currhour]
                         else:
-                            dict_h["今日能耗"] = 0
-                    if comphour in dict_i.keys():
-                        dict_h["对比日能耗"] = dict_i[comphour]
-                    else:
-                        dict_h["对比日能耗"] = 0
-                    dir_list.append(dict_h)
+                            if datetime.datetime.strptime(currhour, '%Y-%m-%d %H') >= datetime.datetime.now():
+                                dict_h["今日能耗"] = ""
+                            else:
+                                dict_h["今日能耗"] = 0
+                        if comphour in dict_i.keys():
+                            dict_h["对比日能耗"] = dict_i[comphour]
+                        else:
+                            dict_h["对比日能耗"] = 0
+                        dir_list.append(dict_h)
                 dir = {}
                 dir["lineChartRows"] = dir_list
                 row1_list = []
@@ -178,6 +180,7 @@ def energyselectbytime():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             begin = data.get("begin")
             end = data.get("end")
             tag_str = "SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS A_ACR_10,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS A_ACR_13"
@@ -204,6 +207,7 @@ def makecoolanalysis():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             CompareTime = data.get("CompareTime")
             if CompareTime:
                 begin = CompareTime + " 00:00:00"
@@ -270,6 +274,7 @@ def makecoolselectbytime():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             TagCode = data.get("TagCode")
             begin = data.get("begin")
             end = data.get("end")
@@ -317,6 +322,7 @@ def selectrundetailbyequipmentcode():
     if request.method == 'GET':
         data = request.values
         try:
+            db_session.commit()
             EquipmentCode = data.get("EquipmentCode")
             WorkDate = data.get("WorkDate")
             run = db_session.query(EquipmentStatusCount).filter(EquipmentStatusCount.WorkDate == WorkDate,
