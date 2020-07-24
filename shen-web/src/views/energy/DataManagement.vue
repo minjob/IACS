@@ -172,7 +172,7 @@
         starttime:'2020-06-20 12:00:00',
         endtime:'2020-06-20 13:00:00',
         childrentree:[],
-        TagCodes:"TY_CO2_AVG,B_CO2_AVG",
+        TagCodes:"",
         TagCode:'',
         treenumber:[],
         TagChecked:[],
@@ -479,7 +479,7 @@
                 type: 'value',
                 name: params.name,
                 min: 10,
-                max: 4000,
+                max: 5000,
                 position: 'left',
                 axisLabel: {
                     formatter: '{value}',
@@ -531,7 +531,6 @@
       },
       StartMake(){
         this.changestart()
-        this.changeend()
         this.getChecked()
       },
       changestart(){
@@ -542,23 +541,10 @@
         this.time1=moment(this.valuedatetime1).format('HH:mm:ss')
         this.date1=moment(this.valuedatetime1).format('YYYY-MM-DD')
         this.starttime=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
-        
-      },
-      changeend(){
-        if(moment(moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')), 'seconds')>0){
-          alert('时间选取错误，开始时间大于结束时间')
-          return;
-        }
         this.time2=moment(this.valuedatetime2).format('HH:mm:ss')
         this.date2=moment(this.valuedatetime2).format('YYYY-MM-DD')
         this.endtime=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
-      },
-      getSelectTime(){
-        var t1=moment().format('YYYY-MM-DD ')+this.time1
-        var t2=moment().format('YYYY-MM-DD ')+this.time2
-        if(moment(t2).diff(moment(t1),'hours')<0){
-          alert('时间格式不正确，开始时间大于结束时间')
-        }
+        
       },
       getChecked(){ //选取选中的节点
         var arr=this.$refs.tree.getCheckedNodes()
@@ -585,6 +571,10 @@
             }
       },
        InitTrenddata(t){ //一天多个tag
+         if(moment(this.valuedatetime1).format('YYYY-MM-DD')!==moment(this.valuedatetime2).format('YYYY-MM-DD')){
+          alert('渲染失败,选择了多天')
+          return;
+        }
          var params1={
             TagCodes:t,
             begin:this.starttime,
@@ -642,7 +632,12 @@
               this.dates= rows[0].map(function (item) {
                       return item.time1.slice(11, 19)
               })
-              this.dateset=res.data.date
+               if(moment(this.valuedatetime1).format('YYYY-MM-DD')==moment(this.valuedatetime2).format('YYYY-MM-DD')){
+                  this.dateset=[]
+                  this.dateset.push(moment(this.valuedatetime1).format('YYYY-MM-DD'))
+              }else{
+                this.dateset=res.data.date
+              }
               this.dataline1 = rows[0].map(function (item) {
                   return +item.value1;
                 });
