@@ -439,35 +439,14 @@
 .blackComponents .el-tree-node__label {
   font-size: 18px;
 }
-.Datepick .ivu-input-wrapper{
-  display: none;
-}
-.Datepick .ivu-select-dropdown{
-  top:10px!important;
-  width:200px!important;
-  box-shadow: none;
-}
-.Datepick .ivu-date-picker-cells{
-  margin:10px auto;
-  width: 230px;
-}
-.Datepick .ivu-date-picker-cells span {
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-}
-.Datepick span.ivu-date-picker-cells-cell {
-  width: 32px;
-  font-size: 16px;
-}
 .Timepick .ivu-picker-panel-body{
   background-color: #3D4048;
   width: 198px;
 }
 .Timepick .el-form-item{
   float: left;
-  width:292px;
-  margin-right: 100px;
+  width:299px;
+  margin-right: 40px;
   margin-bottom: 0px;
 }
 .Timepick .el-form-item .el-form-item__label{

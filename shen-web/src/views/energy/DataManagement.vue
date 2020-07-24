@@ -4,19 +4,19 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="platformContainer blackComponents asidetree" style="height:1115px;">
+                <div class="platformContainer blackComponents asidetree" style="height:1134px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
                       node-key="id"
                       ref="tree"
-                      :default-expanded-keys="[0,2, 3,4]"
+                      default-expand-all
                       :props="defaultProps">
                     </el-tree>
                 </div>
               </el-col>
               <el-col :span="18">
-                 <div class="Timepick blackComponents" style="height:42px;">
+                 <div class="Timepick blackComponents" style="height:43px;">
                    <el-form>
                    <el-form-item label="开始时间">
                       <el-date-picker
@@ -35,11 +35,12 @@
                       </el-date-picker>
                   </el-form-item>
                    </el-form>
-                  <el-button type="primary" @click="StartMake">开始渲染</el-button>
+                  <el-button type="primary" @click="StartMake">趋势查询</el-button>
+                  <el-button type="success">数据导出</el-button>
               </div>
               <div class="platformContainer blackComponents mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
-                   <div class="staticbox" style="width:100%; height:295px;">
+                   <div class="staticbox" style="width:100%; height:295px;overflow:auto;">
                      <div class="platformContainer blackComponents">
                         <el-table
                             :data="tableData"
@@ -323,7 +324,7 @@
                 },
                 axisLine: {
                     lineStyle: {
-                        color: '#4E6EC1',
+                        color: '#8392A5',
                     },
                 },
               }],
@@ -340,7 +341,6 @@
                 color: 'green'
               }
           },
-         
           series: [
               {
                   name: dateset[0],
@@ -478,8 +478,8 @@
          yAxis: [{
                 type: 'value',
                 name: params.name,
-                min: 10,
-                max: 5000,
+                min: this.tag1Min,
+                max: this.tag1Max,
                 position: 'left',
                 axisLabel: {
                     formatter: '{value}',
@@ -526,7 +526,7 @@
       },
       getAsidemenu(){
          this.axios.get('/api/tags').then((res) => {
-            this.treedata=[{id:0,label:'桃园地铁站',children:res.data.data}]
+            this.treedata=res.data.data
          })
       },
       StartMake(){
@@ -535,7 +535,10 @@
       },
       changestart(){
         if(moment(moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')), 'seconds')>0){
-          alert('时间选取错误，开始时间大于结束时间')
+        this.$message({
+          message: '时间选取错误，开始时间大于结束时间',
+          type: 'warning'
+        });
           return;
         }
         this.time1=moment(this.valuedatetime1).format('HH:mm:ss')
@@ -572,7 +575,11 @@
       },
        InitTrenddata(t){ //一天多个tag
          if(moment(this.valuedatetime1).format('YYYY-MM-DD')!==moment(this.valuedatetime2).format('YYYY-MM-DD')){
-          alert('渲染失败,选择了多天')
+          this.$message({
+            showClose: true,
+            message: '渲染失败,选择了多天',
+            type: 'error'
+        });
           return;
         }
          var params1={
@@ -636,7 +643,7 @@
                   this.dateset=[]
                   this.dateset.push(moment(this.valuedatetime1).format('YYYY-MM-DD'))
               }else{
-                this.dateset=res.data.date
+                  this.dateset=res.data.date
               }
               this.dataline1 = rows[0].map(function (item) {
                   return +item.value1;
@@ -754,10 +761,10 @@
   padding-left:0px;
 }
 .Timepick{
-    width: 100%;
-    padding-bottom: 10px;
-    border-radius: 4px 4px 0px 0px;
-    background-color: #3D4048;
+  width: 100%;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  background-color: #3D4048;
 }
 .asidetree{
   overflow: auto;
@@ -766,6 +773,6 @@
   border-radius: 4px;
 }
 .mainechart{
-  border-radius: 0px;
+  border-radius: 4px;
 }
 </style>
