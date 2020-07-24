@@ -59,7 +59,9 @@
         <el-col :span="24">
           <transition name="el-zoom-in-top">
             <p id="newArrInfo" v-show="showNewArr" class="color-white text-size-18">
-              共检测tag值 {{ newArrNum }}个，其中未获取到数据的tag有{{ newArrErrorNum }}个，您可以 <span class="color-darkblue" style="cursor: pointer;" @click="initWebSocket">重新检测服务</span>
+              共检测tag值 {{ newArrNum }}个，其中未获取到数据的tag有{{ newArrErrorNum }}个，您可以
+              <span class="color-darkblue" style="cursor: pointer;" @click="initWebSocket" v-if="!initLoadding">重新检测服务</span>
+              <span class="color-darkblue" v-if="initLoadding">即将重新检测...</span>
             </p>
           </transition>
         </el-col>
@@ -76,6 +78,7 @@
       return {
         socket:null,
         websockVarData:{},
+        initLoadding:false, //是否在请求和加载tag值
         arr:[],
         newArr:[],
         newArrErrorNum:0,
@@ -100,6 +103,7 @@
     },
     methods: {
       initWebSocket(){ //初始化weosocket
+        this.initLoadding = true
         // this.websock = new WebSocket('ws://' + location.host + '/socket');
         this.websock = new WebSocket('ws://127.0.0.1:5002/socket');
         this.websock.onmessage = this.websocketonmessage;
@@ -162,10 +166,11 @@
                   that.opcState = false
                 }
               }
-            }, (index + 1) * 100);
+            }, (index + 1) * 50);
           })(index)
         })
         that.websock.close()
+        that.initLoadding = false
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);
