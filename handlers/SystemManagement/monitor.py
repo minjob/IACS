@@ -543,7 +543,7 @@ def energy_trends():
             for item in TagCodes:
                 count += 1
                 sql = "select " + "`SampleTime` as time, " + "`" + item + "`" + " as value" + " from datahistory where" \
-                      " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
+                                                                                              " SampleTime between " + "'" + Begin + "'" + " and " + "'" + End + "'"
                 results = db_session.execute(sql).fetchall()
                 list1 = []
                 for result in results[::30]:
@@ -574,14 +574,15 @@ def energy_trends():
                     end_time = item + " " + End
                     sql = "select `SampleTime` as time, " + "`" + request.values.get(
                         'TagCode') + "`" + "as value from " \
-                        "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                                           "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                     results = db_session.execute(sql).fetchall()
                     list1 = []
                     for result in results[::30]:
                         list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                       f'value{count}': result['value']})
                     data.append(list1)
-                return json.dumps({'code': '20001', 'message': '成功', 'data': data, 'date': date_list}, cls=AlchemyEncoder, ensure_ascii=False)
+                return json.dumps({'code': '20001', 'message': '成功', 'data': data, 'date': date_list},
+                                  cls=AlchemyEncoder, ensure_ascii=False)
             else:
                 Begin = request.values.get("start_time")
                 End = request.values.get("end_time")
@@ -592,7 +593,7 @@ def energy_trends():
                     start_time = item + " " + Begin
                     end_time = item + " " + End
                     sql = "select `SampleTime` as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
-                          "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                                                                                                        "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                     results = db_session.execute(sql).fetchall()
                     list1 = []
                     for result in results[::30]:
@@ -611,35 +612,36 @@ def energy_trends():
 
 @opc.route('/tags', methods=['GET'])
 def tags():
-    data = [{
-        "id": "1",
-        "label": "LS1机组",
-        "children": [{
-            "id": "1-1",
-            "label": "LD1冷冻泵",
-            "children": [{"id": "SCADA.AI.E119LD__LD1AIFR", "label": "LD1频率运行反馈", "ParentTagCode": '1'}]
-        },
-            {
-                "id": "1-2",
-                "label": "LQ1冷却泵",
-                "children": [{"id": "SCADA.AI.E119LQ__LQ1AIFR", "label": "LQ1频率运行反馈", "ParentTagCode": '1'}]
+    data = [{"id": "0", "label": "桃园地铁站", "children": [
+        {
+            "id": "1",
+            "label": "LS1机组",
+            "children": [{
+                "id": "1-1",
+                "label": "LD1冷冻泵",
+                "children": [{"id": "SCADA.AI.E119LD__LD1AIFR", "label": "LD1频率运行反馈", "ParentTagCode": '1'}]
             },
-            {
-                "id": "1-3",
-                "label": "LS1",
-                "children": [
-                    {"id": "SCADA.AI.E119LS__LS1AI08", "label": "冷水机组1冷凝器出水温度", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119LS__LS1AI09", "label": "冷水机组1冷凝器回水温度", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119LS__LS1AI02", "label": "冷水机组1冷水主机吸气压力", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119LS__LS1AI01", "label": "冷水机组1出水温度", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119LS__LS1AI07", "label": "冷水机组1蒸发器回水温度", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119T___TD1AITM", "label": "A端LS1冷冻水出水温度(TD1)", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119T___TD2AITM", "label": "A端LS1冷冻水回水温度(TD2)", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119T___TQ1AITM", "label": "A端LS1冷却水出水温度(TQ1)", "ParentTagCode": "1"},
-                    {"id": "SCADA.AI.E119T___TQ2AITM", "label": "A端LS1冷却水回水温度(TQ2)", "ParentTagCode": "1"},
-                ]
-            }]
-    },
+                {
+                    "id": "1-2",
+                    "label": "LQ1冷却泵",
+                    "children": [{"id": "SCADA.AI.E119LQ__LQ1AIFR", "label": "LQ1频率运行反馈", "ParentTagCode": '1'}]
+                },
+                {
+                    "id": "1-3",
+                    "label": "LS1",
+                    "children": [
+                        {"id": "SCADA.AI.E119LS__LS1AI08", "label": "冷水机组1冷凝器出水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI09", "label": "冷水机组1冷凝器回水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI02", "label": "冷水机组1冷水主机吸气压力", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI01", "label": "冷水机组1出水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI07", "label": "冷水机组1蒸发器回水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TD1AITM", "label": "A端LS1冷冻水出水温度(TD1)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TD2AITM", "label": "A端LS1冷冻水回水温度(TD2)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TQ1AITM", "label": "A端LS1冷却水出水温度(TQ1)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TQ2AITM", "label": "A端LS1冷却水回水温度(TQ2)", "ParentTagCode": "1"},
+                    ]
+                }]
+        },
         {
             "id": "2",
             "label": "LS2机组",
@@ -759,7 +761,8 @@ def tags():
                     "children": [{"id": "SCADA.AI.E119KT__KT2AIFR", "label": "KT2空调频率运行反馈", "ParentTagCode": '1'},
                                  {"id": "SCADA.AI.E119SDF_SDF2AIOC", "label": "SDF2阀门开度反馈", "ParentTagCode": '1'}]
                 }]
-        },
-    ]
+        }
+             ]
+    }]
 
     return json.dumps({'code': '20001', 'message': '成功', 'data': data}, ensure_ascii=False)
