@@ -48,7 +48,7 @@
             <p>
               <i class="dotState bg-grayblack" v-if="jnValue === ''"></i>
               <i class="dotState bg-lightgreen" v-if="jnValue === '1'"></i>
-              <i class="dotState bg-black" v-if="jnValue === '1'"></i>
+              <i class="dotState bg-black" v-if="jnValue === '0'"></i>
               <span class="color-white">节能状态</span>
               <span class="floatRight" v-if="jnValue === ''"></span>
               <span class="floatRight color-lightgreen" v-if="jnValue === '1'">开启</span>
