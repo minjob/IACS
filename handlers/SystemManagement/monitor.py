@@ -617,24 +617,24 @@ def tags():
             "label": "LS1机组",
             "children": [{
                 "label": "LD1冷冻泵",
-                "children": [{"tag": "SCADA.AI.E119LD__LD1AIFR", "label": "LD1频率运行反馈", "ParentTagCode": "1"}]
+                "children": [{"id": "SCADA.AI.E119LD__LD1AIFR", "label": "LD1频率运行反馈", "ParentTagCode": "1"}]
             },
                 {
                     "label": "LQ1冷却泵",
-                    "children": [{"tag": "SCADA.AI.E119LQ__LQ1AIFR", "label": "LQ1频率运行反馈", "ParentTagCode": "1"}]
+                    "children": [{"id": "SCADA.AI.E119LQ__LQ1AIFR", "label": "LQ1频率运行反馈", "ParentTagCode": "1"}]
                 },
                 {
                     "label": "LS1",
                     "children": [
-                        {"tag": "SCADA.AI.E119LS__LS1AI08", "label": "冷水机组1冷凝器出水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS1AI09", "label": "冷水机组1冷凝器回水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS1AI02", "label": "冷水机组1冷水主机吸气压力", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS1AI01", "label": "冷水机组1出水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS1AI07", "label": "冷水机组1蒸发器回水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TD1AITM", "label": "A端LS1冷冻水出水温度(TD1)", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TD2AITM", "label": "A端LS1冷冻水回水温度(TD2)", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TQ1AITM", "label": "A端LS1冷却水出水温度(TQ1)", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TQ2AITM", "label": "A端LS1冷却水回水温度(TQ2)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI08", "label": "冷水机组1冷凝器出水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI09", "label": "冷水机组1冷凝器回水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI02", "label": "冷水机组1冷水主机吸气压力", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI01", "label": "冷水机组1出水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS1AI07", "label": "冷水机组1蒸发器回水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TD1AITM", "label": "A端LS1冷冻水出水温度(TD1)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TD2AITM", "label": "A端LS1冷冻水回水温度(TD2)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TQ1AITM", "label": "A端LS1冷却水出水温度(TQ1)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TQ2AITM", "label": "A端LS1冷却水回水温度(TQ2)", "ParentTagCode": "1"},
                     ]
                 }]
         },
@@ -642,36 +642,36 @@ def tags():
             "label": "LS2机组",
             "children": [{
                 "label": "LD2冷冻泵",
-                "children": [{"tag": "SCADA.AI.E119LD__LD2AIFR", "label": "LD2频率运行反馈", "ParentTagCode": "1"}]
+                "children": [{"id": "SCADA.AI.E119LD__LD2AIFR", "label": "LD2频率运行反馈", "ParentTagCode": "1"}]
             },
                 {
                     "label": "LQ2冷却泵",
-                    "children": [{"tag": "SCADA.AI.E119LQ__LQ2AIFR", "label": "LQ2频率运行反馈", "ParentTagCode": "1"}]
+                    "children": [{"id": "SCADA.AI.E119LQ__LQ2AIFR", "label": "LQ2频率运行反馈", "ParentTagCode": "1"}]
                 },
                 {
                     "label": "LS2",
                     "children": [
-                        {"tag": "SCADA.AI.E119LS__LS2AI01", "label": "出水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS2AI07", "label": "蒸发器回水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS2AI08", "label": "冷凝器出水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS2AI09", "label": "冷凝器回水温度", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119LS__LS2AI02", "label": "冷水主机吸气压力", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TD3AITM", "label": "A端LS2冷冻水出水温度(TD3)", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TD4AITM", "label": "A端LS2冷冻水回水温度(TD4)", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TQ3AITM", "label": "A端LS2冷却水出水温度(TQ3)", "ParentTagCode": "1"},
-                        {"tag": "SCADA.AI.E119T___TQ4AITM", "label": "A端LS2冷却水回水温度(TQ4)", "ParentTagCode": "1"}
+                        {"id": "SCADA.AI.E119LS__LS2AI01", "label": "出水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS2AI07", "label": "蒸发器回水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS2AI08", "label": "冷凝器出水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS2AI09", "label": "冷凝器回水温度", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119LS__LS2AI02", "label": "冷水主机吸气压力", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TD3AITM", "label": "A端LS2冷冻水出水温度(TD3)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TD4AITM", "label": "A端LS2冷冻水回水温度(TD4)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TQ3AITM", "label": "A端LS2冷却水出水温度(TQ3)", "ParentTagCode": "1"},
+                        {"id": "SCADA.AI.E119T___TQ4AITM", "label": "A端LS2冷却水回水温度(TQ4)", "ParentTagCode": "1"}
                     ]
                 }]
         },
         {
             "label": "室外温度",
             "children": [{
-                "tag": "SCADA.AI.E119HTS_HF1AIWD",
+                "id": "SCADA.AI.E119HTS_HF1AIWD",
                 "label": "新风室温度",
                 "ParentTagCode": "1"
             },
                 {
-                    "tag": "SCADA.AI.E119HTS_HF1AISD",
+                    "id": "SCADA.AI.E119HTS_HF1AISD",
                     "label": "新风室湿度",
                     "ParentTagCode": "1"
                 }]
@@ -679,17 +679,17 @@ def tags():
         {
             "label": "站厅",
             "children": [{
-                "tag": "B_CO2_AVG",
+                "id": "B_CO2_AVG",
                 "label": "站厅CO2平均值",
                 "ParentTagCode": "5"
             },
                 {
-                    "tag": "ZT02_TEMP_AVG",
+                    "id": "ZT02_TEMP_AVG",
                     "label": "站厅温度平均值",
                     "ParentTagCode": "5"
                 },
                 {
-                    "tag": "ZT02_SD_AVG",
+                    "id": "ZT02_SD_AVG",
                     "label": "站厅湿度平均值",
                     "ParentTagCode": "5"
                 },
@@ -698,17 +698,17 @@ def tags():
         {
             "label": "站台",
             "children": [{
-                "tag": "A_CO2_AVG",
+                "id": "A_CO2_AVG",
                 "label": "站台CO2平均值",
                 "ParentTagCode": "1"
             },
                 {
-                    "tag": "ZT01_TEMP_AVG",
+                    "id": "ZT01_TEMP_AVG",
                     "label": "站台温度平均值",
                     "ParentTagCode": "1"
                 },
                 {
-                    "tag": "ZT01_SD_AVG",
+                    "id": "ZT01_SD_AVG",
                     "label": "站台湿度平均值",
                     "ParentTagCode": "1"
                 },
@@ -717,17 +717,17 @@ def tags():
         {
             "label": "能耗",
             "children": [{
-                "tag": "MB2TCP3.A_ACR_12.Ep_total_q",
+                "id": "MB2TCP3.A_ACR_12.Ep_total_q",
                 "label": "LS1机组电表",
                 "ParentTagCode": "1"
             },
                 {
-                    "tag": "MB2TCP3.A_ACR_20.Ep_total_q",
+                    "id": "MB2TCP3.A_ACR_20.Ep_total_q",
                     "label": "LS2机组电表",
                     "ParentTagCode": "1"
                 },
                 {
-                    "tag": "NH_CONSUM",
+                    "id": "NH_CONSUM",
                     "label": "能耗指数",
                     "ParentTagCode": "1"
                 }
@@ -737,14 +737,14 @@ def tags():
             "label": "空调",
             "children": [{
                 "label": "KT1空调",
-                "children": [{"tag": "SCADA.AI.E119KT__KT1AIFR", "label": "KT1空调频率运行反馈", "ParentTagCode": "1"},
-                             {"tag": "  SCADA.AI.E119SDF_SDF1AIOC", "label": "SDF1阀门开度反馈", "ParentTagCode": "1"}
+                "children": [{"id": "SCADA.AI.E119KT__KT1AIFR", "label": "KT1空调频率运行反馈", "ParentTagCode": "1"},
+                             {"id": "  SCADA.AI.E119SDF_SDF1AIOC", "label": "SDF1阀门开度反馈", "ParentTagCode": "1"}
                              ]
             },
                 {
                     "label": "KT2空调",
-                    "children": [{"tag": "SCADA.AI.E119KT__KT2AIFR", "label": "KT2空调频率运行反馈", "ParentTagCode": "1"},
-                                 {"tag": "SCADA.AI.E119SDF_SDF2AIOC", "label": "SDF2阀门开度反馈", "ParentTagCode": "1"}]
+                    "children": [{"id": "SCADA.AI.E119KT__KT2AIFR", "label": "KT2空调频率运行反馈", "ParentTagCode": "1"},
+                                 {"id": "SCADA.AI.E119SDF_SDF2AIOC", "label": "SDF2阀门开度反馈", "ParentTagCode": "1"}]
                 }]
         }
              ]
