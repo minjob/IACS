@@ -550,7 +550,7 @@ def energy_trends():
                 for result in results[::30]:
                     list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                   f'value{count}': result['value']})
-                data.append(list1)
+                data.append({item: list1})
             return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             # 一个tag查询多天
