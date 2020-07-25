@@ -581,7 +581,7 @@ def energy_trends():
                     for result in results[::30]:
                         list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                       f'value{count}': result['value']})
-                    data.append(list1)
+                    data.append({item: list1})
                 return json.dumps({'code': '20001', 'message': '成功', 'data': data, 'date': date_list},
                                   cls=AlchemyEncoder, ensure_ascii=False)
             else:
@@ -600,7 +600,7 @@ def energy_trends():
                     for result in results[::30]:
                         list1.append({f'time{count}': datetime.strftime(result['time'], "%Y-%m-%d %H:%M:%S"),
                                       f'value{count}': result['value']})
-                    data.append(list1)
+                    data.append({item: list1})
                 return json.dumps({'code': '20001', 'message': '成功', 'data': data}, cls=AlchemyEncoder,
                                   ensure_ascii=False)
 
@@ -640,7 +640,6 @@ def tags():
 
                     rank3_data = {"id": data.TagCode, "label": data.TagName, "ParentTagCode": "1"}
                     children3.append(rank3_data)
-
                 children2.append(rank2_data)
                 # rank3 = {"label": result.ParentTag, "children": [{"id": result.TagCode, "label": result.TagName}]}
             else:
