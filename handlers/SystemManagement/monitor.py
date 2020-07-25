@@ -649,4 +649,4 @@ def tags():
                     children2.append(rank2_data)
         children.append(children1)
     tree = [{"label": factory.AreaName, "children": children}]
-    return json.dumps(tree, cls=AlchemyEncoder, ensure_ascii=False)
+    return json.dumps({'code': '20001', 'message': '成功', 'data': tree}, cls=AlchemyEncoder, ensure_ascii=False)
