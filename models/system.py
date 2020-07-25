@@ -947,6 +947,22 @@ class Schedulelqt(Base):
     lqt2_allowrun = Column(Unicode(32), nullable=True)
 
 
+class Tags(Base):
+    """趋势图tag点表"""
+
+    __tablename__ = "tags"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    # tag点编号
+    TagCode = Column(Unicode(100), nullable=True)
+    # tag点名称
+    TagName = Column(Unicode(100), nullable=True)
+    # 上级tag点
+    ChildrenTag = Column(Unicode(100), nullable=True)
+    # 父节点
+    ParentTag = Column(Unicode(100), nullable=True)
+
+
 class CollectionPoint(Base):
     __tablename__ = "CollectionPoint"
 

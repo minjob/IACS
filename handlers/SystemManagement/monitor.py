@@ -10,8 +10,9 @@ from opcua import ua, Client
 from dbset.database import constant
 from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.database.db_operate import db_session
+from models.core import AreaMaintain
 from models.schedul_model import TagMaintain
-from models.system import Schedulelqt
+from models.system import Schedulelqt, Tags
 from tools.common import logger, insertSyslog
 
 opc = Blueprint('opc', __name__)
@@ -330,7 +331,7 @@ class ScheduleCTRLWORD(object):
         elif len(slow) == 7:
             slow = '0' + slow
 
-        shigh = '0000000'
+        shigh = '000000'
 
         if AFault == 1:
             shigh = '1' + shigh
@@ -593,7 +594,7 @@ def energy_trends():
                     start_time = item + " " + Begin
                     end_time = item + " " + End
                     sql = "select `SampleTime` as time, " + "`" + request.values.get('TagCode') + "`" + "as value from " \
-                                                                                                        "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
+                          "datahistory where SampleTime between " + "'" + start_time + "'" + " and " + "'" + end_time + "'"
                     results = db_session.execute(sql).fetchall()
                     list1 = []
                     for result in results[::30]:
@@ -612,142 +613,40 @@ def energy_trends():
 
 @opc.route('/tags', methods=['GET'])
 def tags():
-    data = [{"label": "桃园地铁站", "children": [
-        {
-            "label": "LS1机组",
-            "children": [{
-                "label": "LD1冷冻泵",
-                "children": [{"id": "SCADA.AI.E119LD__LD1AIFR", "label": "LD1频率运行反馈", "ParentTagCode": "1"}]
-            },
-                {
-                    "label": "LQ1冷却泵",
-                    "children": [{"id": "SCADA.AI.E119LQ__LQ1AIFR", "label": "LQ1频率运行反馈", "ParentTagCode": "1"}]
-                },
-                {
-                    "label": "LS1",
-                    "children": [
-                        {"id": "SCADA.AI.E119LS__LS1AI08", "label": "冷水机组1冷凝器出水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS1AI09", "label": "冷水机组1冷凝器回水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS1AI02", "label": "冷水机组1冷水主机吸气压力", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS1AI01", "label": "冷水机组1出水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS1AI07", "label": "冷水机组1蒸发器回水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TD1AITM", "label": "A端LS1冷冻水出水温度(TD1)", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TD2AITM", "label": "A端LS1冷冻水回水温度(TD2)", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TQ1AITM", "label": "A端LS1冷却水出水温度(TQ1)", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TQ2AITM", "label": "A端LS1冷却水回水温度(TQ2)", "ParentTagCode": "1"},
-                    ]
-                }]
-        },
-        {
-            "label": "LS2机组",
-            "children": [{
-                "label": "LD2冷冻泵",
-                "children": [{"id": "SCADA.AI.E119LD__LD2AIFR", "label": "LD2频率运行反馈", "ParentTagCode": "1"}]
-            },
-                {
-                    "label": "LQ2冷却泵",
-                    "children": [{"id": "SCADA.AI.E119LQ__LQ2AIFR", "label": "LQ2频率运行反馈", "ParentTagCode": "1"}]
-                },
-                {
-                    "label": "LS2",
-                    "children": [
-                        {"id": "SCADA.AI.E119LS__LS2AI01", "label": "出水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS2AI07", "label": "蒸发器回水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS2AI08", "label": "冷凝器出水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS2AI09", "label": "冷凝器回水温度", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119LS__LS2AI02", "label": "冷水主机吸气压力", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TD3AITM", "label": "A端LS2冷冻水出水温度(TD3)", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TD4AITM", "label": "A端LS2冷冻水回水温度(TD4)", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TQ3AITM", "label": "A端LS2冷却水出水温度(TQ3)", "ParentTagCode": "1"},
-                        {"id": "SCADA.AI.E119T___TQ4AITM", "label": "A端LS2冷却水回水温度(TQ4)", "ParentTagCode": "1"}
-                    ]
-                }]
-        },
-        {
-            "label": "室外温度",
-            "children": [{
-                "id": "SCADA.AI.E119HTS_HF1AIWD",
-                "label": "新风室温度",
-                "ParentTagCode": "1"
-            },
-                {
-                    "id": "SCADA.AI.E119HTS_HF1AISD",
-                    "label": "新风室湿度",
-                    "ParentTagCode": "1"
-                }]
-        },
-        {
-            "label": "站厅",
-            "children": [{
-                "id": "B_CO2_AVG",
-                "label": "站厅CO2平均值",
-                "ParentTagCode": "5"
-            },
-                {
-                    "id": "ZT02_TEMP_AVG",
-                    "label": "站厅温度平均值",
-                    "ParentTagCode": "5"
-                },
-                {
-                    "id": "ZT02_SD_AVG",
-                    "label": "站厅湿度平均值",
-                    "ParentTagCode": "5"
-                },
-            ]
-        },
-        {
-            "label": "站台",
-            "children": [{
-                "id": "A_CO2_AVG",
-                "label": "站台CO2平均值",
-                "ParentTagCode": "1"
-            },
-                {
-                    "id": "ZT01_TEMP_AVG",
-                    "label": "站台温度平均值",
-                    "ParentTagCode": "1"
-                },
-                {
-                    "id": "ZT01_SD_AVG",
-                    "label": "站台湿度平均值",
-                    "ParentTagCode": "1"
-                },
-            ]
-        },
-        {
-            "label": "能耗",
-            "children": [{
-                "id": "MB2TCP3.A_ACR_12.Ep_total_q",
-                "label": "LS1机组电表",
-                "ParentTagCode": "1"
-            },
-                {
-                    "id": "MB2TCP3.A_ACR_20.Ep_total_q",
-                    "label": "LS2机组电表",
-                    "ParentTagCode": "1"
-                },
-                {
-                    "id": "NH_CONSUM",
-                    "label": "能耗指数",
-                    "ParentTagCode": "1"
-                }
-            ]
-        },
-        {
-            "label": "空调",
-            "children": [{
-                "label": "KT1空调",
-                "children": [{"id": "SCADA.AI.E119KT__KT1AIFR", "label": "KT1空调频率运行反馈", "ParentTagCode": "1"},
-                             {"id": "  SCADA.AI.E119SDF_SDF1AIOC", "label": "SDF1阀门开度反馈", "ParentTagCode": "1"}
-                             ]
-            },
-                {
-                    "label": "KT2空调",
-                    "children": [{"id": "SCADA.AI.E119KT__KT2AIFR", "label": "KT2空调频率运行反馈", "ParentTagCode": "1"},
-                                 {"id": "SCADA.AI.E119SDF_SDF2AIOC", "label": "SDF2阀门开度反馈", "ParentTagCode": "1"}]
-                }]
-        }
-             ]
-    }]
+    """树形tag点"""
+    factory = db_session.query(AreaMaintain).first()
+    sql = "select ChildrenTag from tags"
+    parent_tags = db_session.execute(sql).fetchall()
+    tags_list = set(str(item[0]) for item in parent_tags)
+    children = []
+    for item in tags_list:
+        # 通过一级节点获取所有对应节点下的值
+        children2 = []
+        children1 = {"label": item, "children": children2}
+        query_data = db_session.query(Tags).filter_by(ChildrenTag=item).all()
+        parent_tag2 = set(item.ParentTag for item in query_data)
+        for result in parent_tag2:
+            # children4 = []
+            # 通过一级节点获取所有对应的二级节点
+            if result:
+                # 二级节点不为空
+                children3 = []
+                rank2_data = {"label": result, "children": children3}
+                # children4.append(rank2_data)
+                last_data = db_session.query(Tags).filter_by(ParentTag=result).all()
+                parent_tag_sql = 'select '
+                for data in last_data:
+                    # 循环获取最后节点的数据
 
-    return json.dumps({'code': '20001', 'message': '成功', 'data': data}, ensure_ascii=False)
+                    rank3_data = {"id": data.TagCode, "label": data.TagName, "ParentTagCode": "1"}
+                    children3.append(rank3_data)
+
+                children2.append(rank2_data)
+                # rank3 = {"label": result.ParentTag, "children": [{"id": result.TagCode, "label": result.TagName}]}
+            else:
+                for data in query_data:
+                    rank2_data = {"id": data.TagCode, "label": data.TagName, "ParentTagCode": "1"}
+                    children2.append(rank2_data)
+        children.append(children1)
+    tree = [{"label": factory.AreaName, "children": children}]
+    return json.dumps(tree, cls=AlchemyEncoder, ensure_ascii=False)
