@@ -75,7 +75,7 @@ pywin32==228
 pywin32-ctypes==0.2.0
 PyYAML==5.2
 redis==3.3.8
-requests==2.8.1
+requests==2.20.0
 servicemanager==1.8.1
 six==1.12.0
 soaplib==1.0.0
