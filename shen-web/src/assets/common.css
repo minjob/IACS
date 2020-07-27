@@ -459,3 +459,7 @@
 .ivu-picker-confirm .ivu-btn-primary{
   display: none;
 }
+.el-checkbox.is-bordered+.el-checkbox.is-bordered {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
