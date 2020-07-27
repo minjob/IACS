@@ -287,6 +287,9 @@
 .marginBottom{
   margin-bottom: 15px;
 }
+.marginBottomS{
+  margin-bottom: 10px;
+}
 /* 文本位置 */
 .vertical-align-middle{
   vertical-align: middle;
