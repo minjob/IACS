@@ -108,7 +108,7 @@
                       </el-select>
                     </el-form-item>
                     <el-button type="primary" @click='Searchdata'>数据查询</el-button>
-                    <el-button type="success">excel导出</el-button>
+                    <el-button type="success" @click='Excelout'>excel导出</el-button>
                    </el-form>
                    </div>
                     </el-form-item>
@@ -212,9 +212,9 @@
         comparetime:'00:00:04',
         time1:'12:00:00',
         time2:'13:00:00',
-        valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
-        valuedatetime2:moment().format('YYYY-MM-DD HH:mm:ss'),
-        valuedatetime3:moment().format('YYYY-MM-DD'),
+        valuedatetime1:'2020-06-20 12:00:00',
+        valuedatetime2:'2020-06-20 13:00:00',
+        valuedatetime3:'2020-06-20',
         starttime:'2020-06-20 12:00:00',
         endtime:'2020-06-20 13:00:00',
         childrentree:[],
@@ -240,11 +240,11 @@
           column:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
             {prop:"CollectionDate",label:"日期",type:"input",value:""},
-            {prop:"StationHallTemperature",label:"站厅温度",type:"input",value:"",showField:false,searchProp:false},
+            {prop:"StationHallTemperature",label:"站厅温度",type:"input",value:""},
             {prop:"PlatformTemperature",label:"站台温度",type:"input",value:""},
             {prop:"StationHallHumidity",label:"站厅湿度",type:"input",value:""},
-            {prop:"PlatformHumidity ",label:" 站台湿度",type:"input",value:""},
-            {prop:"CarbonDioxideConten",label:"二氧化碳含量",type:"input",value:""},
+            {prop:"PlatformHumidity",label:" 站台湿度",type:"input",value:""},
+            {prop:"CarbonDioxideContent",label:"二氧化碳含量",type:"input",value:""},
             {prop:"ConsumptionLfirst",label:"L1冷水机组耗量",type:"input",value:""},
             {prop:"ConsumptionLsecond",label:"L2冷水机组耗量",type:"input",value:""},
             {prop:"ConsumptionLtotal",label:"冷水机组总耗量",type:"input",value:""}
@@ -268,7 +268,7 @@
     mounted(){
         this.getAsidemenu()
         this.Initdesktop()
-        this.asD()
+        this.Searchdata()
     },
     watch:{
 
@@ -278,18 +278,27 @@
 
     },
     methods: {
+      Excelout(){ //excel导出
+      if(this.dateclass==='day'){
+        var startTime=moment(this.valuedatetime3).format('YYYY-MM-DD 00:00:00')
+        var endTime=moment(this.valuedatetime3).format('YYYY-MM-DD 23:59:59')
+      }else{
+         var startTime=moment(this.valuedatetime3).format('YYYY-MM-01 00:00:00')
+         var endTime=moment(this.valuedatetime3).format('YYYY-MM-31 23:59:59')
+      }
+      window.location.href = "/api/exceloutdatasummaryanalysis?StartTime="+startTime+"&EndTime="+endTime
+      },
       Searchdata(){ //数据查询按钮
+        this.valuedatetime3=moment(this.valuedatetime3).format('YYYY-MM-DD')
         var params={
-          CollectDay:'2020-O6-20',
-          CollectClass :'day'
+          CollectDay:this.valuedatetime3,
+          CollectClass :this.dateclass,
+          limit:this.TableData.limit,
+          offset:this.TableData.offset - 1
         }
-        var params1={
-          tableName: 'DataSummaryAnalysis',
-          limit:1000000,
-          offset:0
-        }
-       this.axios.get('/api/insertdb_datasummaryanalysis',{params:params}).then((value) => {
-         console.log(value)
+       this.axios.get('/api/insertdb_datasummaryanalysis',{params:params}).then((res) => {
+          this.TableData.data = res.data.rows
+          this.TableData.total = res.data.total
        })
       },
       saveTeamGroup(){
@@ -816,15 +825,6 @@
               });
               this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
                 })
-      },
-      asD(){
-        var params={
-          StartTime:"2020-06-20",
-          EndTime:"2020-06-21"
-        }
-        this.axios.get('/api/exceloutdatasummaryanalysis',{params:params}).then((value) => {
-          console.log(value)
-        })
       }
     }
   }
