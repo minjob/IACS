@@ -106,6 +106,7 @@
         this.initLoadding = true
         // this.websock = new WebSocket('ws://' + location.host + '/socket');
         this.websock = new WebSocket('ws://127.0.0.1:5002/socket');
+        // this.websock = new WebSocket('ws://192.168.100.254:5002/socket');
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
         this.websock.onerror = this.websocketonerror;
