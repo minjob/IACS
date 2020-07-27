@@ -280,18 +280,16 @@
     methods: {
       Searchdata(){ //数据查询按钮
         var params={
-          CollectDay:'2020-O6-20'
+          CollectDay:'2020-O6-20',
+          CollectClass :'day'
         }
-       this.axios.get('/api//insertdb_datasummaryanalysis',{params:params}).then((value) => {
-         console.log(value)
-          var params1={
+        var params1={
           tableName: 'DataSummaryAnalysis',
           limit:1000000,
           offset:0
         }
-        this.axios.get('/api/CUID',{params:params1}).then((value) => {
-          console.log(value)
-        })
+       this.axios.get('/api/insertdb_datasummaryanalysis',{params:params}).then((value) => {
+         console.log(value)
        })
       },
       saveTeamGroup(){
