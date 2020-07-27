@@ -116,13 +116,7 @@
                   </div>
                     <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
               </el-col>
-              <download-excel
-                    class="export-excel-wrapper"
-                    :data="json_data"
-                    :fields="json_fields"
-                    name="趋势图查询.xls">
-                    <el-button type="primary" size="small">导出EXCEL</el-button>
-              </download-excel>
+             
           </el-row>
       </el-col>
   </el-row>
@@ -214,7 +208,7 @@
         time2:'12:00:00',
         valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
         valuedatetime2:moment().format('YYYY-MM-DD 12:00:00'),
-        valuedatetime3:'2020-06-20',
+        valuedatetime3:moment().subtract(1, "days").format("YYYY-MM-DD"),
         starttime:moment().format('YYYY-MM-DD 00:00:00'),
         endtime:moment().format('YYYY-MM-DD 12:00:00'),
         childrentree:[],
@@ -302,31 +296,30 @@
        })
       },
       saveTeamGroup(){
-        this.exo=[]
-        this.json_data=[]
-       alert(this.checkedtag)
-       for(var i=0;i<this.dateset.length;i++){
-         for(var j=0;j<this.checkedtag.length;j++){
-           if(this.dateset[i]===this.checkedtag[j]){
-            this.exo.push(this.allvalue[i])
-           }
-         }
-       }
-      for(var i=0;i<this.exo.length;i++){
-            var obj=this.exo[i].map((res) => {
-             return {
-                time1: res.time1,
-                value1: res.value1,
-                time2: res.time2,
-                value2: res.value2
-        }
-            })
-      this.json_data=obj
-      }
-      this.json_fields={"趋势线一时刻": "time1","数值": "value1","趋势线二时刻": "time2", "数值": "value2"}
-      this.json_meta= [[{" key ": " charset "," value ": " utf- 8 "}]],
+      //   this.exo=[]
+      //   this.json_data=[]
+      //  for(var i=0;i<this.dateset.length;i++){
+      //    for(var j=0;j<this.checkedtag.length;j++){
+      //      if(this.dateset[i]===this.checkedtag[j]){
+      //       this.exo.push(this.allvalue[i])
+      //      }
+      //    }
+      //  }
+      // for(var i=0;i<this.exo.length;i++){
+      //       var obj=this.exo[i].map((res) => {
+      //        return {
+      //           time1: res.time1,
+      //           value1: res.value1,
+      //           time2: res.time2,
+      //           value2: res.value2
+      //   }
+      //       })
+      // this.json_data=this.json_data.concat(obj)
+      // }
+      // this.json_fields={"趋势线一时刻": "time1","数值1": "value1","趋势线二时刻": "time2", "数值2": "value2"}
+      //   this.json_meta= [[{" key ": " charset "," value ": " utf- 8 "}]],
         this.isout=false
-        this.checkedtag=[]
+      //   this.checkedtag=[]
       },
       OutExcel(){
         this.isout=true
