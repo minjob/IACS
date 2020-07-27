@@ -15,7 +15,7 @@ import calendar
 import datetime
 
 logger = MESLogger('../logs', 'log')
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, desc
 from io import BytesIO
 
 metadata = MetaData()
@@ -243,8 +243,8 @@ def insertdb_datasummaryanalysis():
                 if datetime.datetime.strptime(i, '%Y-%m-%d') <= (datetime.datetime.now() - datetime.timedelta(days=1)):
                     dasoc = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate == i).first()
                     if not dasoc:
-                        daysta = CollectDay + " 00:00:00"
-                        dayend = CollectDay + " 23:59:59"
+                        daysta = i + " 00:00:00"
+                        dayend = i + " 23:59:59"
                         dsa = DataSummaryAnalysis()
                         sql = "SELECT  SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS ConsumptionLfirst,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS ConsumptionLsecond FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
                               + daysta + "' AND '" + dayend + "'"
@@ -252,8 +252,8 @@ def insertdb_datasummaryanalysis():
                         ConsumptionLfirst = 0
                         ConsumptionLsecond = 0
                         for oc in re:
-                            ConsumptionLfirst = 0 if oc["ConsumptionLfirst"] == None or oc["ConsumptionLfirst"] == "" else int(oc["ConsumptionLfirst"])
-                            ConsumptionLsecond = 0 if oc["ConsumptionLsecond"] == None or oc["ConsumptionLsecond"] == "" else int(oc["ConsumptionLsecond"])
+                            ConsumptionLfirst = 0 if oc["ConsumptionLfirst"] == None or oc["ConsumptionLfirst"] == "" else round(int(oc["ConsumptionLfirst"]),2)
+                            ConsumptionLsecond = 0 if oc["ConsumptionLsecond"] == None or oc["ConsumptionLsecond"] == "" else round(int(oc["ConsumptionLsecond"]))
                         sql = "SELECT  AVG(TY_CO2_AVG) AS CarbonDioxideContent,AVG(ZT01_TEMP_AVG) AS PlatformTemperature,AVG(ZT01_SD_AVG) AS PlatformHumidity,AVG(ZT02_TEMP_AVG) AS StationHallTemperature,AVG(ZT02_SD_AVG) AS StationHallHumidity" \
                               " FROM datahistory WHERE SampleTime BETWEEN '" + daysta + "' AND '" + dayend + "'"
                         re1 = db_session.execute(sql).fetchall()
@@ -262,13 +262,13 @@ def insertdb_datasummaryanalysis():
                         PlatformTemperature = ""
                         StationHallTemperature = ""
                         StationHallHumidity = ""
-                        for i in re1:
-                            CarbonDioxideContent = i["CarbonDioxideContent"]
-                            PlatformHumidity = i["PlatformHumidity"]
-                            PlatformTemperature = i["PlatformTemperature"]
-                            StationHallTemperature = i["StationHallTemperature"]
-                            StationHallHumidity = i["StationHallHumidity"]
-                        dsa.CollectionDate = CollectDay
+                        for j in re1:
+                            CarbonDioxideContent = 0 if j["CarbonDioxideContent"] == None else round(float(j["CarbonDioxideContent"]), 2)
+                            PlatformHumidity = 0 if j["PlatformHumidity"] == None else round(float(j["PlatformHumidity"]), 2)
+                            PlatformTemperature = 0 if j["PlatformTemperature"] == None else round(float(j["PlatformTemperature"]), 2)
+                            StationHallTemperature = 0 if j["StationHallTemperature"] == None else round(float(j["StationHallTemperature"]), 2)
+                            StationHallHumidity = 0 if j["StationHallHumidity"] == None else round(float(j["StationHallHumidity"]), 2)
+                        dsa.CollectionDate = i
                         dsa.CarbonDioxideContent = CarbonDioxideContent
                         dsa.ConsumptionLfirst = ConsumptionLfirst
                         dsa.ConsumptionLsecond = ConsumptionLsecond
@@ -287,7 +287,7 @@ def insertdb_datasummaryanalysis():
             endpage = pages * rowsnumber + rowsnumber  # 截止页
             if CollectClass == "month":
                 ocalss = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate.between(CollectDay[0:7],
-                             CollectDay[0:8]+str(calendar.monthrange(int(CollectDay[0:4]), int(CollectDay[5:7]))[1]))).all()[inipage:endpage]
+                             CollectDay[0:8]+str(calendar.monthrange(int(CollectDay[0:4]), int(CollectDay[5:7]))[1]))).order_by(desc("ID")).all()[inipage:endpage]
                 total = db_session.query(DataSummaryAnalysis).filter(
                     DataSummaryAnalysis.CollectionDate.between(CollectDay[0:7],
                                                                CollectDay[0:8] + str(
@@ -295,7 +295,7 @@ def insertdb_datasummaryanalysis():
                                                                                        int(CollectDay[5:7]))[1]))).count()
             elif CollectClass == "day":
                 ocalss = db_session.query(DataSummaryAnalysis).filter(
-                    DataSummaryAnalysis.CollectionDate == CollectDay).all()[inipage:endpage]
+                    DataSummaryAnalysis.CollectionDate == CollectDay).order_by(desc("ID")).all()[inipage:endpage]
                 total = db_session.query(DataSummaryAnalysis).filter(
                     DataSummaryAnalysis.CollectionDate == CollectDay).count()
             jsonocalss = json.dumps(ocalss, cls=AlchemyEncoder, ensure_ascii=False)
