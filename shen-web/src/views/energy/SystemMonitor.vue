@@ -177,18 +177,42 @@
         </el-row>
         <el-col :span="24" style="background: #34383E;overflow: hidden;position: relative;" v-if="TabControl.TabControlCurrent === '冷水系统'">
           <div class="MainContain BorderRadius4 coolingSysMonbg" style="width: 1500px;" @mousedown="move" data-move >
-            <el-popover placement="bottom" title="冷却塔1" width="200" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="bottom" title="冷却塔1" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LQT1','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQT1','STOP')">关闭</el-button>
               <div slot="reference" class="lqt" style="top: 75px;left: 165px;"></div>
             </el-popover>
-            <el-popover placement="bottom" title="冷却塔2" width="200" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="bottom" title="冷却塔2" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LQT2','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQT2','STOP')">关闭</el-button>
               <div slot="reference" class="lqt" style="top: 75px;left: 355px;"></div>
             </el-popover>
-            <el-button style="position: absolute;top: 535px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" v-has="['系统监控操作控制']" @click="faultReset('LS1')">故障复位</el-button>
-            <el-popover placement="right" title="冷水机组1" width="300" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="right" title="冷水机组1" width="400" trigger="click">
+              <el-divider content-position="left">设备状态</el-divider>
+              <el-row>
+                <el-col :span="12">
+                  <p class="marginBottomS">出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI01'] }}</span> °C</p>
+                  <p class="marginBottomS">吸气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI02'] }}</span> Kpa</p>
+                  <p class="marginBottomS">排气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI03'] }}</span> Kpa</p>
+                  <p class="marginBottomS">目标容器百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI10'] }}</span> %</p>
+                </el-col>
+                <el-col :span="12">
+                  <p class="marginBottomS">蒸发器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI07'] }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI08'] }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI09'] }}</span> °C</p>
+                </el-col>
+                <el-col :span="24">
+                  <p class="marginBottomS">一号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI05'] }}</span> A</p>
+                  <p class="marginBottomS">二号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI06'] }}</span> A</p>
+                  <p class="marginBottomS">一号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI11'] }}</span> %</p>
+                  <p class="marginBottomS">二号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI12'] }}</span> %</p>
+                </el-col>
+              </el-row>
+              <el-divider content-position="left">设备控制</el-divider>
+              <el-button type="warning" icon="el-icon-refresh-left" size="small" v-has="['系统监控操作控制']" @click="faultReset('LS1')">故障复位</el-button>
+              <el-button slot="reference" style="position:absolute;top: 535px;left: 65px;" size="small">机组信息</el-button>
+            </el-popover>
+            <el-popover placement="right" title="冷水机组1" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LS1','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LS1','STOP')">关闭</el-button>
               <div slot="reference" class="jz" style="top: 425px;left: 55px;"></div>
@@ -201,13 +225,38 @@
               <span v-if="LS2Bit[LS2Bit.length-1] === '1'">运行中</span>
               <span v-if="LS2Bit[LS2Bit.length-1] === '0'"><span class="color-offwhite">停机</span></span>
             </div>
-            <el-button style="position: absolute;top: 735px;left: 60px;" type="warning" icon="el-icon-refresh-left" size="small" v-has="['系统监控操作控制']" @click="faultReset('LS2')">故障复位</el-button>
-            <el-popover placement="right" title="冷水机组2" width="300" trigger="click" v-has="['系统监控操作控制']">
+
+            <el-popover placement="right" title="冷水机组2" width="400" trigger="click">
+              <el-divider content-position="left">设备状态</el-divider>
+              <el-row>
+                <el-col :span="12">
+                  <p class="marginBottomS">出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI01'] }}</span> °C</p>
+                  <p class="marginBottomS">吸气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI02'] }}</span> Kpa</p>
+                  <p class="marginBottomS">排气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI03'] }}</span> Kpa</p>
+                  <p class="marginBottomS">目标容器百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI10'] }}</span> %</p>
+                </el-col>
+                <el-col :span="12">
+                  <p class="marginBottomS">蒸发器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI07'] }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI08'] }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI09'] }}</span> °C</p>
+                </el-col>
+                <el-col :span="24">
+                  <p class="marginBottomS">一号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI05'] }}</span> A</p>
+                  <p class="marginBottomS">二号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI06'] }}</span> A</p>
+                  <p class="marginBottomS">一号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI11'] }}</span> %</p>
+                  <p class="marginBottomS">二号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI12'] }}</span> %</p>
+                </el-col>
+              </el-row>
+              <el-divider content-position="left">设备控制</el-divider>
+              <el-button type="warning" icon="el-icon-refresh-left" size="small" v-has="['系统监控操作控制']" @click="faultReset('LS2')">故障复位</el-button>
+              <el-button slot="reference" style="position:absolute;top: 735px;left: 65px;" size="small">机组信息</el-button>
+            </el-popover>
+            <el-popover placement="right" title="冷水机组2" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-button type="success" icon="el-icon-success" size="small" @click="runControl('LS2','RUN')">开启</el-button>
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LS2','STOP')">关闭</el-button>
               <div slot="reference" class="jz" style="top: 625px;left: 55px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷却泵1" width="225" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="right" title="冷却泵1" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLQ1" size="mini" style="width: 58px;"></el-input>
@@ -218,7 +267,7 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQ1','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 305px;left: 450px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷却泵2" width="225" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="right" title="冷却泵2" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLQ2" size="mini" style="width: 58px;"></el-input>
@@ -229,7 +278,7 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LQ2','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 395px;left: 450px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷冻泵1" width="225" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="right" title="冷冻泵1" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLD1" size="mini" style="width: 58px;"></el-input>
@@ -240,7 +289,7 @@
               <el-button type="info" icon="el-icon-error" size="small" @click="runControl('LD1','STOP')">关闭</el-button>
               <div slot="reference" class="lqb" style="top: 715px;left: 470px;"></div>
             </el-popover>
-            <el-popover placement="right" title="冷冻泵2" width="225" trigger="click" v-has="['系统监控操作控制']">
+            <el-popover placement="right" title="冷冻泵2" width="240" trigger="click" v-has="['系统监控操作控制']">
               <el-form :inline="true" :model="formParameters">
                 <el-form-item label="频率(HZ)">
                   <el-input v-model="formParameters.HZLD2" size="mini" style="width: 58px;"></el-input>
