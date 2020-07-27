@@ -210,13 +210,13 @@
         averagevalue5:0,
         dataIndex:0,
         comparetime:'00:00:04',
-        time1:'12:00:00',
-        time2:'13:00:00',
-        valuedatetime1:'2020-06-20 12:00:00',
-        valuedatetime2:'2020-06-20 13:00:00',
+        time1:'00:00:00',
+        time2:'12:00:00',
+        valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
+        valuedatetime2:moment().format('YYYY-MM-DD 12:00:00'),
         valuedatetime3:'2020-06-20',
-        starttime:'2020-06-20 12:00:00',
-        endtime:'2020-06-20 13:00:00',
+        starttime:moment().format('YYYY-MM-DD 00:00:00'),
+        endtime:moment().format('YYYY-MM-DD 12:00:00'),
         childrentree:[],
         TagCodes:"",
         TagCode:'',
@@ -224,7 +224,7 @@
         TagChecked:[],
         dateset:[],
         allday:'',//获取单个tag点日期字符串,
-        currentdate:'2020-06-20',
+        currentdate:moment().format('YYYY-MM-DD'),
         tag1Max:0,
         tag1Min:0,
         tag2Max:0,
@@ -324,14 +324,7 @@
       this.json_data=obj
       }
       this.json_fields={"趋势线一时刻": "time1","数值": "value1","趋势线二时刻": "time2", "数值": "value2"}
-      this.json_meta= [
-        [
-          {
-            " key ": " charset ",
-            " value ": " utf- 8 "
-          }
-        ]
-      ],
+      this.json_meta= [[{" key ": " charset "," value ": " utf- 8 "}]],
         this.isout=false
         this.checkedtag=[]
       },
