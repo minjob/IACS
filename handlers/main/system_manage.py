@@ -232,6 +232,7 @@ def insertdb_datasummaryanalysis():
             CollectClass = data.get("CollectClass")
 
             #数据写入----------------------------------------------------------
+            db_session.commit()
             collectdays_list = []
             if CollectClass == "day":
                 collectdays_list.append(CollectDay)
