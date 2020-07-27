@@ -15,11 +15,8 @@ import store from './store'
 import $ from 'jquery'
 import './icons'
 
-//iview 的按需引入
-import 'view-design/dist/styles/iview.css'
-import { DatePicker,TimePicker} from 'view-design';
-Vue.component('DatePicker', DatePicker);
-Vue.component('TimePicker', TimePicker);
+import JsonExcel from 'vue-json-excel';
+Vue.component('downloadExcel',JsonExcel);
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios

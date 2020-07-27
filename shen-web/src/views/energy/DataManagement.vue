@@ -23,7 +23,7 @@
                         v-model="valuedatetime1"
                         type="datetime"
                         placeholder="选择日期时间"
-                        default-time="12:00:00">
+                        default-time="valuedatetime1">
                       </el-date-picker>
                   </el-form-item>
                   <el-form-item label="结束时间">
@@ -31,13 +31,24 @@
                         v-model="valuedatetime2"
                         type="datetime"
                         placeholder="选择日期时间"
-                        default-time="13:00:00">
+                        default-time="valuedatetime2">
                       </el-date-picker>
                   </el-form-item>
                    </el-form>
                   <el-button type="primary" @click="StartMake">趋势查询</el-button>
-                  <el-button type="success">数据导出</el-button>
+                  <el-button type="success" @click="OutExcel">数据导出</el-button>
               </div>
+              <el-dialog title="选择导出的趋势线" :visible.sync="isout" width="50%">
+                  <div>
+                    <el-checkbox-group v-model="checkedtag">
+                      <el-checkbox v-for="(item,index) in dateset" :label="item" :key="index" border size="small"></el-checkbox>
+                    </el-checkbox-group>
+                  </div>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="isout = false">取 消</el-button>
+                    <el-button type="primary" @click="saveTeamGroup">确定导出</el-button>
+                  </span>
+              </el-dialog>
               <div class="platformContainer blackComponents mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
                    <div class="staticbox" style="width:100%; height:295px;overflow:auto;">
@@ -78,17 +89,40 @@
           </el-row>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '数据汇总分析'">
               <el-col :span=24 >
-                   <div class="blackComponents">
-                     <el-form ref="ruleForm">
-                        <el-form-item>
-                              <el-time-picker is-range v-model="value2"   class="selecttime" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"  @change="getVal2" placeholder="选择时间范围"></el-time-picker>
-                              <el-button type="primary">数据导入</el-button>
-                              <el-button type="success">excel导出</el-button>
-                        </el-form-item>
-                     </el-form>
+                  <div class="blackComponents">
+                  <el-form ref="ruleForm">
+                      <el-form-item>
+                          <div class="Timepick blackComponents" style="height:43px;marginBottom:0px;">
+                      <el-form>
+                      <el-form-item label="开始时间">
+                        <el-date-picker
+                          v-model="valuedatetime3"
+                          type="date"
+                          placeholder="选择日期">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="类型选择">
+                      <el-select v-model="dateclass" placeholder="请选择日期类型">
+                        <el-option label="日" value="day"></el-option>
+                        <el-option label="月" value="month"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-button type="primary" @click='Searchdata'>数据查询</el-button>
+                    <el-button type="success">excel导出</el-button>
+                   </el-form>
                    </div>
+                    </el-form-item>
+                  </el-form>
+                  </div>
                     <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
               </el-col>
+              <download-excel
+                    class="export-excel-wrapper"
+                    :data="json_data"
+                    :fields="json_fields"
+                    name="趋势图查询.xls">
+                    <el-button type="primary" size="small">导出EXCEL</el-button>
+              </download-excel>
           </el-row>
       </el-col>
   </el-row>
@@ -105,6 +139,13 @@
     components:{TabControl,tableView},
     data(){
       return {
+        checkedtag:[],
+        json_fields:{},
+        json_data:[],
+        json_meta:[],
+        exo:[],
+        allvalue:[],
+        dateclass:'day',
         TabControl:{
           TabControlCurrent:"",
           TabControlOptions:[
@@ -117,7 +158,8 @@
             name: 'Tag1',
             comparetime:'00:00:04',
             max: 0,
-            min:0
+            min:0,
+
           },{
             averag: 0,
             comparetime:'00:00:04',
@@ -148,6 +190,8 @@
           children: 'children',
           label: 'label'
         },
+        isout:false,
+        value2:'',
         dates:[],
         myChart:null,
         dataline1:[],
@@ -168,8 +212,9 @@
         comparetime:'00:00:04',
         time1:'12:00:00',
         time2:'13:00:00',
-        valuedatetime1:'2020-06-20 12:00:00',
-        valuedatetime2:'2020-06-20 13:00:00',
+        valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
+        valuedatetime2:moment().format('YYYY-MM-DD HH:mm:ss'),
+        valuedatetime3:moment().format('YYYY-MM-DD'),
         starttime:'2020-06-20 12:00:00',
         endtime:'2020-06-20 13:00:00',
         childrentree:[],
@@ -208,20 +253,12 @@
           limit:5,
           offset:1,
           total:0,
-          
           multipleSelection:[],
           tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:false, //是否需要单选
-          // searchProp:"",
-          // searchVal:"",  //控制搜索框
           dialogVisible: false,
           dialogTitle:'',
           handleType:[
-            // {type:"primary",label:"添加"},
-            // {type:"primary",label:"修改"},
-            // {type:"primary",label:"删除"},//操作
-            // {type:"primary",label:"数据导入",clickEvent:"takeOrder"}, //对应的按钮事件
-            // {type:"success",label:"excel导出",clickEvent:"maintainOK"},
           ],
           rowClick:"handleEQRowClick",
           rowClickData:{},
@@ -241,8 +278,56 @@
 
     },
     methods: {
-      getVal2(){
-        console.log(this.value2)
+      Searchdata(){ //数据查询按钮
+        var params={
+          CollectDay:'2020-O6-20',
+          CollectClass :'day'
+        }
+        var params1={
+          tableName: 'DataSummaryAnalysis',
+          limit:1000000,
+          offset:0
+        }
+       this.axios.get('/api/insertdb_datasummaryanalysis',{params:params}).then((value) => {
+         console.log(value)
+       })
+      },
+      saveTeamGroup(){
+        this.exo=[]
+        this.json_data=[]
+       alert(this.checkedtag)
+       for(var i=0;i<this.dateset.length;i++){
+         for(var j=0;j<this.checkedtag.length;j++){
+           if(this.dateset[i]===this.checkedtag[j]){
+            this.exo.push(this.allvalue[i])
+           }
+         }
+       }
+      for(var i=0;i<this.exo.length;i++){
+            var obj=this.exo[i].map((res) => {
+             return {
+                time1: res.time1,
+                value1: res.value1,
+                time2: res.time2,
+                value2: res.value2
+        }
+            })
+      this.json_data=obj
+      }
+      this.json_fields={"趋势线一时刻": "time1","数值": "value1","趋势线二时刻": "time2", "数值": "value2"}
+      this.json_meta= [
+        [
+          {
+            " key ": " charset ",
+            " value ": " utf- 8 "
+          }
+        ]
+      ],
+        this.isout=false
+        this.checkedtag=[]
+      },
+      OutExcel(){
+        this.isout=true
       },
       takeOrder(){
         console.log(this.TableData.multipleSelection)
@@ -588,9 +673,11 @@
             end:this.endtime,
             TagFlag:'first'
           }
+            this.allvalue=[]
             this.loading=true
             this.axios.get('/api/energy_trend',{params:params1}).then((res) => {
               var rows=res.data.data
+              this.allvalue=rows
               this.dates = rows[0].map(function (item) {
                 return item.time1.slice(11, 19)
               })
@@ -634,8 +721,10 @@
             end_time:this.time2
           }
           this.loading=true
+          this.allvalue=[]
           this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
               var rows=res.data.data
+              this.allvalue=rows
               this.dates= rows[0].map(function (item) {
                       return item.time1.slice(11, 19)
               })
@@ -715,6 +804,7 @@
           this.dateset=['站厅湿度平均值','站厅温度平均值']
           this.axios.get('/api/energy_trend',{params:params}).then((res) => {
               var rows=res.data.data
+              this.allvalue=rows
               this.dates= rows[0].map(function (item) {
                 return item.time1.slice(11, 19)
               })
@@ -728,13 +818,13 @@
                 })
       },
       asD(){
-        // var params={
-        //   StartTime:"2020-06-20",
-        //   EndTime:"2020-06-21"
-        // }
-        // this.axios.get('/api/exceloutdatasummaryanalysis',{params:params}).then((value) => {
-        //   console.log(value)
-        // })
+        var params={
+          StartTime:"2020-06-20",
+          EndTime:"2020-06-21"
+        }
+        this.axios.get('/api/exceloutdatasummaryanalysis',{params:params}).then((value) => {
+          console.log(value)
+        })
       }
     }
   }
