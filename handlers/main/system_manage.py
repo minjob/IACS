@@ -11,6 +11,8 @@ import json
 from tools.common import engine
 from dbset.database.db_operate import DB_URL,db_session
 import arrow
+import calendar
+import datetime
 
 logger = MESLogger('../logs', 'log')
 from sqlalchemy import MetaData
@@ -227,51 +229,77 @@ def insertdb_datasummaryanalysis():
         data = request.values
         try:
             CollectDay = data.get("CollectDay")
-            dasoc = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate == CollectDay).first()
-            if not dasoc:
-                daysta = CollectDay + " 00:00:00"
-                dayend = CollectDay + " 23:59:59"
-                dsa = DataSummaryAnalysis()
-                sql = "SELECT  SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS ConsumptionLfirst,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS ConsumptionLsecond FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
-                      + daysta + "' AND '" + dayend + "'"
-                re = db_session.execute(sql).fetchall()
-                ConsumptionLfirst = 0
-                ConsumptionLsecond = 0
-                for oc in re:
-                    ConsumptionLfirst = 0 if oc["ConsumptionLfirst"] == None or oc["ConsumptionLfirst"] == "" else int(oc["ConsumptionLfirst"])
-                    ConsumptionLsecond = 0 if oc["ConsumptionLsecond"] == None or oc["ConsumptionLsecond"] == "" else int(oc["ConsumptionLsecond"])
-                sql = "SELECT  AVG(TY_CO2_AVG) AS CarbonDioxideContent,AVG(ZT01_TEMP_AVG) AS PlatformTemperature,AVG(ZT01_SD_AVG) AS PlatformHumidity,AVG(ZT02_TEMP_AVG) AS StationHallTemperature,AVG(ZT02_SD_AVG) AS StationHallHumidity" \
-                      " FROM datahistory WHERE SampleTime BETWEEN '" + daysta + "' AND '" + dayend + "'"
-                re1 = db_session.execute(sql).fetchall()
-                CarbonDioxideContent = ""
-                PlatformHumidity = ""
-                PlatformTemperature = ""
-                StationHallTemperature = ""
-                StationHallHumidity = ""
-                for i in re1:
-                    CarbonDioxideContent = i["CarbonDioxideContent"]
-                    PlatformHumidity = i["PlatformHumidity"]
-                    PlatformTemperature = i["PlatformTemperature"]
-                    StationHallTemperature = i["StationHallTemperature"]
-                    StationHallHumidity = i["StationHallHumidity"]
-                dsa.CollectionDate = CollectDay
-                dsa.CarbonDioxideContent = CarbonDioxideContent
-                dsa.ConsumptionLfirst = ConsumptionLfirst
-                dsa.ConsumptionLsecond = ConsumptionLsecond
-                dsa.ConsumptionLtotal = ConsumptionLsecond + ConsumptionLfirst
-                dsa.PlatformHumidity = PlatformHumidity
-                dsa.PlatformTemperature = PlatformTemperature
-                dsa.StationHallTemperature = StationHallTemperature
-                dsa.StationHallHumidity = StationHallHumidity
-                db_session.add(dsa)
-                db_session.commit()
-                return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
-            else:
-                return json.dumps("已经导入过此天的数据", cls=AlchemyEncoder, ensure_ascii=False)
+            CollectClass = data.get("CollectClass")
+
+            #数据写入----------------------------------------------------------
+            collectdays_list = []
+            if CollectClass == "day":
+                collectdays_list.append(CollectDay)
+            elif CollectClass == "month":
+                for i in range(calendar.monthrange(int(CollectDay[0:4]), int(CollectDay[5:7]))[1] + 1)[1:]:
+                    collectdays_list.append(CollectDay[0:8]+("0"+str(i) if i<10 else str(i)))
+            for i in collectdays_list:
+                if datetime.datetime.strptime(i, '%Y-%m-%d') <= (datetime.datetime.now() - datetime.timedelta(days=1)):
+                    dasoc = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate == i).first()
+                    if not dasoc:
+                        daysta = CollectDay + " 00:00:00"
+                        dayend = CollectDay + " 23:59:59"
+                        dsa = DataSummaryAnalysis()
+                        sql = "SELECT  SUM(`MB2TCP3.A_ACR_12.Ep_total_q`) AS ConsumptionLfirst,SUM(`MB2TCP3.A_ACR_20.Ep_total_q`) AS ConsumptionLsecond FROM incrementelectrictable WHERE CollectionDate BETWEEN '" \
+                              + daysta + "' AND '" + dayend + "'"
+                        re = db_session.execute(sql).fetchall()
+                        ConsumptionLfirst = 0
+                        ConsumptionLsecond = 0
+                        for oc in re:
+                            ConsumptionLfirst = 0 if oc["ConsumptionLfirst"] == None or oc["ConsumptionLfirst"] == "" else int(oc["ConsumptionLfirst"])
+                            ConsumptionLsecond = 0 if oc["ConsumptionLsecond"] == None or oc["ConsumptionLsecond"] == "" else int(oc["ConsumptionLsecond"])
+                        sql = "SELECT  AVG(TY_CO2_AVG) AS CarbonDioxideContent,AVG(ZT01_TEMP_AVG) AS PlatformTemperature,AVG(ZT01_SD_AVG) AS PlatformHumidity,AVG(ZT02_TEMP_AVG) AS StationHallTemperature,AVG(ZT02_SD_AVG) AS StationHallHumidity" \
+                              " FROM datahistory WHERE SampleTime BETWEEN '" + daysta + "' AND '" + dayend + "'"
+                        re1 = db_session.execute(sql).fetchall()
+                        CarbonDioxideContent = ""
+                        PlatformHumidity = ""
+                        PlatformTemperature = ""
+                        StationHallTemperature = ""
+                        StationHallHumidity = ""
+                        for i in re1:
+                            CarbonDioxideContent = i["CarbonDioxideContent"]
+                            PlatformHumidity = i["PlatformHumidity"]
+                            PlatformTemperature = i["PlatformTemperature"]
+                            StationHallTemperature = i["StationHallTemperature"]
+                            StationHallHumidity = i["StationHallHumidity"]
+                        dsa.CollectionDate = CollectDay
+                        dsa.CarbonDioxideContent = CarbonDioxideContent
+                        dsa.ConsumptionLfirst = ConsumptionLfirst
+                        dsa.ConsumptionLsecond = ConsumptionLsecond
+                        dsa.ConsumptionLtotal = ConsumptionLsecond + ConsumptionLfirst
+                        dsa.PlatformHumidity = PlatformHumidity
+                        dsa.PlatformTemperature = PlatformTemperature
+                        dsa.StationHallTemperature = StationHallTemperature
+                        dsa.StationHallHumidity = StationHallHumidity
+                        db_session.add(dsa)
+                        db_session.commit()
+
+            #数据查询-------------------------------------------------------------
+            if CollectClass == "month":
+                ocalss = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate.between(CollectDay[0:7],
+                             CollectDay[0:8]+str(calendar.monthrange(int(CollectDay[0:4]), int(CollectDay[5:7]))[1]))).all()
+                total = db_session.query(DataSummaryAnalysis).filter(
+                    DataSummaryAnalysis.CollectionDate.between(CollectDay[0:7],
+                                                               CollectDay[0:8] + str(
+                                                                   calendar.monthrange(int(CollectDay[0:4]),
+                                                                                       int(CollectDay[5:7]))[1]))).count()
+            elif CollectClass == "day":
+                ocalss = db_session.query(DataSummaryAnalysis).filter(
+                    DataSummaryAnalysis.CollectionDate == CollectDay).all()
+                total = db_session.query(DataSummaryAnalysis).filter(
+                    DataSummaryAnalysis.CollectionDate == CollectDay).count()
+            jsonocalss = json.dumps(ocalss, cls=AlchemyEncoder, ensure_ascii=False)
+            return '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonocalss + "}"
         except Exception as e:
+            db_session.rollback()
             print(e)
             logger.error(e)
-            insertSyslog("error", "数据汇总分析数据写入报错Error：" + str(e), current_user.Name)
+            insertSyslog("error", "数据汇总分析数据写入查询报错Error：" + str(e), current_user.Name)
 
 
 
