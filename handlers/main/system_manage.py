@@ -280,9 +280,13 @@ def insertdb_datasummaryanalysis():
                         db_session.commit()
 
             #数据查询-------------------------------------------------------------
+            pages = int(data.get("offset"))  # 页数
+            rowsnumber = int(data.get("limit"))  # 行数
+            inipage = pages * rowsnumber + 0  # 起始页
+            endpage = pages * rowsnumber + rowsnumber  # 截止页
             if CollectClass == "month":
                 ocalss = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate.between(CollectDay[0:7],
-                             CollectDay[0:8]+str(calendar.monthrange(int(CollectDay[0:4]), int(CollectDay[5:7]))[1]))).all()
+                             CollectDay[0:8]+str(calendar.monthrange(int(CollectDay[0:4]), int(CollectDay[5:7]))[1]))).all()[inipage:endpage]
                 total = db_session.query(DataSummaryAnalysis).filter(
                     DataSummaryAnalysis.CollectionDate.between(CollectDay[0:7],
                                                                CollectDay[0:8] + str(
@@ -290,7 +294,7 @@ def insertdb_datasummaryanalysis():
                                                                                        int(CollectDay[5:7]))[1]))).count()
             elif CollectClass == "day":
                 ocalss = db_session.query(DataSummaryAnalysis).filter(
-                    DataSummaryAnalysis.CollectionDate == CollectDay).all()
+                    DataSummaryAnalysis.CollectionDate == CollectDay).all()[inipage:endpage]
                 total = db_session.query(DataSummaryAnalysis).filter(
                     DataSummaryAnalysis.CollectionDate == CollectDay).count()
             jsonocalss = json.dumps(ocalss, cls=AlchemyEncoder, ensure_ascii=False)
