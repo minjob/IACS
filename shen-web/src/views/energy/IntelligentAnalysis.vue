@@ -6,7 +6,7 @@
         <el-col :span="24">
           <el-form :inline="true" class="blackComponents">
             <el-form-item label="选择时间：">
-              <el-date-picker type="date" v-model="formParameters.energyDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getEnergyAnalysisCharts(),getEnergyData()"></el-date-picker>
+              <el-date-picker type="date" v-model="formParameters.energyDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 140px;" :clearable="false" @change="getEnergyAnalysisCharts(),getEnergyData()"></el-date-picker>
             </el-form-item>
           </el-form>
           <div class="platformContainer">
@@ -44,7 +44,7 @@
           <div class="platformContainer">
             <el-form :inline="true" class="blackComponents">
               <el-form-item label="选择时间：">
-                <el-date-picker type="date" v-model="formParameters.EquipmentRunDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getEquipmentEfficiencyData"></el-date-picker>
+                <el-date-picker type="date" v-model="formParameters.EquipmentRunDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 140px;" :clearable="false" @change="getEquipmentEfficiencyData"></el-date-picker>
               </el-form-item>
             </el-form>
             <el-row :gutter="15">
@@ -106,7 +106,7 @@
               </el-col>
               <el-col :span="24" class="marginTop">
                 <div class="platformContainer">
-                  <ve-histogram :data="chartRunEfficiencyData" :extend="RunEfficiencyExtend" height="400px"></ve-histogram>
+                  <ve-histogram :data="chartRunEfficiencyData" :extend="RunEfficiencyExtend" :settings="RunEfficiencySettings" height="400px"></ve-histogram>
                 </div>
               </el-col>
             </el-row>
@@ -117,7 +117,7 @@
         <el-col :span="24">
           <el-form :inline="true" class="blackComponents">
             <el-form-item label="选择时间：">
-              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getmakecoolanalysis(),getmakecoolanalysisData()"></el-date-picker>
+              <el-date-picker type="date" v-model="formParameters.refrigerationDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 140px;" :clearable="false" @change="getmakecoolanalysis(),getmakecoolanalysisData()"></el-date-picker>
             </el-form-item>
           </el-form>
           <div class="platformContainer">
@@ -259,6 +259,10 @@
         TreeEquipmentCode:"",
         EquipmentFaultObj:{},
         //设备效率分析图表
+        RunEfficiencySettings:{
+          axisSite: { right: ['时间占比'] },
+          yAxisName: ['数值', '时间占比']
+        },
         RunEfficiencyExtend: {
           title:{
             text:"设备效率统计",
@@ -512,7 +516,6 @@
         this.axios.get("/api/makecoolanalysis",{
           params: params
         }).then(res =>{
-          console.log(res.data)
           that.chartRefrigerationData.rows = res.data.lineChartRows
           that.chartRefrigerationStatisticsData.rows = res.data.histogramChartRows
         },res =>{

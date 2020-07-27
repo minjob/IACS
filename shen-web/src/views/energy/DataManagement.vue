@@ -4,26 +4,25 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="platformContainer blackComponents asidetree" style="height:1115px;">
+                <div class="platformContainer blackComponents asidetree" style="height:1134px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
                       node-key="id"
                       ref="tree"
-                      :default-expanded-keys="[0,2, 3,4]"
+                      default-expand-all
                       :props="defaultProps">
                     </el-tree>
                 </div>
               </el-col>
               <el-col :span="18">
-                 <div class="Timepick blackComponents" style="height:42px;">
+                 <div class="Timepick blackComponents" style="height:43px;">
                    <el-form>
                    <el-form-item label="开始时间">
                       <el-date-picker
                         v-model="valuedatetime1"
                         type="datetime"
                         placeholder="选择日期时间"
-                        @change="changestart"
                         default-time="12:00:00">
                       </el-date-picker>
                   </el-form-item>
@@ -31,17 +30,17 @@
                        <el-date-picker
                         v-model="valuedatetime2"
                         type="datetime"
-                        @change="changeend"
                         placeholder="选择日期时间"
                         default-time="13:00:00">
                       </el-date-picker>
                   </el-form-item>
                    </el-form>
-                  <el-button type="primary" @click="StartMake">开始渲染</el-button>
+                  <el-button type="primary" @click="StartMake">趋势查询</el-button>
+                  <el-button type="success">数据导出</el-button>
               </div>
               <div class="platformContainer blackComponents mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
-                   <div class="staticbox" style="width:100%; height:295px;">
+                   <div class="staticbox" style="width:100%; height:295px;overflow:auto;">
                      <div class="platformContainer blackComponents">
                         <el-table
                             :data="tableData"
@@ -170,11 +169,11 @@
         time1:'12:00:00',
         time2:'13:00:00',
         valuedatetime1:'2020-06-20 12:00:00',
-        valuedatetime2:'2020-06-22 13:00:00',
+        valuedatetime2:'2020-06-20 13:00:00',
         starttime:'2020-06-20 12:00:00',
         endtime:'2020-06-20 13:00:00',
         childrentree:[],
-        TagCodes:"TY_CO2_AVG,B_CO2_AVG",
+        TagCodes:"",
         TagCode:'',
         treenumber:[],
         TagChecked:[],
@@ -325,7 +324,7 @@
                 },
                 axisLine: {
                     lineStyle: {
-                        color: '#4E6EC1',
+                        color: '#8392A5',
                     },
                 },
               }],
@@ -342,7 +341,6 @@
                 color: 'green'
               }
           },
-         
           series: [
               {
                   name: dateset[0],
@@ -480,8 +478,8 @@
          yAxis: [{
                 type: 'value',
                 name: params.name,
-                min: 10,
-                max: 2000,
+                min: this.tag1Min,
+                max: this.tag1Max,
                 position: 'left',
                 axisLabel: {
                     formatter: '{value}',
@@ -528,31 +526,28 @@
       },
       getAsidemenu(){
          this.axios.get('/api/tags').then((res) => {
-            this.treedata=[{id:0,label:'桃园地铁站',children:res.data.data}]
+            this.treedata=res.data.data
          })
       },
       StartMake(){
         this.changestart()
-        this.changeend()
         this.getChecked()
       },
       changestart(){
+        if(moment(moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')), 'seconds')>0){
+        this.$message({
+          message: '时间选取错误，开始时间大于结束时间',
+          type: 'warning'
+        });
+          return;
+        }
         this.time1=moment(this.valuedatetime1).format('HH:mm:ss')
         this.date1=moment(this.valuedatetime1).format('YYYY-MM-DD')
         this.starttime=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
-      
-      },
-      changeend(){
         this.time2=moment(this.valuedatetime2).format('HH:mm:ss')
         this.date2=moment(this.valuedatetime2).format('YYYY-MM-DD')
         this.endtime=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
-      },
-      getSelectTime(){
-        var t1=moment().format('YYYY-MM-DD ')+this.time1
-        var t2=moment().format('YYYY-MM-DD ')+this.time2
-        if(moment(t2).diff(moment(t1),'hours')<0){
-          alert('时间格式不正确，开始时间大于结束时间')
-        }
+        
       },
       getChecked(){ //选取选中的节点
         var arr=this.$refs.tree.getCheckedNodes()
@@ -579,6 +574,14 @@
             }
       },
        InitTrenddata(t){ //一天多个tag
+         if(moment(this.valuedatetime1).format('YYYY-MM-DD')!==moment(this.valuedatetime2).format('YYYY-MM-DD')){
+          this.$message({
+            showClose: true,
+            message: '渲染失败,选择了多天',
+            type: 'error'
+        });
+          return;
+        }
          var params1={
             TagCodes:t,
             begin:this.starttime,
@@ -627,49 +630,54 @@
             TagCode:tagcode,
             start_date:this.date1,
             end_date:this.date2,
-            start_tim:this.time1,
+            start_time:this.time1,
             end_time:this.time2
           }
           this.loading=true
           this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
               var rows=res.data.data
-              console.log(rows)
-              // this.dates= rows[0].map(function (item) {
-              //         return item.time1.slice(11, 19)
-              // })
-              // this.dataline1 = rows[0].map(function (item) {
-              //     return +item.value1;
-              //   });
-              // if(rows[1]){
-              //     this.dataline2 = rows[1].map(function (item) {
-              //       return +item.value2;
-              //   });
-              //   }else{
-              //    this.dataline2=[]
-              //  }
-              // if(rows[2]){
-              //    this.dataline3 = rows[2].map(function (item) {
-              //     return +item.value3;
-              //  });
-              //  }else{
-              //    this.dataline3=[]
-              //  }
-              // if(rows[3]){
-              //   this.dataline4 = rows[3].map(function (item) {
-              //     return +item.value4;
-              //  });
-              // }else{
-              //    this.dataline4=[]
-              //  }
-              // if(rows[4]){
-              //   this.dataline5 = rows[4].map(function (item) {
-              //     return +item.value5;
-              //  });     
-              // }else{
-              //    this.dataline5=[]
-              //  }
-              // this.loading=false
-              // this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              this.dates= rows[0].map(function (item) {
+                      return item.time1.slice(11, 19)
+              })
+               if(moment(this.valuedatetime1).format('YYYY-MM-DD')==moment(this.valuedatetime2).format('YYYY-MM-DD')){
+                  this.dateset=[]
+                  this.dateset.push(moment(this.valuedatetime1).format('YYYY-MM-DD'))
+              }else{
+                  this.dateset=res.data.date
+              }
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
+                });
+              if(rows[1]){
+                  this.dataline2 = rows[1].map(function (item) {
+                    return +item.value2;
+                });
+                }else{
+                 this.dataline2=[]
+               }
+              if(rows[2]){
+                 this.dataline3 = rows[2].map(function (item) {
+                  return +item.value3;
+               });
+               }else{
+                 this.dataline3=[]
+               }
+              if(rows[3]){
+                this.dataline4 = rows[3].map(function (item) {
+                  return +item.value4;
+               });
+              }else{
+                 this.dataline4=[]
+               }
+              if(rows[4]){
+                this.dataline5 = rows[4].map(function (item) {
+                  return +item.value5;
+               });     
+              }else{
+                 this.dataline5=[]
+               }
+              this.loading=false
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
           })
       },
       InitTable(){
@@ -753,10 +761,10 @@
   padding-left:0px;
 }
 .Timepick{
-    width: 100%;
-    padding-bottom: 10px;
-    border-radius: 4px 4px 0px 0px;
-    background-color: #3D4048;
+  width: 100%;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  background-color: #3D4048;
 }
 .asidetree{
   overflow: auto;
@@ -765,6 +773,6 @@
   border-radius: 4px;
 }
 .mainechart{
-  border-radius: 0px;
+  border-radius: 4px;
 }
 </style>

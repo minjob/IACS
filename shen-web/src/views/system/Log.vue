@@ -7,7 +7,7 @@
       <div class="platformContainer blackComponents">
         <el-form :inline="true" :model="formParameters">
           <el-form-item label="选择查询时间">
-            <el-date-picker type="date" v-model="formParameters.searchDate" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="searchLogDate"></el-date-picker>
+            <el-date-picker type="date" v-model="formParameters.searchDate" size="mini" format="yyyy-MM-dd" style="width: 140px;" :clearable="false" @change="searchLogDate"></el-date-picker>
           </el-form-item>
         </el-form>
         <tableView class="blackComponents" :tableData="TableData" @getTableData="searchLogDate"></tableView>
