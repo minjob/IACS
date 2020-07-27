@@ -143,7 +143,7 @@
         this.camera = new Three.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 )
         this.camera.position.z = 1000
         this.scene = new Three.Scene()
-        this.scene.fog = new Three.FogExp2( 0xffffff, 0.0008 );
+        this.scene.background = new Three.Color( 0x1B1E27 );
 
         var numParticles = this.AMOUNTX * this.AMOUNTY;
 				var positions = new Float32Array( numParticles * 3 );
@@ -165,7 +165,7 @@
 				geometry.setAttribute( 'scale', new Three.BufferAttribute( scales, 1 ) );
 				var material = new Three.ShaderMaterial( {
 					uniforms: {
-						color: { value: new Three.Color( 0x097bdb ) },
+						color: { value: new Three.Color( 0x228AD5 ) },
 					},
 					vertexShader: document.getElementById( 'vertexshader' ).textContent,
 					fragmentShader: document.getElementById( 'fragmentshader' ).textContent
@@ -198,8 +198,8 @@
 				this.renderer.setSize( window.innerWidth, window.innerHeight );
       },
       onDocumentMouseMove( event ){
-        this.mouseX = event.clientX - this.windowHalfX;
-				this.mouseY = event.clientY - this.windowHalfY;
+        this.mouseX = event.clientX - this.windowHalfX - 200;
+				this.mouseY = event.clientY - this.windowHalfY - 200;
       },
       onDocumentTouchStart( event ){
         if ( event.touches.length === 1 ) {
