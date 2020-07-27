@@ -280,11 +280,11 @@
     methods: {
       Excelout(){ //excel导出
       if(this.dateclass==='day'){
-        var startTime=moment(this.valuedatetime3).format('YYYY-MM-DD 00:00:00')
-        var endTime=moment(this.valuedatetime3).format('YYYY-MM-DD 23:59:59')
+        var startTime=moment(this.valuedatetime3).format('YYYY-MM-DD')
+        var endTime=moment(this.valuedatetime3).format('YYYY-MM-DD')
       }else{
-         var startTime=moment(this.valuedatetime3).format('YYYY-MM-01 00:00:00')
-         var endTime=moment(this.valuedatetime3).format('YYYY-MM-31 23:59:59')
+         var startTime=moment(this.valuedatetime3).format('YYYY-MM-01')
+         var endTime=moment(this.valuedatetime3).format('YYYY-MM-31')
       }
       window.location.href = "/api/exceloutdatasummaryanalysis?StartTime="+startTime+"&EndTime="+endTime
       },
