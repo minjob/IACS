@@ -19,7 +19,8 @@ import time
 import gc
 import datetime
 
-pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD) #, password=constant.REDIS_PASSWORD
+# pool = redis.ConnectionPool(host=constant.REDIS_HOST) #, password=constant.REDIS_PASSWORD,decode_responses=True
+pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 redis_conn = redis.Redis(connection_pool=pool)
 
 clients = dict()  # 客户端Session字典
@@ -48,11 +49,11 @@ class SendThread(threading.Thread):
         while True:
 
             try:
-                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tags_list")))
+                # oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "tags_list")))
+                oclass = redis_conn.hgetall(constant.REDIS_TABLENAME)
                 oc_dict_i_tag = {}
                 for oc in oclass:
-                    oc_dict_i_tag[oc] = returnb(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc))
+                    oc_dict_i_tag[returnb(oc)] = returnb(oclass.get(oc))
                 json_data = json.dumps(oc_dict_i_tag)
                 bytemsg = bytes(json_data,encoding="utf-8")
                 for key in clients.keys():
@@ -129,7 +130,7 @@ def strtofloat(f):
         print(e)
 def returnb(rod):
     if rod == None or rod == "" or rod == b'':
-        return ""
+        return rod
     else:
         return rod.decode()
 
@@ -137,11 +138,6 @@ def returnb(rod):
 if __name__ == "__main__":
     # tornado.options.parse_command_line()
     # 将所有的tag写入redis
-    Tags = db_session.query(TagMaintain).filter().all()
-    tags_list = []
-    for tag in Tags:
-        tags_list.append(tag.TagCode)
-    redis_conn.hset(constant.REDIS_TABLENAME, "tags_list", str(tags_list))
     app = tornado.web.Application([
         (r"/", IndexHandler),
         (r"/socket", ChatHandler),

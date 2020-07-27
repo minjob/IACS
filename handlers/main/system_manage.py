@@ -190,6 +190,7 @@ def exportxdatasummaryanalysis(StartTime, EndTime):
     oclass = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate.between(StartTime, EndTime)).all()
     i = 0
     for oc in oclass:
+        print(oc.CollectionDate)
         for cum in columns:
             if cum == '日期':
                 worksheet.write(i + 1, columns.index(cum), oc.CollectionDate)
@@ -239,7 +240,7 @@ def insertdb_datasummaryanalysis():
                 for oc in re:
                     ConsumptionLfirst = 0 if oc["ConsumptionLfirst"] == None or oc["ConsumptionLfirst"] == "" else int(oc["ConsumptionLfirst"])
                     ConsumptionLsecond = 0 if oc["ConsumptionLsecond"] == None or oc["ConsumptionLsecond"] == "" else int(oc["ConsumptionLsecond"])
-                sql = "SELECT  TY_CO2_AVG AS CarbonDioxideContent,ZT01_TEMP_AVG AS PlatformTemperature,ZT01_SD_AVG AS PlatformHumidity,ZT02_TEMP_AVG AS StationHallTemperature,ZT02_SD_AVG AS StationHallHumidity" \
+                sql = "SELECT  AVG(TY_CO2_AVG) AS CarbonDioxideContent,AVG(ZT01_TEMP_AVG) AS PlatformTemperature,AVG(ZT01_SD_AVG) AS PlatformHumidity,AVG(ZT02_TEMP_AVG) AS StationHallTemperature,AVG(ZT02_SD_AVG) AS StationHallHumidity" \
                       " FROM datahistory WHERE SampleTime BETWEEN '" + daysta + "' AND '" + dayend + "'"
                 re1 = db_session.execute(sql).fetchall()
                 CarbonDioxideContent = ""
