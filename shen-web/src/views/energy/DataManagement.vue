@@ -49,6 +49,21 @@
                     <el-button type="primary" @click="saveTeamGroup">确定导出</el-button>
                   </span>
               </el-dialog>
+              <el-dialog title="请点击下载生成的excel表格" :visible.sync="isload" width="50%">
+                  <div>
+                    <download-excel
+                      class="export-excel-wrapper"
+                      :data="json_data"
+                      :fields="json_fields"
+                      name="趋势图查询汇总表格.xls">
+                    <el-button type="primary" size="small">下载生成的EXCEL</el-button>
+                    </download-excel>
+                  </div>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="isload = false">取 消</el-button>
+                    <el-button type="primary" @click="LoadExcel">完成</el-button>
+                  </span>
+              </el-dialog>
               <div class="platformContainer blackComponents mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
                    <div class="staticbox" style="width:100%; height:295px;overflow:auto;">
@@ -116,7 +131,6 @@
                   </div>
                     <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
               </el-col>
-             
           </el-row>
       </el-col>
   </el-row>
@@ -138,8 +152,11 @@
         json_data:[],
         json_meta:[],
         exo:[],
+        yvaluemax:0,
+        yvaluemin:0,
         allvalue:[],
         dateclass:'day',
+        isload:false,
         TabControl:{
           TabControlCurrent:"",
           TabControlOptions:[
@@ -206,11 +223,11 @@
         comparetime:'00:00:04',
         time1:'00:00:00',
         time2:'12:00:00',
-        valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
-        valuedatetime2:moment().format('YYYY-MM-DD 12:00:00'),
+        valuedatetime1:'2020-06-20 00:00:00',
+        valuedatetime2:'2020-06-20 12:00:00',
         valuedatetime3:moment().subtract(1, "days").format("YYYY-MM-DD"),
-        starttime:moment().format('YYYY-MM-DD 00:00:00'),
-        endtime:moment().format('YYYY-MM-DD 12:00:00'),
+        starttime:'2020-06-20 00:00:00',
+        endtime:'2020-06-20 12:00:00',
         childrentree:[],
         TagCodes:"",
         TagCode:'',
@@ -244,7 +261,7 @@
             {prop:"ConsumptionLtotal",label:"冷水机组总耗量",type:"input",value:""}
           ],
           data:[],
-          limit:5,
+          limit:40,
           offset:1,
           total:0,
           multipleSelection:[],
@@ -264,14 +281,10 @@
         this.Initdesktop()
         this.Searchdata()
     },
-    watch:{
-
-    },
-    computed:{ //计算属性
-
-
-    },
     methods: {
+      LoadExcel(){
+        this.isload=false
+      },
       Excelout(){ //excel导出
       if(this.dateclass==='day'){
         var startTime=moment(this.valuedatetime3).format('YYYY-MM-DD')
@@ -296,30 +309,37 @@
        })
       },
       saveTeamGroup(){
-      //   this.exo=[]
-      //   this.json_data=[]
-      //  for(var i=0;i<this.dateset.length;i++){
-      //    for(var j=0;j<this.checkedtag.length;j++){
-      //      if(this.dateset[i]===this.checkedtag[j]){
-      //       this.exo.push(this.allvalue[i])
-      //      }
-      //    }
-      //  }
-      // for(var i=0;i<this.exo.length;i++){
-      //       var obj=this.exo[i].map((res) => {
-      //        return {
-      //           time1: res.time1,
-      //           value1: res.value1,
-      //           time2: res.time2,
-      //           value2: res.value2
-      //   }
-      //       })
-      // this.json_data=this.json_data.concat(obj)
-      // }
-      // this.json_fields={"趋势线一时刻": "time1","数值1": "value1","趋势线二时刻": "time2", "数值2": "value2"}
-      //   this.json_meta= [[{" key ": " charset "," value ": " utf- 8 "}]],
+        this.exo=[]
+        this.json_data=[]
+       for(var i=0;i<this.dateset.length;i++){
+         for(var j=0;j<this.checkedtag.length;j++){
+           if(this.dateset[i]===this.checkedtag[j]){
+            this.exo.push(this.allvalue[i])
+           }
+         }
+       }
+      for(var i=0;i<this.exo.length;i++){
+            var obj=this.exo[i].map((res) => {
+             return {
+                time1: res.time1,
+                value1: res.value1,
+                time2: res.time2,
+                value2: res.value2,
+                time3: res.time3,
+                value3: res.value3,
+                time4: res.time4,
+                value4: res.value4,
+                time5: res.time5,
+                value5: res.value5,
+        }
+            })
+      this.json_data=this.json_data.concat(obj)
+      }
+      this.json_fields={"趋势线一时刻": "time1","数值1": "value1","趋势线二时刻": "time2", "数值2": "value2","趋势线三时刻": "time3", "数值3": "value3","趋势线四时刻": "time4", "数值4": "value4","趋势线五时刻": "time5", "数值5": "value5"}
+        this.json_meta= [[{" key ": " charset "," value ": " utf- 8 "}]],
         this.isout=false
-      //   this.checkedtag=[]
+        this.isload=true
+        this.checkedtag=[]
       },
       OutExcel(){
         this.isout=true
@@ -344,7 +364,7 @@
           console.log("请求错误")
         })
       },
-      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dateset){
+      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dateset,yvaluemax,yvaluemin){
         if(this.myChart){
           this.myChart.dispose()
         }
@@ -396,8 +416,8 @@
               yAxis: [{
                 type: 'value',
                 name: dateset[0],
-                min: 10,
-                max: 2500,
+                min: yvaluemin,
+                max: yvaluemax,
                 position: 'left',
                 axisLabel: {
                     formatter: '{value}',
@@ -679,6 +699,8 @@
               this.dataline1 = rows[0].map(function (item) {
                   return +item.value1;
                });
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
               this.dataline2 = rows[1].map(function (item) {
                   return +item.value2;
                });
@@ -704,7 +726,7 @@
                  this.dataline5=[]
                }
               this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
                 })
       },
       SingleTag(tagcode){ // 获取一个tag多天的数据
@@ -732,6 +754,8 @@
               this.dataline1 = rows[0].map(function (item) {
                   return +item.value1;
                 });
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
               if(rows[1]){
                   this.dataline2 = rows[1].map(function (item) {
                     return +item.value2;
@@ -761,7 +785,7 @@
                  this.dataline5=[]
                }
               this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
           })
       },
       InitTable(){
@@ -806,10 +830,12 @@
               this.dataline1 = rows[0].map(function (item) {
                   return +item.value1;
                });
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
               this.dataline2 = rows[1].map(function (item) {
                   return +item.value2;
               });
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
                 })
       }
     }
