@@ -5,8 +5,16 @@
       <el-row :gutter="15" v-if="TabControl.TabControlCurrent === '设备台账'">
         <el-col :span="24" v-if="!showRepairsForm && !showMaintainForm && !showKeepPlanForm">
           <div class="platformContainer">
-            <tableView class="blackComponents" :tableData="TableData" @getTableData="getEQTable" @repairs="repairs" @handleEQRowClick="handleEQRowClick" @drawUpKeepPlan="drawUpKeepPlan"></tableView>
+            <tableView class="blackComponents" :tableData="TableData" @getTableData="getEQTable" @repairs="repairs" @handleEQRowClick="handleEQRowClick" @drawUpKeepPlan="drawUpKeepPlan" @seeKeepPlan="seeKeepPlan"></tableView>
           </div>
+          <el-dialog :title="TableData.rowClickData.EquipmentCode + '保养计划'" :visible.sync="keepPlandialogVisible" width="70%">
+            <el-table :data="KeepPlanTableData.data" border>
+              <el-table-column v-for="(item,index) in KeepPlanTableData.column" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="keepPlandialogVisible = false">取 消</el-button>
+            </span>
+          </el-dialog>
           <el-form :inline="true" class="marginBottom">
             <el-radio-group v-model="showLogTypeValue" size="mini" :border="false">
               <el-radio-button v-for="item in showLogType" :key="item.label" :label="item.label"></el-radio-button>
@@ -223,7 +231,7 @@
           handleType:[
             {type:"warning",label:"快速报修",clickEvent:"repairs",hasPermissions:['设备报修']},
             {type:"primary",label:"制定保养计划",clickEvent:"drawUpKeepPlan",hasPermissions:['设备制定保养计划']},
-            {type:"primary",label:"查看保养计划",clickEvent:""},
+            {type:"primary",label:"查看保养计划",clickEvent:"seeKeepPlan"},
           ],
           rowClick:"handleEQRowClick",
           rowClickData:{},
@@ -327,7 +335,21 @@
           offset:1,
           total:0,
           multipleSelection:[],
-        }
+        },
+        KeepPlanTableData:{ //保养计划表参数
+          column:[
+            {prop:"No",label:"工单号"},
+            {prop:"EquipmentCode",label:"设备编码"},
+            {prop:"Worker",label:"制定计划人"},
+            {prop:"ApplyTime",label:"制定计划时间"},
+            {prop:"StartTime",label:"任务开始时间"},
+            {prop:"WorkTime",label:"工作截止时间"},
+            {prop:"Describe",label:"计划描述"},
+            {prop:"WeekTime",label:"工作周期"},
+          ],
+          data:[],
+        },
+        keepPlandialogVisible:false,
       }
     },
     created(){
@@ -504,6 +526,24 @@
         },res =>{
           console.log("请求错误")
         })
+      },
+      seeKeepPlan(){  //查看设备保养计划
+        if(this.TableData.multipleSelection.length === 1){
+          this.KeepPlanTableData.data = []
+          this.keepPlandialogVisible = true
+          this.axios.get("/api/get_keep_plan/"+this.TableData.multipleSelection[0].EquipmentCode).then(res =>{
+            if(res.data.code === "10001"){
+              this.KeepPlanTableData.data = res.data.data
+            }
+          },res =>{
+            console.log("请求错误")
+          })
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择一项设备查看保养计划'
+          });
+        }
       },
       getRepairTable(){ //获取维修任务表
         var that = this
@@ -692,7 +732,7 @@
           });
         }
       },
-      getKeepLogTable(){ //获取保养记录表
+      getKeepLogTable(){ //点击保养记录表
 
       },
       handleKeepLogSelectionChange(val){ //选中保养记录
