@@ -255,7 +255,8 @@ def insertdb_datasummaryanalysis():
                             ConsumptionLfirst = 0 if oc["ConsumptionLfirst"] == None or oc["ConsumptionLfirst"] == "" else round(int(oc["ConsumptionLfirst"]),2)
                             ConsumptionLsecond = 0 if oc["ConsumptionLsecond"] == None or oc["ConsumptionLsecond"] == "" else round(int(oc["ConsumptionLsecond"]))
                         sql = "SELECT  AVG(TY_CO2_AVG) AS CarbonDioxideContent,AVG(ZT01_TEMP_AVG) AS PlatformTemperature,AVG(ZT01_SD_AVG) AS PlatformHumidity,AVG(ZT02_TEMP_AVG) AS StationHallTemperature,AVG(ZT02_SD_AVG) AS StationHallHumidity" \
-                              " FROM datahistory WHERE SampleTime BETWEEN '" + daysta + "' AND '" + dayend + "'"
+                              " FROM datahistory WHERE TY_CO2_AVG != 'None' AND TY_CO2_AVG != 'init' AND ZT01_TEMP_AVG != 'None' AND ZT01_TEMP_AVG != 'init' AND ZT01_SD_AVG != 'None' " \
+                              "AND ZT01_SD_AVG != 'init' AND ZT02_TEMP_AVG != 'None' AND ZT02_TEMP_AVG != 'init' AND ZT02_SD_AVG != 'None' AND ZT02_SD_AVG != 'init' AND SampleTime BETWEEN '" + daysta + "' AND '" + dayend + "'"
                         re1 = db_session.execute(sql).fetchall()
                         CarbonDioxideContent = ""
                         PlatformHumidity = ""

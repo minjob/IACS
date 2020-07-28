@@ -340,9 +340,9 @@ def selectrundetailbyequipmentcode():
             else:
                 pow = ""
             dict_run = {}
-            dict_run["runcount"] = len(run)
-            dict_run["stopcount"] = len(stop)
-            dict_run["faultcount"] = len(fault)
+            dict_run["runcount"] = 0 if len(run) == 0 else run[0].StatusChangeCount
+            dict_run["stopcount"] = 0 if len(stop) == 0 else stop[0].StatusChangeCount
+            dict_run["faultcount"] = 0 if len(fault) == 0 else fault[0].StatusChangeCount
             dict_run["power"] = pow
             runtime = 0
             for r in run:
