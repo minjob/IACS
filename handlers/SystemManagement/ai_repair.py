@@ -59,6 +59,10 @@ def get_no(no):
 
 @repair.route('/repair', methods=['GET', 'POST'])
 def repairs():
+    """
+    添加设备维修任务
+    :return:
+    """
     if request.method == 'GET':
         data = db_session.query(Repair).all()
         return json.dumps({'code': '10001', 'message': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
@@ -203,6 +207,11 @@ def keep_tasks():
 
 @repair.route('/keep_record/<p>', methods=['GET'])
 def keep_record(p):
+    """
+    查看保养记录
+    :param p: 设备号
+    :return: 该设备的所有保养记录记录
+    """
     try:
         # 当前页码
         page = int(request.values.get('offset'))
@@ -228,3 +237,17 @@ def keep_record(p):
         insertSyslog("error", "保养记录查询错误：" + str(e), current_user.Name)
         return json.dumps({'code': '20002', 'message': str(e)}, cls=AlchemyEncoder, ensure_ascii=False)
 
+
+@repair.route('/get_keep_plan/<p>', methods=['GET'])
+def get_keep_plan(p):
+    """
+    获取对应设备的保养计划
+    :param p: 设备号
+    :return: 该设备的所有记录
+    """
+    query_data = db_session.query(KeepPlan).order_by(KeepPlan.ApplyTime.desc()).all()
+    result = []
+    for data in query_data:
+        if p in data.EquipmentCode:
+            result.append(data)
+    return json.dumps({'code': '10001', 'message': '操作成功', 'data': result}, cls=AlchemyEncoder, ensure_ascii=False)
