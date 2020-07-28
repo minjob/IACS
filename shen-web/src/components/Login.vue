@@ -5,7 +5,7 @@
         <div class="login-form-box">
           <div class="login-form-title">桃园地铁站智能分析控制系统</div>
           <div class="login-form-mask"></div>
-          <div class="login-form">
+          <div class="login-form blackComponents">
             <el-form ref="ruleForm" :model="loginForm" :rules="rules" style="width: 100%;">
               <el-form-item prop="WorkNumber">
                 <el-input placeholder="请输入工号" v-model="loginForm.WorkNumber">
