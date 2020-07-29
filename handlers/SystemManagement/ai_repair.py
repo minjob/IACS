@@ -52,9 +52,9 @@ def get_time_stamp(work_time):
     # 倒数三天
     # return 0 < time_stamp - int(time.time()) < 259200
     # 倒数7天
-    # return 0 < time_stamp - int(time.time()) < 604800
+    return 0 < time_stamp - int(time.time()) < 604800
     # 倒数47天
-    return 0 < time_stamp - int(time.time()) < 604800 * 7
+    # return 0 < time_stamp - int(time.time()) < 604800 * 7
 
 
 def get_no(no):
@@ -86,6 +86,11 @@ def repairs():
 
 @repair.route('/repair_task/<p>', methods=['PATCH'])
 def repair_tasks(p):
+    """
+    更新维修任务表的状态
+    :param p: 更改工单状态
+    :return:
+    """
     if p == 'jiedan':
         json_data = request.values
         data = db_session.query(Repair).filter_by(No=json_data.get('No')).first()
