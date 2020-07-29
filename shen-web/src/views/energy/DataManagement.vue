@@ -49,21 +49,6 @@
                     <el-button type="primary" @click="saveTeamGroup">确定导出</el-button>
                   </span>
               </el-dialog>
-              <el-dialog title="请点击下载生成的excel表格" :visible.sync="isload" width="50%">
-                  <div>
-                    <download-excel
-                      class="export-excel-wrapper"
-                      :data="json_data"
-                      :fields="json_fields"
-                      name="趋势图查询汇总表格.xls">
-                    <el-button type="primary" size="small">下载生成的EXCEL</el-button>
-                    </download-excel>
-                  </div>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="isload = false">取 消</el-button>
-                    <el-button type="primary" @click="LoadExcel">完成</el-button>
-                  </span>
-              </el-dialog>
               <div class="platformContainer blackComponents mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
                    <div class="staticbox" style="width:100%; height:295px;overflow:auto;">
@@ -104,7 +89,7 @@
           </el-row>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '数据汇总分析'">
               <el-col :span=24 >
-                  <div class="blackComponents">
+                <div class="blackComponents">
                   <el-form ref="ruleForm">
                       <el-form-item>
                           <div class="Timepick blackComponents" style="height:43px;marginBottom:0px;">
@@ -129,7 +114,11 @@
                     </el-form-item>
                   </el-form>
                   </div>
-                    <tableView class="blackComponents" :tableData="TableData" @getTableData="getRepairTable" @takeOrder="takeOrder" ></tableView>
+                  <div class="blackComponents">
+                    <el-table :data="TableData.data" border>
+                      <el-table-column v-for="(item,index) in TableData.column" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
+                    </el-table>
+                  </div>
               </el-col>
           </el-row>
       </el-col>
@@ -223,11 +212,11 @@
         comparetime:'00:00:04',
         time1:'00:00:00',
         time2:'12:00:00',
-        valuedatetime1:'2020-06-20 00:00:00',
-        valuedatetime2:'2020-06-20 12:00:00',
+        valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
+        valuedatetime2:moment().format('YYYY-MM-DD 12:00:00'),
         valuedatetime3:moment().subtract(1, "days").format("YYYY-MM-DD"),
-        starttime:'2020-06-20 00:00:00',
-        endtime:'2020-06-20 12:00:00',
+        starttime:moment().format('YYYY-MM-DD 00:00:00'),
+        endtime:moment().format('YYYY-MM-DD 12:00:00'),
         childrentree:[],
         TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
         TagCode:'',
@@ -248,7 +237,6 @@
         tag5Min:0,
         makefirst:true,
         TableData:{
-          tableName:"DataSummaryAnalysis",
           column:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true,showField:false,searchProp:false},
             {prop:"CollectionDate",label:"日期",type:"input",value:""},
@@ -264,16 +252,6 @@
           data:[],
           limit:40,
           offset:1,
-          total:0,
-          multipleSelection:[],
-          tableSelection:true, //是否在第一列添加复选框
-          tableSelectionRadio:false, //是否需要单选
-          dialogVisible: false,
-          dialogTitle:'',
-          handleType:[
-          ],
-          rowClick:"handleEQRowClick",
-          rowClickData:{},
         },
       }
     },
@@ -306,45 +284,9 @@
         }
        this.axios.get('/api/insertdb_datasummaryanalysis',{params:params}).then((res) => {
           this.TableData.data = res.data.rows
-          this.TableData.total = res.data.total
        })
       },
       saveTeamGroup(){
-        this.exo=[]
-        this.json_data=[]
-       for(var i=0;i<this.dateset.length;i++){
-         for(var j=0;j<this.checkedtag.length;j++){
-           if(this.dateset[i]===this.checkedtag[j]){
-            this.exo.push(this.allvalue[i])
-           }
-         }
-       }
-      for(var i=0;i<this.exo.length;i++){
-            var obj=this.exo[i].map((res) => {
-             return {
-                time1: res.time1,
-                value1: res.value1,
-                time2: res.time2,
-                value2: res.value2,
-                time3: res.time3,
-                value3: res.value3,
-                time4: res.time4,
-                value4: res.value4,
-                time5: res.time5,
-                value5: res.value5,
-        }
-            })
-      this.json_data=this.json_data.concat(obj)
-      }
-      this.json_fields={"趋势线一时刻": "time1","数值1": "value1","趋势线二时刻": "time2", "数值2": "value2","趋势线三时刻": "time3", "数值3": "value3","趋势线四时刻": "time4", "数值4": "value4","趋势线五时刻": "time5", "数值5": "value5"}
-        this.json_meta= [[{" key ": " charset "," value ": " utf- 8 "}]],
-        this.isout=false
-        this.isload=true
-        this.checkedtag=[]
-      },
-      OutExcel(){
-        this.isout=false
-      
         if(this.makefirst){
           var TagCodes=this.TagCodes
           var begin=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
@@ -360,6 +302,10 @@
           var end_time=moment(this.valuedatetime2).format('HH:mm:ss')
           window.location.href = "/api/excelouttrendalysis?TagCode="+TagCode+"&start_date="+start_date+"&end_date="+end_date+"&start_time="+start_time+"&end_time="+end_time
         }
+        this.isout=false
+      },
+      OutExcel(){
+        this.isout=true
       },
       takeOrder(){
         console.log(this.TableData.multipleSelection)
@@ -808,7 +754,7 @@
           })
       },
       InitTable(){
-        this.tableData= []
+        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0}]
         for(var i=0;i<this.dateset.length;i++){
           this.tableData[i].name=this.dateset[i]
         }
