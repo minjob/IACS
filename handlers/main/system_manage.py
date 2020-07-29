@@ -366,9 +366,13 @@ def exportxdatatrendanalysis(data):
                 if cum == '日期':
                     worksheet.write(i + 1, columns.index(cum), datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S'))
                 if cum == '值':
-                    oc_list = []
+                    oc_list = ""
                     for TagCode in TagCodes:
-                        oc_list.append("-" if re[i][TagCode] is None else re[i][TagCode])
+                        code = "-" if re[i][TagCode] is None else re[i][TagCode]
+                        if oc_list == "":
+                            oc_list = code
+                        else:
+                            oc_list = oc_list + "," + code
                     worksheet.write(i + 1, columns.index(cum), oc_list)
             i = i + 1
         writer.close()
