@@ -229,7 +229,7 @@
         starttime:'2020-06-20 00:00:00',
         endtime:'2020-06-20 12:00:00',
         childrentree:[],
-        TagCodes:"",
+        TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
         TagCode:'',
         treenumber:[],
         TagChecked:[],
@@ -246,6 +246,7 @@
         tag4Min:0,
         tag5Max:0,
         tag5Min:0,
+        makefirst:true,
         TableData:{
           tableName:"DataSummaryAnalysis",
           column:[
@@ -342,7 +343,23 @@
         this.checkedtag=[]
       },
       OutExcel(){
-        this.isout=true
+        this.isout=false
+      
+        if(this.makefirst){
+          var TagCodes=this.TagCodes
+          var begin=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
+          var end=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
+          var TagFlag='first'
+          window.location.href = "/api/excelouttrendalysis?TagCodes="+TagCodes+"&begin="+begin+"&end="+end+"&TagFlag="+'first'
+        }
+        else{
+          var TagCode=this.TagCode
+          var start_date=moment(this.valuedatetime1).format('YYYY-MM-DD')
+          var end_date=moment(this.valuedatetime2).format('YYYY-MM-DD')
+          var start_time=moment(this.valuedatetime1).format('HH:mm:ss')
+          var end_time=moment(this.valuedatetime2).format('HH:mm:ss')
+          window.location.href = "/api/excelouttrendalysis?TagCode="+TagCode+"&start_date="+start_date+"&end_date="+end_date+"&start_time="+start_time+"&end_time="+end_time
+        }
       },
       takeOrder(){
         console.log(this.TableData.multipleSelection)
@@ -691,6 +708,7 @@
             this.allvalue=[]
             this.loading=true
             this.axios.get('/api/energy_trend',{params:params1}).then((res) => {
+              this.makefirst=true
               var rows=res.data.data
               this.allvalue=rows
               this.dates = rows[0].map(function (item) {
@@ -740,6 +758,7 @@
           this.loading=true
           this.allvalue=[]
           this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
+              this.makefirst=false
               var rows=res.data.data
               this.allvalue=rows
               this.dates= rows[0].map(function (item) {
@@ -789,7 +808,7 @@
           })
       },
       InitTable(){
-        this.tableData= [{averag: 0,name: 'Tag1',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag2',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag3',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag4',comparetime:'00:00:04',max: 0,min:0},{averag: 0,name: 'Tag5',comparetime:'00:00:04',max: 0,min:0}]
+        this.tableData= []
         for(var i=0;i<this.dateset.length;i++){
           this.tableData[i].name=this.dateset[i]
         }
@@ -815,13 +834,14 @@
       },
       Initdesktop(){
          var params={
-            TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
+            TagCodes:this.TagCodes,
             begin:this.starttime,
             end:this.endtime,
             TagFlag:'first'
           }
           this.dateset=['站厅湿度平均值','站厅温度平均值']
           this.axios.get('/api/energy_trend',{params:params}).then((res) => {
+              this.makefirst=true
               var rows=res.data.data
               this.allvalue=rows
               this.dates= rows[0].map(function (item) {

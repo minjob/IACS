@@ -49,7 +49,12 @@ def get_time_stamp(work_time):
     """
     time_array = time.strptime(work_time, "%Y-%m-%d %H:%M:%S")
     time_stamp = int(time.mktime(time_array))
-    return 0 < time_stamp - int(time.time()) < 259200
+    # 倒数三天
+    # return 0 < time_stamp - int(time.time()) < 259200
+    # 倒数7天
+    # return 0 < time_stamp - int(time.time()) < 604800
+    # 倒数47天
+    return 0 < time_stamp - int(time.time()) < 604800 * 7
 
 
 def get_no(no):
@@ -169,9 +174,10 @@ def keep_tasks():
                                     WeekTime=item.WeekTime, Type=item.Type)
                     db_session.add(data)
                     db_session.commit()
-                if item.Type == '单次':
-                    db_session.delete(item)
-                    db_session.commit()
+                # if item.Type == '单次':
+                #     pass
+                    # db_session.delete(item)
+                    # db_session.commit()
             data = db_session.query(KeepTask).order_by(KeepTask.ApplyTime.desc()).limit(limit).offset((offset - 1) * limit)
             total = db_session.query(KeepTask).count()
             return json.dumps({'code': '10001', 'message': '操作成功', 'data': {'rows': data.all(), 'total': total}},
@@ -188,13 +194,14 @@ def keep_tasks():
             db_session.delete(item)
             db_session.commit()
             keep_plan = db_session.query(KeepPlan).filter_by(No=no).first()
-            if keep_plan:
+            if keep_plan and keep_plan.Type == '周期':
                 keep_plan.WorkTime = add_date(keep_plan.WeekTime, keep_plan.WorkTime)
                 db_session.add_all([data, keep_plan])
                 db_session.commit()
                 db_session.close()
                 return json.dumps({'code': '10001', 'message': '操作成功'}, cls=AlchemyEncoder, ensure_ascii=False)
             else:
+                db_session.delete(keep_plan)
                 db_session.add(data)
                 db_session.commit()
                 db_session.close()

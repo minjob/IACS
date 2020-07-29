@@ -191,21 +191,21 @@
               <el-divider content-position="left">设备状态</el-divider>
               <el-row>
                 <el-col :span="12">
-                  <p class="marginBottomS">出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI01'] }}</span> °C</p>
-                  <p class="marginBottomS">吸气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI02'] }}</span> Kpa</p>
-                  <p class="marginBottomS">排气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI03'] }}</span> Kpa</p>
-                  <p class="marginBottomS">目标容器百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI10'] }}</span> %</p>
+                  <p class="marginBottomS">出水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI01']) / 10 }}</span> °C</p>
+                  <p class="marginBottomS">吸气压力 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI02']) / 10 }}</span> Kpa</p>
+                  <p class="marginBottomS">排气压力 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI03']) / 10 }}</span> Kpa</p>
+                  <p class="marginBottomS">目标容器百分比 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI10']) / 10 }}</span> %</p>
                 </el-col>
                 <el-col :span="12">
-                  <p class="marginBottomS">蒸发器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI07'] }}</span> °C</p>
-                  <p class="marginBottomS">冷凝器出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI08'] }}</span> °C</p>
-                  <p class="marginBottomS">冷凝器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI09'] }}</span> °C</p>
+                  <p class="marginBottomS">蒸发器回水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI07']) / 10 }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器出水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI08']) / 10 }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器回水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI09']) / 10 }}</span> °C</p>
                 </el-col>
                 <el-col :span="24">
-                  <p class="marginBottomS">一号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI05'] }}</span> A</p>
-                  <p class="marginBottomS">二号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI06'] }}</span> A</p>
-                  <p class="marginBottomS">一号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI11'] }}</span> %</p>
-                  <p class="marginBottomS">二号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS1AI12'] }}</span> %</p>
+                  <p class="marginBottomS">一号压缩机运行电流 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI05']) / 10 }}</span> A</p>
+                  <p class="marginBottomS">二号压缩机运行电流 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI06']) / 10 }}</span> A</p>
+                  <p class="marginBottomS">一号压缩机当前容量百分比 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI11']) / 10 }}</span> %</p>
+                  <p class="marginBottomS">二号压缩机当前容量百分比 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS1AI12']) / 10 }}</span> %</p>
                 </el-col>
               </el-row>
               <el-divider content-position="left">设备控制</el-divider>
@@ -230,21 +230,21 @@
               <el-divider content-position="left">设备状态</el-divider>
               <el-row>
                 <el-col :span="12">
-                  <p class="marginBottomS">出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI01'] }}</span> °C</p>
-                  <p class="marginBottomS">吸气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI02'] }}</span> Kpa</p>
-                  <p class="marginBottomS">排气压力 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI03'] }}</span> Kpa</p>
-                  <p class="marginBottomS">目标容器百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI10'] }}</span> %</p>
+                  <p class="marginBottomS">出水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI01']) / 10 }}</span> °C</p>
+                  <p class="marginBottomS">吸气压力 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI02']) / 10 }}</span> Kpa</p>
+                  <p class="marginBottomS">排气压力 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI03']) / 10 }}</span> Kpa</p>
+                  <p class="marginBottomS">目标容器百分比 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI10']) / 10 }}</span> %</p>
                 </el-col>
                 <el-col :span="12">
-                  <p class="marginBottomS">蒸发器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI07'] }}</span> °C</p>
-                  <p class="marginBottomS">冷凝器出水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI08'] }}</span> °C</p>
-                  <p class="marginBottomS">冷凝器回水温度 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI09'] }}</span> °C</p>
+                  <p class="marginBottomS">蒸发器回水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI07']) / 10 }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器出水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI08']) / 10 }}</span> °C</p>
+                  <p class="marginBottomS">冷凝器回水温度 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI09']) / 10 }}</span> °C</p>
                 </el-col>
                 <el-col :span="24">
-                  <p class="marginBottomS">一号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI05'] }}</span> A</p>
-                  <p class="marginBottomS">二号压缩机运行电流 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI06'] }}</span> A</p>
-                  <p class="marginBottomS">一号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI11'] }}</span> %</p>
-                  <p class="marginBottomS">二号压缩机当前容量百分比 <span class="color-darkblue">{{ websockVarData['SCADA.AI.E119LS__LS2AI12'] }}</span> %</p>
+                  <p class="marginBottomS">一号压缩机运行电流 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI05']) / 10 }}</span> A</p>
+                  <p class="marginBottomS">二号压缩机运行电流 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI06']) / 10 }}</span> A</p>
+                  <p class="marginBottomS">一号压缩机当前容量百分比 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI11']) / 10 }}</span> %</p>
+                  <p class="marginBottomS">二号压缩机当前容量百分比 <span class="color-darkblue">{{ Number(websockVarData['SCADA.AI.E119LS__LS2AI12']) / 10 }}</span> %</p>
                 </el-col>
               </el-row>
               <el-divider content-position="left">设备控制</el-divider>
