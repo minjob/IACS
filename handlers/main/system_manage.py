@@ -192,7 +192,6 @@ def exportxdatasummaryanalysis(StartTime, EndTime):
     oclass = db_session.query(DataSummaryAnalysis).filter(DataSummaryAnalysis.CollectionDate.between(StartTime, EndTime)).all()
     i = 0
     for oc in oclass:
-        print(oc.CollectionDate)
         for cum in columns:
             if cum == '日期':
                 worksheet.write(i + 1, columns.index(cum), oc.CollectionDate)
@@ -367,7 +366,10 @@ def exportxdatatrendanalysis(data):
                 if cum == '日期':
                     worksheet.write(i + 1, columns.index(cum), datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S'))
                 if cum == '值':
-                    worksheet.write(i + 1, columns.index(cum), "-" if re[i][TagCode] is None else re[i][TagCode])
+                    oc_list = []
+                    for TagCode in TagCodes:
+                        oc_list.append("-" if re[i][TagCode] is None else re[i][TagCode])
+                    worksheet.write(i + 1, columns.index(cum), oc_list)
             i = i + 1
         writer.close()
         output.seek(0)
@@ -431,10 +433,10 @@ def selectTree():
     data = request.values
     if request.method == 'GET':
         try:
-            ParentCode = data.get("ParentCode")
-            tableName = data.get("tableName")
-            Name = data.get("Name")
-            Code = data.get("Code")
+            ParentCode = data.get("ParentCode")#父节点字段名
+            tableName = data.get("tableName")#表名
+            Name = data.get("Name")#展示的字段名
+            Code = data.get("Code")#展示的字段code
             id = 0
             return json.dumps(getTreeChildrenMap(id, ParentCode, tableName, Name, Code), cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
