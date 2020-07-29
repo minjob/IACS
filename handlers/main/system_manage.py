@@ -307,5 +307,100 @@ def insertdb_datasummaryanalysis():
             logger.error(e)
             insertSyslog("error", "数据汇总分析数据写入查询报错Error：" + str(e), current_user.Name)
 
+@system_set.route('/excelouttrendalysis', methods=['POST', 'GET'])
+def excelouttrendanalysis():
+    '''
+    趋势分析导出
+    :return:
+    '''
+    data = request.values
+    if request.method == 'GET':
+        output = exportxdatatrendanalysis(data)
+        resp = make_response(output.getvalue())
+        resp.headers["Content-Disposition"] = "attachment; filename=consumption.xlsx"
+        resp.headers['Content-Type'] = 'application/x-xlsx'
+        return resp
+
+def exportxdatatrendanalysis(data):
+    # 创建数据流
+    output = BytesIO()
+    # 创建excel work book
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    workbook = writer.book
+    # 创建excel sheet
+    worksheet = workbook.add_worksheet('sheet1')
+
+    cell_format = workbook.add_format({
+        'font_size': 18,
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': '#006633'})
+    worksheet.set_column('A:F', 24)
+    col = 0
+    row = 1
+    # 写入列名
+    columns = ['日期', '值']
+    for item in columns:
+        worksheet.write(0, col, item, cell_format)
+        col += 1
+    db_session.commit()
+    TagFlag = data.get("TagFlag")
+    if TagFlag == "first":
+        begin = data.get("begin")
+        end = data.get("end")
+        TagCodes = data.get("TagCodes")
+        TagCodes = TagCodes.split(",")
+        tag_str = ""
+        for TagCode in TagCodes:
+            if tag_str == "":
+                tag_str = "AVG(`" + TagCode + "`) AS " + "`" + TagCode + "`"
+            else:
+                tag_str = tag_str + "," + "AVG(`" + TagCode + "`) AS " + "`" + TagCode + "`"
+        sql = "SELECT  " + tag_str + ",SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" \
+              + begin + "' AND '" + end + "' group by CollectionHour order by SampleTime"
+        re = db_session.execute(sql).fetchall()
+        i = 0
+        for i in range(len(re)):
+            for cum in columns:
+                if cum == '日期':
+                    worksheet.write(i + 1, columns.index(cum), datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S'))
+                if cum == '值':
+                    worksheet.write(i + 1, columns.index(cum), "-" if re[i][TagCode] is None else re[i][TagCode])
+            i = i + 1
+        writer.close()
+        output.seek(0)
+        return output
+    else:
+        TagCode = "AVG(`" + data.get("TagCode") + "`)"
+        PointDates = data.get("PointDates")
+        PointDates = PointDates.split(",")
+        ParagraBegin = data.get("ParagraBegin")
+        ParagraEnd = data.get("ParagraEnd")
+        parameter_str = ""
+        j = 0
+        for ponit in PointDates:
+            if j == 0:
+                parameter_str = "SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
+            else:
+                parameter_str = parameter_str + "' OR SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
+            j = j + 1
+        parameter_str = parameter_str + "' group by CollectionHour order by SampleTime"
+        sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE " + parameter_str
+        re = db_session.execute(sql)
+        i = 0
+        for i in range(len(re)):
+            for cum in columns:
+                if cum == '日期':
+                    worksheet.write(i + 1, columns.index(cum),
+                                    datetime.datetime.strftime(i["SampleTime"], '%Y-%m-%d %H:%M:%S'))
+                if cum == '值':
+                    worksheet.write(i + 1, columns.index(cum), "-" if i["value"] is None else i["value"])
+            i = i + 1
+        writer.close()
+        output.seek(0)
+        return output
+
 
 
