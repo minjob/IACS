@@ -747,7 +747,7 @@ class Plan(Base):
 
 # class Record(Base):
 #     __tablename__ = 'Record'
-# 
+#
 #     # ID:
 #     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 #     # 设备编码:
@@ -875,7 +875,7 @@ class Repair(Base):
     # 申请时间
     ApplyTime = Column(Unicode(32), nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     # 接单人
-    ReceiveWorker = Column(Unicode(32), nullable=True)
+    ReceiveWorker = Column(Unicode(32), nullable=True, default='')
     # 接单时间
     ReceiveTime = Column(Unicode(32), nullable=True, default='尚未接单')
 
