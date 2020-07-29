@@ -402,5 +402,44 @@ def exportxdatatrendanalysis(data):
         output.seek(0)
         return output
 
+from sqlalchemy import Table
+def getTreeChildrenMap(id, ParentCode, tableName, Name, Code):
+    sz = []
+    try:
+        db_session.commit()
+        newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
+        orgs = db_session.query(newTable).filter(newTable.columns._data[ParentCode] == int(id)).all()
+        dir = []
+        for i in orgs:
+            a = 0
+            divi = {}
+            for j in newTable.columns._data:
+                divi[str(j)] = str(i[a])
+                a = a + 1
+            dir.append(divi)
+        for obj in dir:
+            if int(obj.get(ParentCode)) == int(id):
+                sz.append(
+                    {"label": obj.get(Name), "value": obj.get(Code), "children": getTreeChildrenMap(obj.get("ID"), ParentCode, tableName, Name, Code)})
+        return sz
+    except Exception as e:
+        print(e)
+        return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+@system_set.route('/selectTree')#组织结构
+def selectTree():
+    '''查询树形结构'''
+    data = request.values
+    if request.method == 'GET':
+        try:
+            ParentCode = data.get("ParentCode")
+            tableName = data.get("tableName")
+            Name = data.get("Name")
+            Code = data.get("Code")
+            id = 0
+            return json.dumps(getTreeChildrenMap(id, ParentCode, tableName, Name, Code), cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            insertSyslog("error", "查询树形结构报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
 
