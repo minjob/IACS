@@ -383,15 +383,15 @@ def exportxdatatrendanalysis(data):
         begin = data.get("start_time")
         end = data.get("end_time")
         sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' group by CollectionHour order by SampleTime"
-        re = db_session.execute(sql)
+        re = db_session.execute(sql).fetchall()
         i = 0
         for i in range(len(re)):
             for cum in columns:
                 if cum == '日期':
                     worksheet.write(i + 1, columns.index(cum),
-                                    datetime.datetime.strftime(i["SampleTime"], '%Y-%m-%d %H:%M:%S'))
+                                    datetime.datetime.strftime(re[i]["SampleTime"], '%Y-%m-%d %H:%M:%S'))
                 if cum == '值':
-                    worksheet.write(i + 1, columns.index(cum), "-" if i["value"] is None else i["value"])
+                    worksheet.write(i + 1, columns.index(cum), "-" if re[i]["value"] is None else str(round(re[i]["value"], 2)))
             i = i + 1
         writer.close()
         output.seek(0)
