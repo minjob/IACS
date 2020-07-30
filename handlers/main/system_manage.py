@@ -368,11 +368,11 @@ def exportxdatatrendanalysis(data):
                 if cum == '值':
                     oc_list = ""
                     for TagCode in TagCodes:
-                        code = "-" if re[i][TagCode] is None else re[i][TagCode]
+                        code = "-" if re[i][TagCode] is None else str(round(re[i][TagCode], 2))
                         if oc_list == "":
                             oc_list = code
                         else:
-                            oc_list = oc_list + "," + code
+                            oc_list = oc_list + ", " + code
                     worksheet.write(i + 1, columns.index(cum), oc_list)
             i = i + 1
         writer.close()
@@ -380,20 +380,9 @@ def exportxdatatrendanalysis(data):
         return output
     else:
         TagCode = "AVG(`" + data.get("TagCode") + "`)"
-        PointDates = data.get("PointDates")
-        PointDates = PointDates.split(",")
-        ParagraBegin = data.get("ParagraBegin")
-        ParagraEnd = data.get("ParagraEnd")
-        parameter_str = ""
-        j = 0
-        for ponit in PointDates:
-            if j == 0:
-                parameter_str = "SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
-            else:
-                parameter_str = parameter_str + "' OR SampleTime BETWEEN '" + ponit + " " + ParagraBegin + "' AND '" + ponit + " " + ParagraEnd
-            j = j + 1
-        parameter_str = parameter_str + "' group by CollectionHour order by SampleTime"
-        sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE " + parameter_str
+        begin = data.get("start_time")
+        end = data.get("end_time")
+        sql = "SELECT  " + TagCode + " AS value,SampleTime AS SampleTime FROM datahistory WHERE SampleTime BETWEEN '" + begin + "' AND '" + end + "' group by CollectionHour order by SampleTime"
         re = db_session.execute(sql)
         i = 0
         for i in range(len(re)):
