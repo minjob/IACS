@@ -778,6 +778,7 @@
          this.tableData[4].averag=this.averagevalue5
          this.tableData[4].max=this.tag5Max
          this.tableData[4].min=this.tag5Min
+         this.tableData[5].averag=this.averagevalue6
          this.tableData[5].max=this.tag6Max
          this.tableData[5].min=this.tag6Min
          this.tableData=this.tableData.slice(0, this.dateset.length)
