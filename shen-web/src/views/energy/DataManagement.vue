@@ -4,7 +4,7 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="platformContainer blackComponents asidetree" style="height:1134px;">
+                <div class="platformContainer blackComponents asidetree" style="height:1154px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
@@ -16,7 +16,7 @@
                 </div>
               </el-col>
               <el-col :span="18">
-                 <div class="Timepick blackComponents" style="height:43px;">
+                 <div class="Timepick blackComponents" style="height:66px;">
                    <el-form>
                    <el-form-item label="开始时间">
                       <el-date-picker
@@ -90,7 +90,7 @@
                 <div class="blackComponents">
                   <el-form ref="ruleForm">
                       <el-form-item>
-                          <div class="Timepick blackComponents" style="height:43px;marginBottom:0px;">
+                          <div class="Timepick blackComponents" style="height:66px;marginBottom:0px;">
                       <el-form>
                       <el-form-item label="开始时间">
                         <el-date-picker
@@ -158,24 +158,6 @@
             name: 'Tag2',
             max: 0,
             min:0
-          },{
-            averag: 0,
-            comparetime:'00:00:04',
-            name: 'Tag3',
-            max: 0,
-            min:0
-          },{
-            averag: 0,
-            comparetime:'00:00:04',
-            name: 'Tag4',
-            max: 0,
-            min:0
-          },{
-            averag: 0,
-            comparetime:'00:00:04',
-            name: 'Tag5',
-            max: 0,
-            min:0
           }],
         treedata:[],
         defaultProps: {
@@ -191,6 +173,7 @@
         dataline3:[],
         dataline4:[],
         dataline5:[],
+        dataline6:[],
         maxvalue:10,
         date1:moment().format('YYYY-MM-DD'),
         date2:moment().format('YYYY-MM-DD'),
@@ -200,6 +183,7 @@
         averagevalue3:0,
         averagevalue4:0,
         averagevalue5:0,
+        averagevalue6:0,
         dataIndex:0,
         comparetime:'00:00:04',
         time1:'00:00:00',
@@ -225,6 +209,8 @@
         tag4Min:0,
         tag5Max:0,
         tag5Min:0,
+        tag6Max:0,
+        tag6Min:0,
         makefirst:true,
         TableData:{
           column:[
@@ -281,8 +267,7 @@
           var TagCodes=this.TagCodes
           var begin=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
           var end=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
-          var TagFlag='first'
-          window.location.href = "/api/excelouttrendalysis?TagCodes="+TagCodes+"&begin="+begin+"&end="+end+"&TagFlag="+'first'
+          window.location.href = "/api/excelouttrendalysis?TagCodes="+TagCodes+"&begin="+begin+"&end="+end+"&TagFlag=first"
         }
         else{
           var TagCode=this.TagCode
@@ -315,14 +300,14 @@
           console.log("请求错误")
         })
       },
-      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dateset,yvaluemax,yvaluemin){
+      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dataline6,dateset,yvaluemax,yvaluemin){
         if(this.myChart){
           this.myChart.dispose()
         }
         this.myChart= echarts.init(document.getElementById('main'));
         var option = {
               backgroundColor: '#3D4048',
-              color:['#4472C5','#ED7C30','#80FF80','#FF8096','#800080'], 
+              color:['#4472C5','#ED7C30','#80FF80','#FF8096','#800080','#881033'], 
               legend: {
                   data:dateset ,
                   inactiveColor: '#777',
@@ -450,6 +435,17 @@
                   }
               },
               {
+                  name: dateset[5],
+                  type: 'line',
+                  data: dataline6,
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                      width: 1,
+                      color:'#881033'
+                  }
+              },
+              {
 	          name: '平行于y轴的对比线',
             type: 'line',
             markLine: {
@@ -477,6 +473,7 @@
           var arr3=that.dataline3.slice(that.dataIndex,index)
           var arr4=that.dataline4.slice(that.dataIndex,index)
           var arr5=that.dataline5.slice(that.dataIndex,index)
+          var arr6=that.dataline6.slice(that.dataIndex,index)
           var index1=index-that.dataIndex
         }else{
           var arr1=that.dataline1.slice(index, that.dataIndex)
@@ -484,6 +481,7 @@
           var arr3=that.dataline3.slice(index, that.dataIndex)
           var arr4=that.dataline4.slice(index, that.dataIndex)
           var arr5=that.dataline5.slice(index, that.dataIndex)
+          var arr6=that.dataline6.slice(index, that.dataIndex)
           var index1=that.dataIndex-index
         }
         var num1=0
@@ -491,6 +489,7 @@
         var num3=0
         var num4=0
         var num5=0
+        var num6=0
         for(var i=0;i<arr1.length;i++){
             num1=num1+arr1[i]
          }
@@ -506,11 +505,15 @@
         for(var i=0;i<arr5.length;i++){
             num5=num5+arr5[i]
          }
+        for(var i=0;i<arr6.length;i++){
+            num6=num6+arr6[i]
+         }
          that.averagevalue1=(num1/index1).toFixed(2)
          that.averagevalue2=(num2/index1).toFixed(2)
          that.averagevalue3=(num3/index1).toFixed(2)
          that.averagevalue4=(num4/index1).toFixed(2)
          that.averagevalue5=(num5/index1).toFixed(2)
+         that.averagevalue6=(num6/index1).toFixed(2)
          that.tag1Max=Math.max.apply(Math, arr1).toFixed(2)
          that.tag1Min=Math.min.apply(Math, arr1).toFixed(2)
          that.tag2Max=Math.max.apply(Math, arr2).toFixed(2)
@@ -521,6 +524,8 @@
          that.tag4Min=Math.min.apply(Math, arr4).toFixed(2)
          that.tag5Max=Math.max.apply(Math, arr5).toFixed(2)
          that.tag5Min=Math.min.apply(Math, arr5).toFixed(2)
+         that.tag6Max=Math.max.apply(Math, arr6).toFixed(2)
+         that.tag6Min=Math.min.apply(Math, arr6).toFixed(2)
          that.InitTable()
        }
      })
@@ -547,11 +552,12 @@
     function renderBrushed(params) {
       var time=params.name
       var datas=params.data
+      console.log(params)
       var index=params.dataIndex
       that.dataIndex=params.dataIndex
       that.comparetime=params.name
       var maxline=[]
-      maxline.push(that.dataline1[index],that.dataline2[index],that.dataline3[index],that.dataline4[index],that.dataline5[index])
+      maxline.push(that.dataline1[index],that.dataline2[index],that.dataline3[index],that.dataline4[index],that.dataline5[index],that.dataline6[index])
       var max=Math.max.apply(Math, maxline)
       that.myChart.setOption({
           series:{
@@ -675,8 +681,15 @@
               }else{
                  this.dataline5=[]
                }
+              if(rows[5]){
+                this.dataline6 = rows[5].map(function (item) {
+                  return +item.value6;
+               });     
+              }else{
+                 this.dataline6=[]
+               }
               this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
                 })
       },
       SingleTag(tagcode){ // 获取一个tag多天的数据
@@ -733,14 +746,22 @@
               }else{
                  this.dataline5=[]
                }
+               if(rows[5]){
+                this.dataline6 = rows[5].map(function (item) {
+                  return +item.value6;
+               });     
+              }else{
+                 this.dataline6=[]
+               }
               this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
           })
       },
       InitTable(){
-        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0}]
+        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag2',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0}]
         for(var i=0;i<this.dateset.length;i++){
           this.tableData[i].name=this.dateset[i]
+          this.tableData[i].comparetime=this.comparetime
         }
          this.tableData[0].averag=this.averagevalue1
          this.tableData[0].max=this.tag1Max
@@ -757,10 +778,9 @@
          this.tableData[4].averag=this.averagevalue5
          this.tableData[4].max=this.tag5Max
          this.tableData[4].min=this.tag5Min
-         for(var i=0;i<5;i++){
-           this.tableData[i].comparetime=this.comparetime
-         }
-        
+         this.tableData[5].max=this.tag6Max
+         this.tableData[5].min=this.tag6Min
+         this.tableData=this.tableData.slice(0, this.dateset.length)
       },
       Initdesktop(){
          var params={
@@ -784,7 +804,7 @@
               this.dataline2 = rows[1].map(function (item) {
                   return +item.value2;
               });
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
                 })
       }
     }
@@ -814,6 +834,8 @@
 .Timepick{
   width: 100%;
   margin-bottom: 15px;
+  padding-left: 12px;
+  padding-top: 12px;
   border-radius: 4px;
   background-color: #3D4048;
 }
