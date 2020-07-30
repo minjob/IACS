@@ -758,7 +758,7 @@
           })
       },
       InitTable(){
-        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag2',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0}]
+        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag2',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag6',averag:0,max:0,min:0}]
         for(var i=0;i<this.dateset.length;i++){
           this.tableData[i].name=this.dateset[i]
           this.tableData[i].comparetime=this.comparetime
