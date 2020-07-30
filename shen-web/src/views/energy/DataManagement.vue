@@ -38,11 +38,9 @@
                   <el-button type="primary" @click="StartMake">趋势查询</el-button>
                   <el-button type="success" @click="OutExcel">数据导出</el-button>
               </div>
-              <el-dialog title="选择导出的趋势线" :visible.sync="isout" width="50%">
+              <el-dialog  :visible.sync="isout" width="50%">
                   <div>
-                    <el-checkbox-group v-model="checkedtag">
-                      <el-checkbox v-for="(item,index) in dateset" :label="item" :key="index" border size="small"></el-checkbox>
-                    </el-checkbox-group>
+                  确定导出excel?
                   </div>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="isout = false">取 消</el-button>
@@ -136,14 +134,8 @@
     components:{TabControl,tableView},
     data(){
       return {
-        checkedtag:[],
-        json_fields:{},
-        json_data:[],
-        json_meta:[],
-        exo:[],
         yvaluemax:0,
         yvaluemin:0,
-        allvalue:[],
         dateclass:'day',
         isload:false,
         TabControl:{
@@ -220,8 +212,6 @@
         childrentree:[],
         TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
         TagCode:'',
-        treenumber:[],
-        TagChecked:[],
         dateset:[],
         allday:'',//获取单个tag点日期字符串,
         currentdate:moment().format('YYYY-MM-DD'),
@@ -296,11 +286,9 @@
         }
         else{
           var TagCode=this.TagCode
-          var start_date=moment(this.valuedatetime1).format('YYYY-MM-DD')
-          var end_date=moment(this.valuedatetime2).format('YYYY-MM-DD')
-          var start_time=moment(this.valuedatetime1).format('HH:mm:ss')
-          var end_time=moment(this.valuedatetime2).format('HH:mm:ss')
-          window.location.href = "/api/excelouttrendalysis?TagCode="+TagCode+"&start_date="+start_date+"&end_date="+end_date+"&start_time="+start_time+"&end_time="+end_time
+          var start_time=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
+          var end_time=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
+          window.location.href = "/api/excelouttrendalysis?TagCode="+TagCode+"&start_time="+start_time+"&end_time="+end_time
         }
         this.isout=false
       },
@@ -651,12 +639,10 @@
             end:this.endtime,
             TagFlag:'first'
           }
-            this.allvalue=[]
             this.loading=true
             this.axios.get('/api/energy_trend',{params:params1}).then((res) => {
               this.makefirst=true
               var rows=res.data.data
-              this.allvalue=rows
               this.dates = rows[0].map(function (item) {
                 return item.time1.slice(11, 19)
               })
@@ -702,11 +688,9 @@
             end_time:this.time2
           }
           this.loading=true
-          this.allvalue=[]
           this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
               this.makefirst=false
               var rows=res.data.data
-              this.allvalue=rows
               this.dates= rows[0].map(function (item) {
                       return item.time1.slice(11, 19)
               })
@@ -789,7 +773,6 @@
           this.axios.get('/api/energy_trend',{params:params}).then((res) => {
               this.makefirst=true
               var rows=res.data.data
-              this.allvalue=rows
               this.dates= rows[0].map(function (item) {
                 return item.time1.slice(11, 19)
               })
