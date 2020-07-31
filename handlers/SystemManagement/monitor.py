@@ -389,13 +389,13 @@ def change_run():
         if equipment_code in ['LS1', 'LD1', 'LQT1']:
             if equipment_code == 'LS1' and status == 'STOP':
                 ctrl.Equip_LS1Control(equipment_code, status)
-                ctrl.Write_LS_INIWORD(equipment_code, temperature)
+                # ctrl.Write_LS_INIWORD(equipment_code, temperature)
             else:
                 ctrl.Equip_LS1Control(equipment_code, status)
         if equipment_code in ['LS2', 'LD2', 'LQT2']:
             if equipment_code == 'LS2' and status == 'STOP':
                 ctrl.Equip_LS2Control(equipment_code, status)
-                ctrl.Write_LS_INIWORD(equipment_code, temperature)
+                # ctrl.Write_LS_INIWORD(equipment_code, temperature)
             else:
                 ctrl.Equip_LS2Control(equipment_code, status)
         insertSyslog("机组开关操作", f"对{equipment_code}设备进行了{status}操作", current_user.Name)
