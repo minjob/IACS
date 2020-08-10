@@ -39,7 +39,7 @@
             <li>
               <el-tooltip class="head-menu-item" effect="dark" content="消息" placement="bottom">
                 <el-badge>
-                  <i class="color-white text-size-18 el-icon-bell" @click="getFullCreeen"></i>
+                  <i class="color-white text-size-18 el-icon-bell" @click="getStu_Equ"></i>
                 </el-badge>
               </el-tooltip>
             </li>
@@ -125,6 +125,8 @@ export default {
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],
       isFullScreen:false, //是否全屏
+      websock:null,
+      websockVarData:{},
     }
   },
   //依赖注入传值
@@ -148,6 +150,7 @@ export default {
     }else{
       this.$router.push("/login");
     }
+    this.initWebSocket()
   },
   destroyed() {
 
@@ -205,6 +208,36 @@ export default {
         }
       }
     },
+    initWebSocket(){ //初始化weosocket
+      // this.websock = new WebSocket('ws://' + location.host + '/socket');
+      this.websock = new WebSocket('ws://127.0.0.1:5002/socket');
+      this.websock.onmessage = this.websocketonmessage;
+      this.websock.onopen = this.websocketonopen;
+      this.websock.onerror = this.websocketonerror;
+      this.websock.onclose = this.websocketclose;
+    },
+    websocketonopen(){ //连接建立之后执行send方法发送数据
+      this.websocketsend();
+    },
+    websocketonerror(){//连接建立失败重连
+      console.log("websocket连接失败")
+    },
+    websocketonmessage(e){ //数据接收
+      this.websockVarData = JSON.parse(e.data)
+      console.log(this.websockVarData)
+    },
+    websocketsend(Data){//数据发送
+      this.websock.send(Data);
+    },
+    websocketclose(e){  //关闭
+      console.log("websocket关闭")
+    },
+    closesocket(){
+      this.websock.close()
+    },
+    getStu_Equ(){  //获取设备故障信息
+
+    }
   }
 }
 </script>

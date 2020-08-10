@@ -35,8 +35,27 @@
                       </el-date-picker>
                   </el-form-item>
                    </el-form>
-                  <el-button type="primary" @click="StartMake">趋势查询</el-button>
-                  <el-button type="success" @click="OutExcel">数据导出</el-button>
+                   <el-tooltip  effect="dark" content="时间后退" placement="top-start">
+                      <el-button type="primary" icon="el-icon-d-arrow-left" @click="backWard"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="加减时间基数" placement="top-start">
+                      <el-input-number  v-model="selftime" :min="2" :max="100" :step="2" step-strictly></el-input-number>
+                  </el-tooltip>
+                  <el-tooltip  effect="dark" content="时间前进" placement="top-start">
+                      <el-button type="primary" icon="el-icon-d-arrow-right" :disabled='isDisabled' @click="forWard"></el-button>
+                  </el-tooltip>
+                  <el-tooltip  effect="dark" content="回到当前实时数据" placement="top-start">
+                      <el-button type="primary" icon="el-icon-refresh-right" v-if="showcurrent" @click="ShowCurrent"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="暂停实时数据" placement="top-start">
+                      <el-button type="primary" icon="el-icon-video-pause" v-if="!showcurrent" @click="endWebsocket"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="数据查询" placement="top-start">
+                      <el-button type="primary" icon="el-icon-search" @click="StartMake"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="导出数据" placement="top-start">
+                      <el-button type="primary" icon="el-icon-download" @click="OutExcel"></el-button>
+                  </el-tooltip>
               </div>
               <el-dialog  :visible.sync="isout" width="50%">
                   <div>
@@ -134,6 +153,8 @@
     components:{TabControl,tableView},
     data(){
       return {
+        showcurrent:false,
+        isDisabled:false,
         yvaluemax:0,
         yvaluemin:0,
         dateclass:'day',
@@ -164,6 +185,8 @@
           children: 'children',
           label: 'label'
         },
+        websoc:null,
+        selftime:2,
         isout:false,
         value2:'',
         dates:[],
@@ -189,16 +212,16 @@
         time1:'00:00:00',
         time2:'12:00:00',
         valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
-        valuedatetime2:moment().format('YYYY-MM-DD 12:00:00'),
+        valuedatetime2:moment().format('YYYY-MM-DD HH:mm:ss'),
         valuedatetime3:moment().subtract(1, "days").format("YYYY-MM-DD"),
         starttime:moment().format('YYYY-MM-DD 00:00:00'),
-        endtime:moment().format('YYYY-MM-DD 12:00:00'),
+        endtime:moment().format('YYYY-MM-DD HH:mm:ss'),
         childrentree:[],
         TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
         TagCode:'',
         dateset:[],
+        receiveWeb:true,//websocket内区分选中的tag状态
         allday:'',//获取单个tag点日期字符串,
-        currentdate:moment().format('YYYY-MM-DD'),
         tag1Max:0,
         tag1Min:0,
         tag2Max:0,
@@ -236,8 +259,245 @@
         this.Initdesktop()
         this.Searchdata()
     },
+    destroyed(){
+      if(this.websoc){
+        this.websoc.close()
+      }
+    },
     methods: {
-      LoadExcel(){
+      forWard(){
+         this.valuedatetime1=moment(this.valuedatetime1).add(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         this.valuedatetime2=moment(this.valuedatetime2).add(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         if(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment().format('YYYY-MM-DD HH:mm:ss')), 'seconds')>=0){
+           this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+           this.valuedatetime1=moment(this.valuedatetime2).subtract(this.selftime, "hours").format('YYYY-MM-DD HH:mm:ss')
+           this.isDisabled=true
+            this.$message({
+              showClose: true,
+              message: '已切换至实时数据'
+            });
+            if(this.myChart){
+            this.myChart.dispose()
+            }
+           this.startWebsocket()
+        }else{
+           if(this.websoc){
+             this.websoc.close()
+            }
+            if(this.myChart){
+            this.myChart.dispose()
+            }
+           this.StartMake()
+           this.showcurrent=true
+        }
+      },
+      backWard(){
+        this.isDisabled=false
+         this.valuedatetime1=moment(this.valuedatetime1).subtract(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         this.valuedatetime2=moment(this.valuedatetime2).subtract(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         if(this.websoc){
+             this.websoc.close()
+            }
+         if(this.myChart){
+            this.myChart.dispose()
+            }
+         this.StartMake()
+         this.showcurrent=true
+      },
+      ShowCurrent(){
+        this.showcurrent=true
+        this.isDisabled=true
+        this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+        this.valuedatetime1=moment(this.valuedatetime2).subtract(this.selftime, "hours").format('YYYY-MM-DD HH:mm:ss')
+        this.startWebsocket()
+      },
+      endWebsocket(){
+        this.websoc.close()
+      },
+      startWebsocket(){
+        this.showcurrent=false
+        var arr=this.$refs.tree.getCheckedNodes()
+        if(arr.length===0){
+          this.$message({
+          message: '请先选择要实时展示的tag点',
+          type: 'warning'
+        });
+          return;
+        }
+        this.changestart()
+        var ziset=[]
+        for(var i=0;i<arr.length;i++){
+          if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
+               ziset.push(arr[i])
+          }}
+          if(ziset.length>=2){ //多个tag
+              this.receiveWeb=true //websocket内区分子节点个数
+              this.dateset=[]
+              this.TagCodes=''
+            for(var i=0;i<ziset.length;i++){
+              this.dateset.push(ziset[i].label)//多个tag
+              this.TagCodes=this.TagCodes+ziset[i].id+','
+                }
+              this.TagCodes=this.TagCodes.slice(0,-1)
+              var params1={
+                  TagCodes:this.TagCodes,
+                  begin:this.starttime,
+                  end:this.endtime,
+                  TagFlag:'first'
+            }
+            this.loading=true
+            this.axios.get('/api/energy_trend',{params:params1}).then((res) => {
+              this.loading=false
+              var rows=res.data.data
+              this.dates = rows[0].map(function (item) {
+                return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
+               });
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.dataline2 = rows[1].map(function (item) {
+                  return +item.value2;
+               });
+               if(rows[2]){
+                 this.dataline3 = rows[2].map(function (item) {
+                  return +item.value3;
+               });
+               }else{
+                 this.dataline3=[]
+               }
+              if(rows[3]){
+                this.dataline4 = rows[3].map(function (item) {
+                  return +item.value4;
+               });
+              }else{
+                 this.dataline4=[]
+               }
+              if(rows[4]){
+                this.dataline5 = rows[4].map(function (item) {
+                  return +item.value5;
+               });     
+              }else{
+                 this.dataline5=[]
+               }
+              if(rows[5]){
+                this.dataline6 = rows[5].map(function (item) {
+                  return +item.value6;
+               });     
+              }else{
+                 this.dataline6=[]
+               }
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+            })
+            }else if(ziset.length===1){//单个tag 的情况
+              this.receiveWeb=false //websocket内区分子节点个数
+              this.TagCode=ziset[0].id
+              if(moment(this.valuedatetime1).format('YYYY-MM-DD')==moment(this.valuedatetime2).format('YYYY-MM-DD')){
+               var params={
+                  TagCode:this.TagCode,
+                  start_date:this.date1,
+                  end_date:this.date2,
+                  start_time:this.time1,
+                  end_time:this.time2
+              }
+            this.loading=true
+            this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
+              this.loading=false
+              this.dateset=[]
+              this.dateset.push(moment(this.valuedatetime1).format('YYYY-MM-DD'))
+              var rows=res.data.data
+              this.dates= rows[0].map(function (item) {
+                      return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
+                });
+              this.datalin2=this.dataline3=this.dataline4=this.dataline5=this.dataline6=[]
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+                })
+              }else{
+                this.$message({
+                  message: '时间选取错误,时间段请选择当前天',
+                  type: 'error'
+            });
+              }
+            }else{
+              console.log('选中的父节点')
+            }
+           this.initWebSocket()
+      },
+      initWebSocket(){
+            this.websoc=new WebSocket('ws://127.0.0.1:5002/socket');
+            // this.websoc = new WebSocket('ws://' + location.host + '/socket');
+            this.websoc.onopen=this.webscop
+            this.websoc.onmessage=this.webscom
+            this.websoc.onerror=this.webscoer
+            this.websoc.onclose=this.webscoclos
+        },
+        webscsend(data){
+            this.websoc.send(data)
+        },
+        webscop(){
+         this.webscsend()
+        },
+        webscom(evt){
+          var resdata = JSON.parse(evt.data); //获取到实时返回的数据
+          if(!this.receiveWeb){
+          if(moment().format('ss')=='02' || moment().format('ss')=='32' || moment().format('ss')=='31' || moment().format('ss')=='57'){
+            for(var i in resdata){
+              if(i===this.TagCode){
+                this.dataline1.splice(0,1)
+                this.dataline1.push(parseFloat(resdata[i]))
+                this.dates.splice(0,1)
+                this.dates.push(moment().format('HH:mm:ss'))
+                this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+                this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+              }
+            }
+          }
+          }else{
+            if(moment().format('ss')=='02' || moment().format('ss')=='32' || moment().format('ss')=='31' || moment().format('ss')=='57'){
+            this.dates.splice(0,1)
+            this.dates.push(moment().format('HH:mm:ss'))
+            this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+            var arr=this.TagCodes.split(',')
+            for(var i in resdata){
+              if(i===arr[0]){
+                this.dataline1.splice(0,1)
+                this.dataline1.push(parseFloat(resdata[i]))
+              }else if(i===arr[1]){
+                this.dataline2.splice(0,1)
+                this.dataline2.push(parseFloat(resdata[i]))
+              }else if(i===arr[2]){
+                this.dataline3.splice(0,1)
+                this.dataline3.push(parseFloat(resdata[i]))
+              }else if(i===arr[3]){
+                this.dataline4.splice(0,1)
+                this.dataline4.push(parseFloat(resdata[i]))
+              }else if(i===arr[4]){
+                this.dataline5.splice(0,1)
+                this.dataline5.push(parseFloat(resdata[i]))
+              }else if(i===arr[5]){
+                this.dataline6.splice(0,1)
+                this.dataline6.push(parseFloat(resdata[i]))
+              }else{
+
+              }
+            }
+          this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+          }
+          }
+        },
+        webscoer(){
+            console.log('连接websocket失败')
+        },
+        webscoclos(e){
+            console.log('关闭websocket连接')
+        },
+        LoadExcel(){
         this.isload=false
       },
       Excelout(){ //excel导出
@@ -552,7 +812,6 @@
     function renderBrushed(params) {
       var time=params.name
       var datas=params.data
-      console.log(params)
       var index=params.dataIndex
       that.dataIndex=params.dataIndex
       that.comparetime=params.name
@@ -587,6 +846,9 @@
          })
       },
       StartMake(){
+         if(this.websoc){
+             this.websoc.close()
+            }
         this.changestart()
         this.getChecked()
       },
@@ -604,10 +866,16 @@
         this.time2=moment(this.valuedatetime2).format('HH:mm:ss')
         this.date2=moment(this.valuedatetime2).format('YYYY-MM-DD')
         this.endtime=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
-        
       },
       getChecked(){ //选取选中的节点
         var arr=this.$refs.tree.getCheckedNodes()
+        if(arr.length===0){
+          this.$message({
+          message: '请先选择tag展示的点',
+          type: 'warning'
+        });
+          return;
+        }
         var ziset=[]
          for(var i=0;i<arr.length;i++){
           if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
@@ -625,7 +893,6 @@
             }else if(ziset.length===1){//单个tag 的情况
               this.TagCode=ziset[0].id
               this.SingleTag(this.TagCode)
-
             }else{
               console.log('选中的父节点')
             }
