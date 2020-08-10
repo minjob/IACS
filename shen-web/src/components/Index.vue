@@ -37,11 +37,23 @@
         <div class="head-menu floatRight">
           <ul>
             <li>
-              <el-tooltip class="head-menu-item" effect="dark" content="消息" placement="bottom">
+              <el-tooltip class="head-menu-item eq_stu blink" effect="dark" content="故障提醒" placement="bottom">
                 <el-badge>
                   <i class="color-white text-size-18 el-icon-bell" @click="getStu_Equ"></i>
                 </el-badge>
               </el-tooltip>
+              <el-drawer
+                :visible.sync="drawerStu_Equ"
+                :with-header="false">
+                <div style="padding: 15px;">
+                  <p class="marginBottom">当前LS1故障信息</p>
+                  <p v-for="(item,index) in LS1EqStuInfo" v-if="LS1EqStuInfo.length > 0" class="marginBottomS text-size-14 color-red">{{ item.value }}</p>
+                  <p v-if="LS1EqStuInfo.length === 0" class="text-size-14">暂无故障</p>
+                  <p class="marginTop marginBottom">当前LS2故障信息</p>
+                  <p v-for="(item,index) in LS2EqStuInfo" v-if="LS2EqStuInfo.length > 0" class="marginBottomS text-size-14 color-red">{{ item.value }}</p>
+                  <p v-if="LS2EqStuInfo.length === 0" class="text-size-14">暂无故障</p>
+                </div>
+              </el-drawer>
             </li>
             <li>
               <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
@@ -127,6 +139,63 @@ export default {
       isFullScreen:false, //是否全屏
       websock:null,
       websockVarData:{},
+      drawerStu_Equ:false,
+      LS1EqStuInfo:[],
+      LS2EqStuInfo:[],
+      LS1Stu_Equ:[
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"一号压缩机不停机报警",stu:0},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"二号压缩机不停机报警",stu:1},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"吸排气压差过低报警",stu:2},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"吸气压力过低报警",stu:3},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"排气压力过高报警",stu:4},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"一号压缩机低油位报警",stu:5},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"二号压缩机低油位报警",stu:6},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"出水温度防冻保护报警",stu:7},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"一号压缩机不运行报警",stu:8},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"二号压缩机不运行报警",stu:9},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"电源掉电报警",stu:10},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"冷媒水温度传感器故障报警",stu:11},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"吸气压力传感器故障报警",stu:12},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"排气压力传感器故障报警",stu:13},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"电源电压过高报警",stu:14},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_109",value:"电源电压过低报警",stu:15},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"冷媒水断流报警",stu:0},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"一号压缩机热继电器过载",stu:1},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"一号压缩机油温过高",stu:2},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"一号压缩机电机过热",stu:3},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"一号压缩机电流过载报警",stu:4},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"二号压缩机电流过载报警",stu:5},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"二号压缩机热继电器过载",stu:6},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"二号压缩机油温过高",stu:7},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_110",value:"二号压缩机电机过热",stu:8},
+      ],
+      LS2Stu_Equ:[
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"一号压缩机不停机报警",stu:0},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"二号压缩机不停机报警",stu:1},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"吸排气压差过低报警",stu:2},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"吸气压力过低报警",stu:3},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"排气压力过高报警",stu:4},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"一号压缩机低油位报警",stu:5},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"二号压缩机低油位报警",stu:6},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"出水温度防冻保护报警",stu:7},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"一号压缩机不运行报警",stu:8},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"二号压缩机不运行报警",stu:9},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"电源掉电报警",stu:10},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"冷媒水温度传感器故障报警",stu:11},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"吸气压力传感器故障报警",stu:12},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"排气压力传感器故障报警",stu:13},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"电源电压过高报警",stu:14},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_112",value:"电源电压过低报警",stu:15},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"冷媒水断流报警",stu:0},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"一号压缩机热继电器过载",stu:1},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"一号压缩机油温过高",stu:2},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"一号压缩机电机过热",stu:3},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"一号压缩机电流过载报警",stu:4},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"二号压缩机电流过载报警",stu:5},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"二号压缩机热继电器过载",stu:6},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"二号压缩机油温过高",stu:7},
+        {tag:"PLC.KG1.Global.KG2_KG1.Stu_Equ_x.Stu_Equ_113",value:"二号压缩机电机过热",stu:8},
+      ],
     }
   },
   //依赖注入传值
@@ -154,6 +223,15 @@ export default {
   },
   destroyed() {
 
+  },
+  watch:{
+    LS1EqStuInfo(val,newVal){
+      if(newVal.length > 0){
+        $(".eq_stu").addClass("blink")
+      }else{
+        $(".eq_stu").removeClass("blink")
+      }
+    }
   },
   methods:{
     getMenuHeight(){
@@ -224,7 +302,33 @@ export default {
     },
     websocketonmessage(e){ //数据接收
       this.websockVarData = JSON.parse(e.data)
-      console.log(this.websockVarData)
+      this.LS1EqStuInfo = []
+      this.LS2EqStuInfo = []
+      for(var i in this.websockVarData){
+        this.LS1Stu_Equ.forEach(item =>{
+          if(item.tag === i){
+            var value = parseInt(this.websockVarData[i],10).toString(2).split("")
+            var stu = value[value.length - 1 - item.stu]
+            if(stu === "1"){
+              this.LS1EqStuInfo.push({
+                value:item.value
+              })
+            }
+          }
+
+        })
+        this.LS2Stu_Equ.forEach(item =>{
+          if(item.tag === i){
+            var value = parseInt(this.websockVarData[i],10).toString(2).split("")
+            var stu = value[value.length - 1 - item.stu]
+            if(stu === "1"){
+              this.LS2EqStuInfo.push({
+                value:item.value
+              })
+            }
+          }
+        })
+      }
     },
     websocketsend(Data){//数据发送
       this.websock.send(Data);
@@ -236,8 +340,8 @@ export default {
       this.websock.close()
     },
     getStu_Equ(){  //获取设备故障信息
-
-    }
+      this.drawerStu_Equ = true
+    },
   }
 }
 </script>
@@ -321,4 +425,18 @@ export default {
   .mainMenuList.active{
     color: #fff;
   }
+  .blink{
+    -webkit-animation: twinkling 1s infinite ease-in-out;
+  }
+  @-webkit-keyframes twinkling{    /*透明度由0到1*/
+    0%{
+      opacity:1; /*透明度为0*/
+    }
+    50%{
+      opacity:0; /*透明度为1*/
+    }
+    100%{
+      opacity:1; /*透明度为1*/
+    }
+   }
 </style>
