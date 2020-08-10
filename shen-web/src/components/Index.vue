@@ -37,9 +37,9 @@
         <div class="head-menu floatRight">
           <ul>
             <li>
-              <el-tooltip class="head-menu-item eq_stu blink" effect="dark" content="故障提醒" placement="bottom">
+              <el-tooltip class="head-menu-item eq_stu" effect="dark" content="故障提醒" placement="bottom">
                 <el-badge>
-                  <i class="color-white text-size-18 el-icon-bell" @click="getStu_Equ"></i>
+                  <i class="eq_stuIcon color-red text-size-18 el-icon-bell" @click="getStu_Equ"></i>
                 </el-badge>
               </el-tooltip>
               <el-drawer
@@ -228,8 +228,10 @@ export default {
     LS1EqStuInfo(val,newVal){
       if(newVal.length > 0){
         $(".eq_stu").addClass("blink")
+        $(".eq_stuIcon").addClass("color-red").removeClass("color-white")
       }else{
         $(".eq_stu").removeClass("blink")
+        $(".eq_stuIcon").addClass("color-white").removeClass("color-red")
       }
     }
   },
