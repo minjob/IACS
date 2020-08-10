@@ -225,13 +225,21 @@ export default {
 
   },
   watch:{
-    LS1EqStuInfo(val,newVal){
-      if(newVal.length > 0){
+    eqStuInfo(newval,oldval){
+      if(newval.LS1EqStuInfo.length > 0 || newval.LS2EqStuInfo.length > 0){
         $(".eq_stu").addClass("blink")
         $(".eq_stuIcon").addClass("color-red").removeClass("color-white")
       }else{
         $(".eq_stu").removeClass("blink")
         $(".eq_stuIcon").addClass("color-white").removeClass("color-red")
+      }
+    },
+  },
+  computed:{
+    eqStuInfo(){
+      const { LS1EqStuInfo,LS2EqStuInfo} = this
+      return {
+        LS1EqStuInfo,LS2EqStuInfo
       }
     }
   },
