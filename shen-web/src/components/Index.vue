@@ -37,6 +37,13 @@
         <div class="head-menu floatRight">
           <ul>
             <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="消息" placement="bottom">
+                <el-badge>
+                  <i class="color-white text-size-18 el-icon-bell" @click="getFullCreeen"></i>
+                </el-badge>
+              </el-tooltip>
+            </li>
+            <li>
               <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
                 <i class="color-white text-size-18" :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
