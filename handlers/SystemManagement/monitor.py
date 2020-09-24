@@ -82,21 +82,32 @@ class ScheduleCTRLWORD(object):
         self._nodekt2pv = None
         self._nodekt1vpv = None
         self._nodekt2vpv = None
-        self.INI_CTRL_WORD()
+        # self.INI_CTRL_WORD()
 
     def INI_CTRL_WORD(self):
         # client = Client('opc.tcp://127.0.0.1:49320')
         self.connect()
-        self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
-        self._nodeld1pv = self._client.get_node('ns = 2;s = SCADA.DO.LD1SET')
-        self._nodelq1pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ1SET')
-        self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
-        self._nodeld2pv = self._client.get_node('ns = 2;s = SCADA.DO.LD2SET')
-        self._nodelq2pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ2SET')
-        self._nodekt1pv = self._client.get_node('ns = 2;s = SCADA.DO.KT1SET')
-        self._nodekt2pv = self._client.get_node('ns = 2;s = SCADA.DO.KT2SET')
-        self._nodekt1vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF1SET')
-        self._nodekt2vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF2SET')
+        # self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
+        #         # self._nodeld1pv = self._client.get_node('ns = 2;s = SCADA.DO.LD1SET')
+        #         # self._nodelq1pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ1SET')
+        #         # self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
+        #         # self._nodeld2pv = self._client.get_node('ns = 2;s = SCADA.DO.LD2SET')
+        #         # self._nodelq2pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ2SET')
+        #         # self._nodekt1pv = self._client.get_node('ns = 2;s = SCADA.DO.KT1SET')
+        #         # self._nodekt2pv = self._client.get_node('ns = 2;s = SCADA.DO.KT2SET')
+        #         # self._nodekt1vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF1SET')
+        #         # self._nodekt2vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF2SET')
+        self._nodels1 = self._client.get_node('ns = 2;s = PLC.KG1.Global.KG2_KG1_Lighting.H_P_Man_Ang_x.H_P_Man_Ang_038')
+        self._nodeld1pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_2')
+        self._nodelq1pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_0')
+        self._nodels2 = self._client.get_node('ns = 2;s = PLC.KG1.Global.KG2_KG1_Lighting.H_P_Man_Ang_x.H_P_Man_Ang_039')
+        self._nodeld2pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_3')
+        self._nodelq2pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_1')
+        self._nodek1p1 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_28')
+        self._nodek2p2 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_35')
+        self._nodek3p3 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_42')
+        self._nodek4p4 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_49')
+        self._nodek5p5 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_56')
 
     def Write_LS1_CTRLWord(self):
         # client = Client('opc.tcp://127.0.0.1:49320')
@@ -104,7 +115,7 @@ class ScheduleCTRLWORD(object):
             self.connect()
             ls1ctrl = self.GetCtrlWord(self._ls1_wd, self._ls1_run, self._ls1_stop, self._ld1_run, self._ld1_stop,
                                        self._lqt1_run, self._lqt1_stop)
-            self._nodels1.set_value(ua.DataValue(ua.Variant(ls1ctrl, ua.VariantType.UInt16)))
+            self._nodels1.set_value(ua.DataValue(ua.Variant(ls1ctrl, ua.VariantType.Int16)))
         except Exception as err:
             print(err)
             pass
@@ -133,7 +144,7 @@ class ScheduleCTRLWORD(object):
                 self._lqt1_stop = 1
             ls1ctrl = self.GetCtrlWord(int(100), self._ls1_run, self._ls1_stop, self._ld1_run, self._ld1_stop,
                                        self._lqt1_run, self._lqt1_stop)
-            self._nodels1.set_value(ua.DataValue(ua.Variant(ls1ctrl, ua.VariantType.UInt16)))
+            self._nodels1.set_value(ua.DataValue(ua.Variant(ls1ctrl, ua.VariantType.Int16)))
         except Exception as err:
             print(err)
             pass
@@ -180,7 +191,7 @@ class ScheduleCTRLWORD(object):
                 self._lqt2_stop = 1
             ls2ctrl = self.GetCtrlWord(int(100), self._ls2_run, self._ls2_stop, self._ld2_run, self._ld2_stop,
                                        self._lqt2_run, self._lqt2_stop)
-            self._nodels2.set_value(ua.DataValue(ua.Variant(ls2ctrl, ua.VariantType.UInt16)))
+            self._nodels2.set_value(ua.DataValue(ua.Variant(ls2ctrl, ua.VariantType.Int16)))
         except Exception as err:
             print(err)
             pass
@@ -191,14 +202,14 @@ class ScheduleCTRLWORD(object):
             self.connect()
             if (AEquipment == "LD2"):
                 self._ld2pv = int(AValue)
-                self._nodeld2pv.set_value(ua.DataValue(ua.Variant(10 * int(self._ld2pv), ua.VariantType.UInt16)))
+                self._nodeld2pv.set_value(ua.DataValue(ua.Variant(10 * int(self._ld2pv), ua.VariantType.Int16)))
             elif (AEquipment == "LQ2"):
                 self._lq2pv = int(AValue)
-                self._nodelq2pv.set_value(ua.DataValue(ua.Variant(10 * int(self._lq2pv), ua.VariantType.UInt16)))
+                self._nodelq2pv.set_value(ua.DataValue(ua.Variant(10 * int(self._lq2pv), ua.VariantType.Int16)))
             # self._nodekt1pv.set_value(ua.DataValue(ua.Variant(10*int(self._kt1pv),ua.VariantType.UInt16)))
             # self._nodekt2pv.set_value(ua.DataValue(ua.Variant(10*int(self._kt2pv),ua.VariantType.UInt16)))
-            # self._nodekt1vpv.set_value(ua.DataValue(ua.Variant(10*int(self._kt1vopen),ua.VariantType.UInt16)))
             # self._nodekt2vpv.set_value(ua.DataValue(ua.Variant(10*int(self._kt2vopen),ua.VariantType.UInt16)))
+            # self._nodekt1vpv.set_value(ua.DataValue(ua.Variant(10*int(self._kt1vopen),ua.VariantType.UInt16)))
         except Exception as err:
             print(err)
             pass
@@ -207,16 +218,27 @@ class ScheduleCTRLWORD(object):
         self.disconnect()
         self._client = Client('opc.tcp://127.0.0.1:49320')
         self._client.connect()
-        self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
-        self._nodeld1pv = self._client.get_node('ns = 2;s = SCADA.DO.LD1SET')
-        self._nodelq1pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ1SET')
-        self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
-        self._nodeld2pv = self._client.get_node('ns = 2;s = SCADA.DO.LD2SET')
-        self._nodelq2pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ2SET')
-        self._nodekt1pv = self._client.get_node('ns = 2;s = SCADA.DO.KT1SET')
-        self._nodekt2pv = self._client.get_node('ns = 2;s = SCADA.DO.KT2SET')
-        self._nodekt1vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF1SET')
-        self._nodekt2vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF2SET')
+        # self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
+        # self._nodeld1pv = self._client.get_node('ns = 2;s = SCADA.DO.LD1SET')
+        # self._nodelq1pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ1SET')
+        # self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
+        # self._nodeld2pv = self._client.get_node('ns = 2;s = SCADA.DO.LD2SET')
+        # self._nodelq2pv = self._client.get_node('ns = 2;s = SCADA.DO.LQ2SET')
+        # self._nodekt1pv = self._client.get_node('ns = 2;s = SCADA.DO.KT1SET')
+        # self._nodekt2pv = self._client.get_node('ns = 2;s = SCADA.DO.KT2SET')
+        # self._nodekt1vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF1SET')
+        # self._nodekt2vpv = self._client.get_node('ns = 2;s = SCADA.DO.SDF2SET')
+        self._nodels1 = self._client.get_node('ns = 2;s = PLC.KG1.Global.KG2_KG1_Lighting.H_P_Man_Ang_x.H_P_Man_Ang_038')
+        self._nodeld1pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_2')
+        self._nodelq1pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_0')
+        self._nodels2 = self._client.get_node('ns = 2;s = PLC.KG1.Global.KG2_KG1_Lighting.H_P_Man_Ang_x.H_P_Man_Ang_039')
+        self._nodeld2pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_3')
+        self._nodelq2pv = self._client.get_node('ns = 2;s = PLC.KG1.Global.JN_x.JN_1')
+        self._nodek1p1 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_28')
+        self._nodek2p2 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_35')
+        self._nodek3p3 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_42')
+        self._nodek4p4 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_49')
+        self._nodek5p5 = self._client.get_node('ns = 2;s = PLC.KG1.Global.H_P_Pid_Set_X.H_P_Pid_Set_56')
         self._connected = True
 
     def disconnect(self):
@@ -238,8 +260,8 @@ class ScheduleCTRLWORD(object):
             self.connect()
             ls2ctrl = self.GetCtrlWord(self._ls2_wd, self._ls2_run, self._ls2_stop, self._ld2_run, self._ld2_stop,
                                        self._lqt2_run, self._lqt2_stop)
-            self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
-            self._nodels2.set_value(ua.DataValue(ua.Variant(ls2ctrl, ua.VariantType.UInt16)))
+            # self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
+            self._nodels2.set_value(ua.DataValue(ua.Variant(ls2ctrl, ua.VariantType.Int16)))
         except Exception as err:
             print(err)
             pass
@@ -300,11 +322,11 @@ class ScheduleCTRLWORD(object):
             self.connect()
             lsctrl = self.GetCtrlWord(int(AWD), 0, 0, 0, 0, 0, 0)
             if AEquip == "LS1":
-                self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
-                self._nodels1.set_value(ua.DataValue(ua.Variant(lsctrl, ua.VariantType.UInt16)))
+                # self._nodels1 = self._client.get_node('ns = 2;s = SCADA.DO.TSET1')
+                self._nodels1.set_value(ua.DataValue(ua.Variant(lsctrl, ua.VariantType.Int16)))
             elif AEquip == "LS2":
-                self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
-                self._nodels2.set_value(ua.DataValue(ua.Variant(lsctrl, ua.VariantType.UInt16)))
+                # self._nodels2 = self._client.get_node('ns = 2;s = SCADA.DO.TSET2')
+                self._nodels2.set_value(ua.DataValue(ua.Variant(lsctrl, ua.VariantType.Int16)))
         except Exception as err:
             print(err)
             pass
@@ -347,10 +369,10 @@ class ScheduleCTRLWORD(object):
             self.connect()
             if (AEquipment == "LS1"):
                 lsctrl = self.GetFaultCtrlWord(100, 1)
-                self._nodels1.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
+                self._nodels1.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.Int16)))
                 time.sleep(5)
                 lsctrl = self.GetFaultCtrlWord(100, 0)
-                self._nodels1.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
+                self._nodels1.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.Int16)))
             elif (AEquipment == "LS2"):
                 lsctrl = self.GetFaultCtrlWord(100, 1)
                 self._nodels2.set_value(ua.DataValue(ua.Variant(int(lsctrl), ua.VariantType.UInt16)))
@@ -389,13 +411,13 @@ def change_run():
         if equipment_code in ['LS1', 'LD1', 'LQT1']:
             if equipment_code == 'LS1' and status == 'STOP':
                 ctrl.Equip_LS1Control(equipment_code, status)
-                ctrl.Write_LS_INIWORD(equipment_code, temperature)
+                # ctrl.Write_LS_INIWORD(equipment_code, temperature)
             else:
                 ctrl.Equip_LS1Control(equipment_code, status)
         if equipment_code in ['LS2', 'LD2', 'LQT2']:
             if equipment_code == 'LS2' and status == 'STOP':
                 ctrl.Equip_LS2Control(equipment_code, status)
-                ctrl.Write_LS_INIWORD(equipment_code, temperature)
+                # ctrl.Write_LS_INIWORD(equipment_code, temperature)
             else:
                 ctrl.Equip_LS2Control(equipment_code, status)
         insertSyslog("机组开关操作", f"对{equipment_code}设备进行了{status}操作", current_user.Name)

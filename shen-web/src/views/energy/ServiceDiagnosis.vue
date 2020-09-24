@@ -142,7 +142,6 @@
                     tag:skey,
                     tagData:item[skey]
                   })
-                  that.opcState = true
                 }else{
                   that.newArr.push({
                     tag:skey,
@@ -156,6 +155,13 @@
                     that.jnValue = item[skey]
                   }else{
                     that.jnState = false
+                  }
+                }
+                if(skey === 'SCADA.AI.E119LS__LS1AI07' || 'SCADA.AI.E119LS__LS1AI01'){
+                  if(item[skey].toLowerCase() != 'NONE' || item[skey].toLowerCase() != 'INIT'){
+                    that.opcState = true
+                  }else{
+                    that.opcState = false
                   }
                 }
                 var scrollHeight = $('.scrollable').prop("scrollHeight");

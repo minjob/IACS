@@ -448,21 +448,34 @@
 }
 .Timepick .el-form-item{
   float: left;
-  width:299px;
-  margin-right: 40px;
+  width:284px;
+  margin-right: 0px;
   margin-bottom: 0px;
 }
 .Timepick .el-form-item .el-form-item__label{
  color:#fff;
 }
 .Timepick .el-form-item__content{
-  width:222px;
+  width:210px;
   float: left;
   }
-.ivu-picker-confirm .ivu-btn-primary{
+.Timepick .ivu-picker-confirm .ivu-btn-primary{
   display: none;
 }
-.el-checkbox.is-bordered+.el-checkbox.is-bordered {
+.Timepick .el-checkbox.is-bordered+.el-checkbox.is-bordered {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+.Timepick .el-date-editor.el-input, .Timepick .el-date-editor.el-input__inner {
+  width: 210px;
+}
+.Timepick .el-button+.el-button {
+  margin-left: 4px;
+}
+.Timepick .el-button{
+  padding: 12px 13px;
+}
+.Timepick .el-input-number__decrease,.Timepick .el-input-number__increase{
+  background-color:#409EFF;
+  color: #fff;
 }

@@ -4,7 +4,7 @@
         <TabControl :TabControl="TabControl"></TabControl>
           <el-row :gutter="20" v-if="TabControl.TabControlCurrent === '趋势分析'">
               <el-col :span="6">
-                <div class="platformContainer blackComponents asidetree" style="height:1134px;">
+                <div class="platformContainer blackComponents asidetree" style="height:1154px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
@@ -16,7 +16,7 @@
                 </div>
               </el-col>
               <el-col :span="18">
-                 <div class="Timepick blackComponents" style="height:43px;">
+                 <div class="Timepick blackComponents" style="height:66px;">
                    <el-form>
                    <el-form-item label="开始时间">
                       <el-date-picker
@@ -35,8 +35,27 @@
                       </el-date-picker>
                   </el-form-item>
                    </el-form>
-                  <el-button type="primary" @click="StartMake">趋势查询</el-button>
-                  <el-button type="success" @click="OutExcel">数据导出</el-button>
+                   <el-tooltip  effect="dark" content="时间后退" placement="top-start">
+                      <el-button type="primary" icon="el-icon-d-arrow-left" @click="backWard"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="加减时间基数" placement="top-start">
+                      <el-input-number  v-model="selftime" :min="2" :max="100" :step="2" step-strictly></el-input-number>
+                  </el-tooltip>
+                  <el-tooltip  effect="dark" content="时间前进" placement="top-start">
+                      <el-button type="primary" icon="el-icon-d-arrow-right" :disabled='isDisabled' @click="forWard"></el-button>
+                  </el-tooltip>
+                  <el-tooltip  effect="dark" content="回到当前实时数据" placement="top-start">
+                      <el-button type="primary" icon="el-icon-refresh-right" v-if="showcurrent" @click="ShowCurrent"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="暂停实时数据" placement="top-start">
+                      <el-button type="primary" icon="el-icon-video-pause" v-if="!showcurrent" @click="endWebsocket"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="数据查询" placement="top-start">
+                      <el-button type="primary" icon="el-icon-search" @click="StartMake"></el-button>
+                  </el-tooltip>
+                   <el-tooltip  effect="dark" content="导出数据" placement="top-start">
+                      <el-button type="primary" icon="el-icon-download" @click="OutExcel"></el-button>
+                  </el-tooltip>
               </div>
               <el-dialog  :visible.sync="isout" width="50%">
                   <div>
@@ -90,7 +109,7 @@
                 <div class="blackComponents">
                   <el-form ref="ruleForm">
                       <el-form-item>
-                          <div class="Timepick blackComponents" style="height:43px;marginBottom:0px;">
+                          <div class="Timepick blackComponents" style="height:66px;marginBottom:0px;">
                       <el-form>
                       <el-form-item label="开始时间">
                         <el-date-picker
@@ -134,6 +153,8 @@
     components:{TabControl,tableView},
     data(){
       return {
+        showcurrent:false,
+        isDisabled:false,
         yvaluemax:0,
         yvaluemin:0,
         dateclass:'day',
@@ -158,30 +179,14 @@
             name: 'Tag2',
             max: 0,
             min:0
-          },{
-            averag: 0,
-            comparetime:'00:00:04',
-            name: 'Tag3',
-            max: 0,
-            min:0
-          },{
-            averag: 0,
-            comparetime:'00:00:04',
-            name: 'Tag4',
-            max: 0,
-            min:0
-          },{
-            averag: 0,
-            comparetime:'00:00:04',
-            name: 'Tag5',
-            max: 0,
-            min:0
           }],
         treedata:[],
         defaultProps: {
           children: 'children',
           label: 'label'
         },
+        websoc:null,
+        selftime:2,
         isout:false,
         value2:'',
         dates:[],
@@ -191,6 +196,7 @@
         dataline3:[],
         dataline4:[],
         dataline5:[],
+        dataline6:[],
         maxvalue:10,
         date1:moment().format('YYYY-MM-DD'),
         date2:moment().format('YYYY-MM-DD'),
@@ -200,21 +206,22 @@
         averagevalue3:0,
         averagevalue4:0,
         averagevalue5:0,
+        averagevalue6:0,
         dataIndex:0,
         comparetime:'00:00:04',
         time1:'00:00:00',
         time2:'12:00:00',
         valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
-        valuedatetime2:moment().format('YYYY-MM-DD 12:00:00'),
+        valuedatetime2:moment().format('YYYY-MM-DD HH:mm:ss'),
         valuedatetime3:moment().subtract(1, "days").format("YYYY-MM-DD"),
         starttime:moment().format('YYYY-MM-DD 00:00:00'),
-        endtime:moment().format('YYYY-MM-DD 12:00:00'),
+        endtime:moment().format('YYYY-MM-DD HH:mm:ss'),
         childrentree:[],
         TagCodes:"ZT02_SD_AVG,ZT02_TEMP_AVG",
         TagCode:'',
         dateset:[],
+        receiveWeb:true,//websocket内区分选中的tag状态
         allday:'',//获取单个tag点日期字符串,
-        currentdate:moment().format('YYYY-MM-DD'),
         tag1Max:0,
         tag1Min:0,
         tag2Max:0,
@@ -225,6 +232,8 @@
         tag4Min:0,
         tag5Max:0,
         tag5Min:0,
+        tag6Max:0,
+        tag6Min:0,
         makefirst:true,
         TableData:{
           column:[
@@ -250,8 +259,245 @@
         this.Initdesktop()
         this.Searchdata()
     },
+    destroyed(){
+      if(this.websoc){
+        this.websoc.close()
+      }
+    },
     methods: {
-      LoadExcel(){
+      forWard(){
+         this.valuedatetime1=moment(this.valuedatetime1).add(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         this.valuedatetime2=moment(this.valuedatetime2).add(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         if(moment(moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')).diff(moment(moment().format('YYYY-MM-DD HH:mm:ss')), 'seconds')>=0){
+           this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+           this.valuedatetime1=moment(this.valuedatetime2).subtract(this.selftime, "hours").format('YYYY-MM-DD HH:mm:ss')
+           this.isDisabled=true
+            this.$message({
+              showClose: true,
+              message: '已切换至实时数据'
+            });
+            if(this.myChart){
+            this.myChart.dispose()
+            }
+           this.startWebsocket()
+        }else{
+           if(this.websoc){
+             this.websoc.close()
+            }
+            if(this.myChart){
+            this.myChart.dispose()
+            }
+           this.StartMake()
+           this.showcurrent=true
+        }
+      },
+      backWard(){
+        this.isDisabled=false
+         this.valuedatetime1=moment(this.valuedatetime1).subtract(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         this.valuedatetime2=moment(this.valuedatetime2).subtract(this.selftime, "hours").format("YYYY-MM-DD HH:mm:ss")
+         if(this.websoc){
+             this.websoc.close()
+            }
+         if(this.myChart){
+            this.myChart.dispose()
+            }
+         this.StartMake()
+         this.showcurrent=true
+      },
+      ShowCurrent(){
+        this.showcurrent=true
+        this.isDisabled=true
+        this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+        this.valuedatetime1=moment(this.valuedatetime2).subtract(this.selftime, "hours").format('YYYY-MM-DD HH:mm:ss')
+        this.startWebsocket()
+      },
+      endWebsocket(){
+        this.websoc.close()
+      },
+      startWebsocket(){
+        this.showcurrent=false
+        var arr=this.$refs.tree.getCheckedNodes()
+        if(arr.length===0){
+          this.$message({
+          message: '请先选择要实时展示的tag点',
+          type: 'warning'
+        });
+          return;
+        }
+        this.changestart()
+        var ziset=[]
+        for(var i=0;i<arr.length;i++){
+          if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
+               ziset.push(arr[i])
+          }}
+          if(ziset.length>=2){ //多个tag
+              this.receiveWeb=true //websocket内区分子节点个数
+              this.dateset=[]
+              this.TagCodes=''
+            for(var i=0;i<ziset.length;i++){
+              this.dateset.push(ziset[i].label)//多个tag
+              this.TagCodes=this.TagCodes+ziset[i].id+','
+                }
+              this.TagCodes=this.TagCodes.slice(0,-1)
+              var params1={
+                  TagCodes:this.TagCodes,
+                  begin:this.starttime,
+                  end:this.endtime,
+                  TagFlag:'first'
+            }
+            this.loading=true
+            this.axios.get('/api/energy_trend',{params:params1}).then((res) => {
+              this.loading=false
+              var rows=res.data.data
+              this.dates = rows[0].map(function (item) {
+                return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
+               });
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.dataline2 = rows[1].map(function (item) {
+                  return +item.value2;
+               });
+               if(rows[2]){
+                 this.dataline3 = rows[2].map(function (item) {
+                  return +item.value3;
+               });
+               }else{
+                 this.dataline3=[]
+               }
+              if(rows[3]){
+                this.dataline4 = rows[3].map(function (item) {
+                  return +item.value4;
+               });
+              }else{
+                 this.dataline4=[]
+               }
+              if(rows[4]){
+                this.dataline5 = rows[4].map(function (item) {
+                  return +item.value5;
+               });     
+              }else{
+                 this.dataline5=[]
+               }
+              if(rows[5]){
+                this.dataline6 = rows[5].map(function (item) {
+                  return +item.value6;
+               });     
+              }else{
+                 this.dataline6=[]
+               }
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+            })
+            }else if(ziset.length===1){//单个tag 的情况
+              this.receiveWeb=false //websocket内区分子节点个数
+              this.TagCode=ziset[0].id
+              if(moment(this.valuedatetime1).format('YYYY-MM-DD')==moment(this.valuedatetime2).format('YYYY-MM-DD')){
+               var params={
+                  TagCode:this.TagCode,
+                  start_date:this.date1,
+                  end_date:this.date2,
+                  start_time:this.time1,
+                  end_time:this.time2
+              }
+            this.loading=true
+            this.axios.get('/api/energy_trend',{params:params}).then((res)=>{
+              this.loading=false
+              this.dateset=[]
+              this.dateset.push(moment(this.valuedatetime1).format('YYYY-MM-DD'))
+              var rows=res.data.data
+              this.dates= rows[0].map(function (item) {
+                      return item.time1.slice(11, 19)
+              })
+              this.dataline1 = rows[0].map(function (item) {
+                  return +item.value1;
+                });
+              this.datalin2=this.dataline3=this.dataline4=this.dataline5=this.dataline6=[]
+              this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+                })
+              }else{
+                this.$message({
+                  message: '时间选取错误,时间段请选择当前天',
+                  type: 'error'
+            });
+              }
+            }else{
+              console.log('选中的父节点')
+            }
+           this.initWebSocket()
+      },
+      initWebSocket(){
+            this.websoc=new WebSocket('ws://127.0.0.1:5002/socket');
+            // this.websoc = new WebSocket('ws://' + location.host + '/socket');
+            this.websoc.onopen=this.webscop
+            this.websoc.onmessage=this.webscom
+            this.websoc.onerror=this.webscoer
+            this.websoc.onclose=this.webscoclos
+        },
+        webscsend(data){
+            this.websoc.send(data)
+        },
+        webscop(){
+         this.webscsend()
+        },
+        webscom(evt){
+          var resdata = JSON.parse(evt.data); //获取到实时返回的数据
+          if(!this.receiveWeb){
+          if(moment().format('ss')=='02' || moment().format('ss')=='32' || moment().format('ss')=='31' || moment().format('ss')=='57'){
+            for(var i in resdata){
+              if(i===this.TagCode){
+                this.dataline1.splice(0,1)
+                this.dataline1.push(parseFloat(resdata[i]))
+                this.dates.splice(0,1)
+                this.dates.push(moment().format('HH:mm:ss'))
+                this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+                this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+              }
+            }
+          }
+          }else{
+            if(moment().format('ss')=='02' || moment().format('ss')=='32' || moment().format('ss')=='31' || moment().format('ss')=='57'){
+            this.dates.splice(0,1)
+            this.dates.push(moment().format('HH:mm:ss'))
+            this.valuedatetime2=moment().format('YYYY-MM-DD HH:mm:ss')
+            var arr=this.TagCodes.split(',')
+            for(var i in resdata){
+              if(i===arr[0]){
+                this.dataline1.splice(0,1)
+                this.dataline1.push(parseFloat(resdata[i]))
+              }else if(i===arr[1]){
+                this.dataline2.splice(0,1)
+                this.dataline2.push(parseFloat(resdata[i]))
+              }else if(i===arr[2]){
+                this.dataline3.splice(0,1)
+                this.dataline3.push(parseFloat(resdata[i]))
+              }else if(i===arr[3]){
+                this.dataline4.splice(0,1)
+                this.dataline4.push(parseFloat(resdata[i]))
+              }else if(i===arr[4]){
+                this.dataline5.splice(0,1)
+                this.dataline5.push(parseFloat(resdata[i]))
+              }else if(i===arr[5]){
+                this.dataline6.splice(0,1)
+                this.dataline6.push(parseFloat(resdata[i]))
+              }else{
+
+              }
+            }
+          this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
+          }
+          }
+        },
+        webscoer(){
+            console.log('连接websocket失败')
+        },
+        webscoclos(e){
+            console.log('关闭websocket连接')
+        },
+        LoadExcel(){
         this.isload=false
       },
       Excelout(){ //excel导出
@@ -281,8 +527,7 @@
           var TagCodes=this.TagCodes
           var begin=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
           var end=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
-          var TagFlag='first'
-          window.location.href = "/api/excelouttrendalysis?TagCodes="+TagCodes+"&begin="+begin+"&end="+end+"&TagFlag="+'first'
+          window.location.href = "/api/excelouttrendalysis?TagCodes="+TagCodes+"&begin="+begin+"&end="+end+"&TagFlag=first"
         }
         else{
           var TagCode=this.TagCode
@@ -315,14 +560,14 @@
           console.log("请求错误")
         })
       },
-      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dateset,yvaluemax,yvaluemin){
+      drawLine(dataline1,dataline2,dataline3,dataline4,dataline5,dataline6,dateset,yvaluemax,yvaluemin){
         if(this.myChart){
           this.myChart.dispose()
         }
         this.myChart= echarts.init(document.getElementById('main'));
         var option = {
               backgroundColor: '#3D4048',
-              color:['#4472C5','#ED7C30','#80FF80','#FF8096','#800080'], 
+              color:['#4472C5','#ED7C30','#80FF80','#FF8096','#800080','#881033'], 
               legend: {
                   data:dateset ,
                   inactiveColor: '#777',
@@ -450,6 +695,17 @@
                   }
               },
               {
+                  name: dateset[5],
+                  type: 'line',
+                  data: dataline6,
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                      width: 1,
+                      color:'#881033'
+                  }
+              },
+              {
 	          name: '平行于y轴的对比线',
             type: 'line',
             markLine: {
@@ -477,6 +733,7 @@
           var arr3=that.dataline3.slice(that.dataIndex,index)
           var arr4=that.dataline4.slice(that.dataIndex,index)
           var arr5=that.dataline5.slice(that.dataIndex,index)
+          var arr6=that.dataline6.slice(that.dataIndex,index)
           var index1=index-that.dataIndex
         }else{
           var arr1=that.dataline1.slice(index, that.dataIndex)
@@ -484,6 +741,7 @@
           var arr3=that.dataline3.slice(index, that.dataIndex)
           var arr4=that.dataline4.slice(index, that.dataIndex)
           var arr5=that.dataline5.slice(index, that.dataIndex)
+          var arr6=that.dataline6.slice(index, that.dataIndex)
           var index1=that.dataIndex-index
         }
         var num1=0
@@ -491,6 +749,7 @@
         var num3=0
         var num4=0
         var num5=0
+        var num6=0
         for(var i=0;i<arr1.length;i++){
             num1=num1+arr1[i]
          }
@@ -506,11 +765,15 @@
         for(var i=0;i<arr5.length;i++){
             num5=num5+arr5[i]
          }
+        for(var i=0;i<arr6.length;i++){
+            num6=num6+arr6[i]
+         }
          that.averagevalue1=(num1/index1).toFixed(2)
          that.averagevalue2=(num2/index1).toFixed(2)
          that.averagevalue3=(num3/index1).toFixed(2)
          that.averagevalue4=(num4/index1).toFixed(2)
          that.averagevalue5=(num5/index1).toFixed(2)
+         that.averagevalue6=(num6/index1).toFixed(2)
          that.tag1Max=Math.max.apply(Math, arr1).toFixed(2)
          that.tag1Min=Math.min.apply(Math, arr1).toFixed(2)
          that.tag2Max=Math.max.apply(Math, arr2).toFixed(2)
@@ -521,6 +784,8 @@
          that.tag4Min=Math.min.apply(Math, arr4).toFixed(2)
          that.tag5Max=Math.max.apply(Math, arr5).toFixed(2)
          that.tag5Min=Math.min.apply(Math, arr5).toFixed(2)
+         that.tag6Max=Math.max.apply(Math, arr6).toFixed(2)
+         that.tag6Min=Math.min.apply(Math, arr6).toFixed(2)
          that.InitTable()
        }
      })
@@ -551,7 +816,7 @@
       that.dataIndex=params.dataIndex
       that.comparetime=params.name
       var maxline=[]
-      maxline.push(that.dataline1[index],that.dataline2[index],that.dataline3[index],that.dataline4[index],that.dataline5[index])
+      maxline.push(that.dataline1[index],that.dataline2[index],that.dataline3[index],that.dataline4[index],that.dataline5[index],that.dataline6[index])
       var max=Math.max.apply(Math, maxline)
       that.myChart.setOption({
           series:{
@@ -581,6 +846,9 @@
          })
       },
       StartMake(){
+         if(this.websoc){
+             this.websoc.close()
+            }
         this.changestart()
         this.getChecked()
       },
@@ -598,10 +866,16 @@
         this.time2=moment(this.valuedatetime2).format('HH:mm:ss')
         this.date2=moment(this.valuedatetime2).format('YYYY-MM-DD')
         this.endtime=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
-        
       },
       getChecked(){ //选取选中的节点
         var arr=this.$refs.tree.getCheckedNodes()
+        if(arr.length===0){
+          this.$message({
+          message: '请先选择tag展示的点',
+          type: 'warning'
+        });
+          return;
+        }
         var ziset=[]
          for(var i=0;i<arr.length;i++){
           if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
@@ -619,7 +893,6 @@
             }else if(ziset.length===1){//单个tag 的情况
               this.TagCode=ziset[0].id
               this.SingleTag(this.TagCode)
-
             }else{
               console.log('选中的父节点')
             }
@@ -675,8 +948,15 @@
               }else{
                  this.dataline5=[]
                }
+              if(rows[5]){
+                this.dataline6 = rows[5].map(function (item) {
+                  return +item.value6;
+               });     
+              }else{
+                 this.dataline6=[]
+               }
               this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
                 })
       },
       SingleTag(tagcode){ // 获取一个tag多天的数据
@@ -733,14 +1013,22 @@
               }else{
                  this.dataline5=[]
                }
+               if(rows[5]){
+                this.dataline6 = rows[5].map(function (item) {
+                  return +item.value6;
+               });     
+              }else{
+                 this.dataline6=[]
+               }
               this.loading=false
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
           })
       },
       InitTable(){
-        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0}]
+        this.tableData= [{comparetime:'00:00:04',name:'tag1',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag2',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag3',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag4',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag5',averag:0,max:0,min:0},{comparetime:'00:00:04',name:'tag6',averag:0,max:0,min:0}]
         for(var i=0;i<this.dateset.length;i++){
           this.tableData[i].name=this.dateset[i]
+          this.tableData[i].comparetime=this.comparetime
         }
          this.tableData[0].averag=this.averagevalue1
          this.tableData[0].max=this.tag1Max
@@ -757,10 +1045,10 @@
          this.tableData[4].averag=this.averagevalue5
          this.tableData[4].max=this.tag5Max
          this.tableData[4].min=this.tag5Min
-         for(var i=0;i<5;i++){
-           this.tableData[i].comparetime=this.comparetime
-         }
-        
+         this.tableData[5].averag=this.averagevalue6
+         this.tableData[5].max=this.tag6Max
+         this.tableData[5].min=this.tag6Min
+         this.tableData=this.tableData.slice(0, this.dateset.length)
       },
       Initdesktop(){
          var params={
@@ -784,7 +1072,7 @@
               this.dataline2 = rows[1].map(function (item) {
                   return +item.value2;
               });
-              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dateset,this.yvaluemax,this.yvaluemin);
+              this.drawLine(this.dataline1,this.dataline2,this.dataline3,this.dataline4,this.dataline5,this.dataline6,this.dateset,this.yvaluemax,this.yvaluemin);
                 })
       }
     }
@@ -814,6 +1102,8 @@
 .Timepick{
   width: 100%;
   margin-bottom: 15px;
+  padding-left: 12px;
+  padding-top: 12px;
   border-radius: 4px;
   background-color: #3D4048;
 }
