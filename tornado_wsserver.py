@@ -1,7 +1,6 @@
 import redis
 import json
 from dbset.database import constant
-from models.schedul_model import TagMaintain
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
 from dbset.database.db_operate import db_session
