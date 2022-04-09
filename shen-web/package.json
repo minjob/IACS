@@ -27,7 +27,7 @@
     "jquery-ui": "^1.12.1",
     "less": "^3.11.3",
     "less-loader": "^6.1.0",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "screenfull": "^5.0.2",
     "style-loader": "^1.2.1",
     "svg-sprite-loader": "^5.0.0",
