@@ -6,7 +6,7 @@ arrow==0.15.2
 async==0.6.2
 asyncio==3.4.3
 bootstrap4==0.1.0
-bottle==0.12.4
+bottle==0.12.20
 certifi==2019.11.28
 chardet==3.0.4
 Click==7.0
